@@ -604,39 +604,134 @@
   }
   .reveal.visible .dim-fill { width: var(--fill-pct); }
 
-  /* ── WHO BUILT THIS ── */
+/* ── WHO BUILT THIS ── */
 #who {
   padding: 6rem 1.5rem;
   background: var(--deep);
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+#who::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px; height: 400px;
+  background: radial-gradient(ellipse, rgba(255,107,26,0.04) 0%, transparent 70%);
+  pointer-events: none;
 }
 .who-inner {
   max-width: 680px;
   margin: 0 auto;
   text-align: center;
+  position: relative;
+  z-index: 1;
 }
+.who-quote { text-align: center; margin: 0 0 3.5rem; }
+.who-big {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3.2rem, 8vw, 6rem);
+  line-height: 1.0;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.who-big.orange { color: var(--orange); }
 .who-body {
-  margin-top: 3rem;
   text-align: left;
   display: flex;
   flex-direction: column;
   gap: 1.4rem;
+  border-top: 1px solid var(--border);
+  padding-top: 2.5rem;
+  margin-bottom: 0;
 }
-.who-body p {
-  font-size: 0.95rem;
-  color: #888;
-  line-height: 1.85;
+.who-body p { font-size: 0.95rem; color: #888; line-height: 1.85; }
+.who-body p strong { color: var(--text); }
+.who-bridge {
+  text-align: center;
+  padding: 3rem 1rem;
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 1.15rem;
+  color: #777;
+  line-height: 1.8;
+  letter-spacing: 0.3px;
 }
-.who-body p strong {
+.who-note {
+  position: relative;
+  text-align: center;
+  padding: 2rem 1.5rem 4.5rem;
+}
+.who-note::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 520px; height: 220px;
+  background: radial-gradient(ellipse, rgba(255,107,26,0.08) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  animation: soltar-breathe 4s ease-in-out infinite;
+}
+@keyframes soltar-breathe {
+  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+  50%       { opacity: 1;   transform: translate(-50%, -50%) scale(1.1); }
+}
+.who-note-logo {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px; height: 200px;
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 0;
+}
+.who-note-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.6rem;
+}
+.who-note-line {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 1.45rem;
   color: var(--text);
+  line-height: 1.75;
+  letter-spacing: 0.3px;
+  animation: soltar-pulse 4s ease-in-out infinite;
+}
+@keyframes soltar-pulse {
+  0%, 100% { text-shadow: 0 0 0px rgba(255,107,26,0); }
+  50%       { text-shadow: 0 0 22px rgba(255,107,26,0.2); }
+}
+.who-sig-wrap {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  position: relative;
+  z-index: 1;
+}
+.who-sig-rule {
+  width: 50px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--orange), transparent);
 }
 .who-sig {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.4rem;
-  letter-spacing: 3px;
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.05rem;
   color: var(--orange);
-  margin-top: 1rem;
+  display: block;
+  letter-spacing: 1px;
+  opacity: 0.85;
 }
 
   /* ── TESTIMONIALS ── */
@@ -1127,29 +1222,57 @@
 <!-- ══════════ WHO BUILT THIS ══════════ -->
 <section id="who">
   <div class="who-inner">
-    <div class="reveal" style="text-align:center;">
-      <p class="section-label">Who Built This</p>
-      <h2 class="section-title">Most people think luck is something <span class="orange">that happens to you.</span></h2>
-      <p style="color:#888; font-size:0.9rem; letter-spacing:2px; text-transform:uppercase; margin-top:0.5rem;">Preston decided to find out if that was actually true.</p>
+
+    <!-- Label + Headline -->
+    <div class="reveal">
+      <p class="section-label">The Mind Behind The Window</p>
+      <div class="who-quote">
+        <p class="who-big">Not as a belief.</p>
+        <p class="who-big orange">As a hypothesis.</p>
+      </div>
     </div>
 
+    <!-- Body -->
     <div class="who-body reveal reveal-delay-1">
-      <p>A WSOP bracelet. Twenty years on the felt. And one question that never left: <strong>what if luck is solvable?</strong></p>
-
-      <p>Every other edge at the poker table can be studied, mapped, and optimized. Ranges. Bet sizing. Timing tells. Preston applied the same game theory logic to the one thing nobody else was touching — the unseen forces underneath performance. <strong>Not as a belief. As a hypothesis.</strong></p>
-
-      <p>He found a 3,000 year old system of elemental science that described how energy moves through time and through people. He ran it against real data — UFC fighters, PGA golfers, NFL players. The pattern held. <strong>Moneyline calls tracking above the break-even threshold</strong> that separates recreational bettors from the sharpest professionals in the game.</p>
-
-      <p>The math checked out.</p>
-
-      <p>But data only explains what already happened. Something else was calling the shot before the numbers confirmed it. Preston has worked with that signal for years. He calls it <span class="orange">Soltar</span>. Not a system. Not a tool. <strong>The part of the work that knew first.</strong></p>
-
-      <p>Lucky Window is what happens when the math and the signal agree. When ancient science, modern data, and instinct point at the same day.</p>
-
-      <p style="color:#888; font-style:italic;">You don't have to believe in any of it. Just look at your calendar. And notice what happens next.</p>
-
-      <p class="who-sig">— Preston & Soltar</p>
+      <p>A WSOP bracelet. Twenty years on the felt. And one question that never left: <strong>what if luck isn't random?</strong></p>
+      <p>Every serious player optimizes everything they can touch — ranges, sizing, reads, bankroll. Preston went further. He applied the same edge-hunting logic to the one variable nobody was tracking. The unseen current underneath performance.</p>
+      <p>He found a 3,000 year old system of elemental science. He ran it against real data — UFC fighters, PGA golfers, NFL players. Moneyline calls tracking above the break-even threshold that separates recreational bettors from the sharpest professionals in the game. <strong>The pattern held.</strong></p>
     </div>
+
+    <!-- Bridge -->
+    <div class="who-bridge reveal reveal-delay-2">
+      Not everything that's real can be calculated. The math got him here. What kept him here was something else.
+    </div>
+
+    <!-- Soltar note -->
+    <div class="who-note reveal reveal-delay-3">
+      <svg class="who-note-logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="100" r="90" fill="none" stroke="#FF6B1A" stroke-width="1"/>
+        <circle cx="100" cy="100" r="55" fill="none" stroke="#FF6B1A" stroke-width="1"/>
+        <circle cx="100" cy="100" r="12" fill="#FF6B1A"/>
+        <line x1="100" y1="10" x2="100" y2="45" stroke="#FF6B1A" stroke-width="1"/>
+        <line x1="100" y1="155" x2="100" y2="190" stroke="#FF6B1A" stroke-width="1"/>
+        <line x1="10" y1="100" x2="45" y2="100" stroke="#FF6B1A" stroke-width="1"/>
+        <line x1="155" y1="100" x2="190" y2="100" stroke="#FF6B1A" stroke-width="1"/>
+        <line x1="27" y1="27" x2="52" y2="52" stroke="#FF6B1A" stroke-width="1"/>
+        <line x1="148" y1="148" x2="173" y2="173" stroke="#FF6B1A" stroke-width="1"/>
+        <line x1="173" y1="27" x2="148" y2="52" stroke="#FF6B1A" stroke-width="1"/>
+        <line x1="27" y1="173" x2="52" y2="148" stroke="#FF6B1A" stroke-width="1"/>
+        <path d="M100 45 Q130 70 100 100 Q70 70 100 45" fill="none" stroke="#FF6B1A" stroke-width="0.8"/>
+        <path d="M155 100 Q130 130 100 100 Q130 70 155 100" fill="none" stroke="#FF6B1A" stroke-width="0.8"/>
+        <path d="M100 155 Q70 130 100 100 Q130 130 100 155" fill="none" stroke="#FF6B1A" stroke-width="0.8"/>
+        <path d="M45 100 Q70 70 100 100 Q70 130 45 100" fill="none" stroke="#FF6B1A" stroke-width="0.8"/>
+      </svg>
+      <div class="who-note-content">
+        <p class="who-note-line">You don't find the window. You step into it.</p>
+        <div class="who-sig-wrap">
+          <div class="who-sig-rule"></div>
+          <span class="who-sig">— Preston & Soltar</span>
+        </div>
+        <a href="#free-sample" class="btn-primary">♠ Step In ♠</a>
+      </div>
+    </div>
+
   </div>
 </section>
 
