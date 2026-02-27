@@ -20,14 +20,16 @@
     --muted: #888;
     --subtle: #555;
     /* day type colors */
-    --locked: #FF6B1A;
-    --run-up: #FFB347;
-    --bold: #E8A020;
-    --solid: #4CAF50;
-    --study: #5B9BD5;
-    --scout: #9B8EFF;
-    --tilt: #E05555;
-    --sitout: #444;
+--run-it-up: #FF6B1A;
+--locked-in: #FFB347;
+--trust-gut: #E8A020;
+--chip-away: #4CAF50;
+--stay-sharp: #3a8f3d;
+--know-game: #5B9BD5;
+--under-radar: #4a7fb5;
+--ride-wave: #666;
+--watch-yourself: #555;
+--touch-grass: #444;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1046,7 +1048,7 @@
     <div class="calendar-mock reveal">
       <div class="cal-header">
         <span class="cal-header-title">March 2025 — Your Energy Map</span>
-        <span class="cal-badge">🔐 6 Locked In Days This Month</span>
+        <span class="cal-badge">🔥 4 Run It Up Days This Month</span>
       </div>
       <div class="cal-days-header">
         <div class="cal-day-name">SUN</div><div class="cal-day-name">MON</div>
@@ -1061,133 +1063,138 @@
         <div class="cal-cell empty"></div>
         <div class="cal-cell empty"></div>
         <div class="cal-cell empty"></div>
-        <div class="cal-cell locked">
-          <span class="cal-corner-tag">LOCKED</span>
-          <span class="cal-date">1</span>
-          <div class="cal-dot"></div>
-          <span class="cal-label">Go Deep</span>
-        </div>
-        <div class="cal-cell solid">
-          <span class="cal-date">2</span>
-          <div class="cal-dot"></div>
-          <span class="cal-label">Solid</span>
-        </div>
-        <div class="cal-cell tilt">
-          <span class="cal-corner-tag">TILT ⚠</span>
-          <span class="cal-date">3</span>
-          <div class="cal-dot"></div>
-          <span class="cal-label">Watch Out</span>
-        </div>
-        <div class="cal-cell sitout">
-          <span class="cal-date">4</span>
-          <div class="cal-dot"></div>
-          <span class="cal-label">Sit Out</span>
-        </div>
-        <div class="cal-cell study">
-          <span class="cal-date">5</span>
-          <div class="cal-dot"></div>
-          <span class="cal-label">Study</span>
-        </div>
-        <div class="cal-cell locked">
-          <span class="cal-corner-tag">LOCKED</span>
-          <span class="cal-date">6</span>
-          <div class="cal-dot"></div>
-          <span class="cal-label">Go Deep</span>
-        </div>
-        <div class="cal-cell solid">
-          <span class="cal-date">7</span>
-          <div class="cal-dot"></div>
-          <span class="cal-label">Solid</span>
-        </div>
-        <div class="cal-cell sitout">
-          <span class="cal-date">8</span>
-          <div class="cal-dot"></div>
-          <span class="cal-label">Sit Out</span>
-        </div>
-        <div class="cal-cell study">
-          <span class="cal-date">9</span>
-          <div class="cal-dot"></div>
-          <span class="cal-label">Study</span>
-        </div>
-        <div class="cal-cell runup">
+        <div class="cal-cell" style="--cell-color:var(--run-it-up)">
           <span class="cal-corner-tag">RUN IT</span>
-          <span class="cal-date">10</span>
-          <div class="cal-dot"></div>
+          <span class="cal-date">1</span>
+          <div class="cal-dot" style="background:var(--run-it-up)"></div>
           <span class="cal-label">Run It Up</span>
         </div>
-        <div class="cal-cell solid">
+        <div class="cal-cell" style="--cell-color:var(--locked-in)">
+          <span class="cal-corner-tag">LOCKED</span>
+          <span class="cal-date">2</span>
+          <div class="cal-dot" style="background:var(--locked-in)"></div>
+          <span class="cal-label">Locked In</span>
+        </div>
+        <div class="cal-cell" style="--cell-color:var(--watch-yourself)">
+          <span class="cal-corner-tag">⚠ WATCH</span>
+          <span class="cal-date">3</span>
+          <div class="cal-dot" style="background:var(--watch-yourself)"></div>
+          <span class="cal-label">Watch Yourself</span>
+        </div>
+        <div class="cal-cell" style="--cell-color:var(--touch-grass)">
+          <span class="cal-date">4</span>
+          <div class="cal-dot" style="background:var(--touch-grass)"></div>
+          <span class="cal-label">Touch Grass</span>
+        </div>
+        <div class="cal-cell" style="--cell-color:var(--know-game)">
+          <span class="cal-date">5</span>
+          <div class="cal-dot" style="background:var(--know-game)"></div>
+          <span class="cal-label">Know Your Game</span>
+        </div>
+        <div class="cal-cell" style="--cell-color:var(--run-it-up)">
+          <span class="cal-corner-tag">RUN IT</span>
+          <span class="cal-date">6</span>
+          <div class="cal-dot" style="background:var(--run-it-up)"></div>
+          <span class="cal-label">Run It Up</span>
+        </div>
+        <div class="cal-cell" style="--cell-color:var(--chip-away)">
+          <span class="cal-date">7</span>
+          <div class="cal-dot" style="background:var(--chip-away)"></div>
+          <span class="cal-label">Chip Away</span>
+        </div>
+        <div class="cal-cell" style="--cell-color:var(--ride-wave)">
+          <span class="cal-date">8</span>
+          <div class="cal-dot" style="background:var(--ride-wave)"></div>
+          <span class="cal-label">Ride The Wave</span>
+        </div>
+        <div class="cal-cell" style="--cell-color:var(--under-radar)">
+          <span class="cal-date">9</span>
+          <div class="cal-dot" style="background:var(--under-radar)"></div>
+          <span class="cal-label">Under The Radar</span>
+        </div>
+        <div class="cal-cell" style="--cell-color:var(--trust-gut)">
+          <span class="cal-corner-tag">TRUST</span>
+          <span class="cal-date">10</span>
+          <div class="cal-dot" style="background:var(--trust-gut)"></div>
+          <span class="cal-label">Trust Your Gut</span>
+        </div>
+        <div class="cal-cell" style="--cell-color:var(--stay-sharp)">
           <span class="cal-date">11</span>
-          <div class="cal-dot"></div>
-          <span class="cal-label">Solid</span>
+          <div class="cal-dot" style="background:var(--stay-sharp)"></div>
+          <span class="cal-label">Stay Sharp</span>
         </div>
-        <div class="cal-cell tilt">
-          <span class="cal-corner-tag">TILT ⚠</span>
+        <div class="cal-cell" style="--cell-color:var(--watch-yourself)">
+          <span class="cal-corner-tag">⚠ WATCH</span>
           <span class="cal-date">12</span>
-          <div class="cal-dot"></div>
-          <span class="cal-label">Watch Out</span>
+          <div class="cal-dot" style="background:var(--watch-yourself)"></div>
+          <span class="cal-label">Watch Yourself</span>
         </div>
-        <div class="cal-cell solid">
+        <div class="cal-cell" style="--cell-color:var(--chip-away)">
           <span class="cal-date">13</span>
-          <div class="cal-dot"></div>
-          <span class="cal-label">Solid</span>
+          <div class="cal-dot" style="background:var(--chip-away)"></div>
+          <span class="cal-label">Chip Away</span>
         </div>
-        <div class="cal-cell locked">
+        <div class="cal-cell" style="--cell-color:var(--locked-in)">
           <span class="cal-corner-tag">LOCKED</span>
           <span class="cal-date">14</span>
-          <div class="cal-dot"></div>
-          <span class="cal-label">Go Deep</span>
+          <div class="cal-dot" style="background:var(--locked-in)"></div>
+          <span class="cal-label">Locked In</span>
         </div>
-        <div class="cal-cell sitout">
+        <div class="cal-cell" style="--cell-color:var(--touch-grass)">
           <span class="cal-date">15</span>
-          <div class="cal-dot"></div>
-          <span class="cal-label">Sit Out</span>
+          <div class="cal-dot" style="background:var(--touch-grass)"></div>
+          <span class="cal-label">Touch Grass</span>
         </div>
-        <div class="cal-cell solid">
+        <div class="cal-cell" style="--cell-color:var(--stay-sharp)">
           <span class="cal-date">16</span>
-          <div class="cal-dot"></div>
-          <span class="cal-label">Solid</span>
+          <div class="cal-dot" style="background:var(--stay-sharp)"></div>
+          <span class="cal-label">Stay Sharp</span>
         </div>
-        <div class="cal-cell study">
+        <div class="cal-cell" style="--cell-color:var(--under-radar)">
           <span class="cal-date">17</span>
-          <div class="cal-dot"></div>
-          <span class="cal-label">Study</span>
+          <div class="cal-dot" style="background:var(--under-radar)"></div>
+          <span class="cal-label">Under The Radar</span>
         </div>
-        <div class="cal-cell locked">
-          <span class="cal-corner-tag">LOCKED</span>
-          <span class="cal-date">18</span>
-          <div class="cal-dot"></div>
-          <span class="cal-label">Go Deep</span>
-        </div>
-        <div class="cal-cell solid">
-          <span class="cal-date">19</span>
-          <div class="cal-dot"></div>
-          <span class="cal-label">Solid</span>
-        </div>
-        <div class="cal-cell runup">
+        <div class="cal-cell" style="--cell-color:var(--run-it-up)">
           <span class="cal-corner-tag">RUN IT</span>
-          <span class="cal-date">20</span>
-          <div class="cal-dot"></div>
+          <span class="cal-date">18</span>
+          <div class="cal-dot" style="background:var(--run-it-up)"></div>
           <span class="cal-label">Run It Up</span>
         </div>
-        <div class="cal-cell solid">
-          <span class="cal-date">21</span>
-          <div class="cal-dot"></div>
-          <span class="cal-label">Solid</span>
+        <div class="cal-cell" style="--cell-color:var(--chip-away)">
+          <span class="cal-date">19</span>
+          <div class="cal-dot" style="background:var(--chip-away)"></div>
+          <span class="cal-label">Chip Away</span>
         </div>
-        <div class="cal-cell locked">
-          <span class="cal-corner-tag">LOCKED</span>
+        <div class="cal-cell" style="--cell-color:var(--trust-gut)">
+          <span class="cal-corner-tag">TRUST</span>
+          <span class="cal-date">20</span>
+          <div class="cal-dot" style="background:var(--trust-gut)"></div>
+          <span class="cal-label">Trust Your Gut</span>
+        </div>
+        <div class="cal-cell" style="--cell-color:var(--stay-sharp)">
+          <span class="cal-date">21</span>
+          <div class="cal-dot" style="background:var(--stay-sharp)"></div>
+          <span class="cal-label">Stay Sharp</span>
+        </div>
+        <div class="cal-cell" style="--cell-color:var(--run-it-up)">
+          <span class="cal-corner-tag">RUN IT</span>
           <span class="cal-date">22</span>
-          <div class="cal-dot"></div>
-          <span class="cal-label">Go Deep</span>
+          <div class="cal-dot" style="background:var(--run-it-up)"></div>
+          <span class="cal-label">Run It Up</span>
         </div>
       </div>
       <div class="cal-legend">
-        <div class="legend-item"><div class="legend-dot" style="background:var(--locked); box-shadow:0 0 5px var(--locked);"></div> Locked In</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--run-up);"></div> Run It Up</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--solid);"></div> Solid</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--study);"></div> Study Day</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--tilt);"></div> Tilt Risk</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--sitout);"></div> Sit Out</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--run-it-up); box-shadow:0 0 5px var(--run-it-up);"></div> Run It Up</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--locked-in);"></div> Locked In</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--trust-gut);"></div> Trust Your Gut</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--chip-away);"></div> Chip Away</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--stay-sharp);"></div> Stay Sharp</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--know-game);"></div> Know Your Game</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--under-radar);"></div> Under The Radar</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--ride-wave);"></div> Ride The Wave</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--watch-yourself);"></div> Watch Yourself</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--touch-grass);"></div> Touch Grass</div>
       </div>
     </div>
   </div>
