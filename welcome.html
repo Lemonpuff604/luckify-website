@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>You're In — Luckify.me</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange: #FF6B1A;
+      --orange-dim: #cc4d0a;
+      --bg: #080808;
+      --bg2: #0f0f0f;
+      --bg3: #151515;
+      --text: #e8e0d4;
+      --muted: #6b6459;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 400;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── PARTICLES ── */
+    #particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: var(--orange);
+      opacity: 0;
+      animation: float linear infinite;
+    }
+    @keyframes float {
+      0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+      10%  { opacity: 0.6; }
+      90%  { opacity: 0.2; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid rgba(255,107,26,0.1);
+    }
+    nav img { height: 48px; }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 4rem 2rem 2rem;
+    }
+
+    .success-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(76,175,80,0.12);
+      border: 1px solid rgba(76,175,80,0.3);
+      color: #4CAF50;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 600;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.4rem 1rem;
+      border-radius: 100px;
+      margin-bottom: 1.5rem;
+    }
+    .success-badge::before {
+      content: '✓';
+      font-size: 0.9rem;
+    }
+
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      line-height: 1;
+      letter-spacing: 0.02em;
+      margin-bottom: 1.2rem;
+    }
+    h1 .orange { color: var(--orange); }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto 0.8rem;
+      line-height: 1.6;
+    }
+
+    .delivery-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,107,26,0.08);
+      border: 1px solid rgba(255,107,26,0.2);
+      color: var(--orange);
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 0.5rem 1.2rem;
+      border-radius: 6px;
+      margin-top: 1rem;
+    }
+    .delivery-note::before { content: '⏱'; }
+
+    /* ── DIVIDER ── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      max-width: 680px;
+      margin: 2.5rem auto 0;
+      padding: 0 2rem;
+    }
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,107,26,0.3), transparent);
+    }
+    .divider-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 0.15em;
+      color: var(--orange);
+      white-space: nowrap;
+    }
+
+    /* ── FORM WRAPPER ── */
+    .form-section {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    .form-container {
+      background: var(--bg3);
+      border: 1px solid rgba(255,107,26,0.15);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 0 60px rgba(255,107,26,0.06);
+    }
+
+    .form-container iframe {
+      width: 100%;
+      min-height: 1420px;
+      border: none;
+      display: block;
+      background: transparent;
+    }
+
+    /* ── WHAT HAPPENS NEXT ── */
+    .next-steps {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 1.5rem 5rem;
+    }
+
+    .steps-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .step-card {
+      background: var(--bg3);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 10px;
+      padding: 1.4rem 1rem;
+      text-align: center;
+    }
+
+    .step-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      color: var(--orange);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .step-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text);
+      margin-bottom: 0.4rem;
+    }
+
+    .step-desc {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.04);
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+    footer a {
+      color: var(--orange);
+      text-decoration: none;
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 600px) {
+      .steps-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 2.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Particles -->
+<div id="particles"></div>
+
+<!-- Nav -->
+<nav>
+  <img src="finalnewlucki-02.png" alt="Luckify.me" />
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="success-badge">Trial Activated</div>
+  <h1>You're In.<br><span class="orange">Let's Build Your Calendar.</span></h1>
+  <p class="hero-sub">Fill in your details below so Preston can build your personalized poker energy calendar. Every field matters — birth time and location shape your unique energy profile.</p>
+  <div class="delivery-note">Your calendar will be delivered within 24 hours</div>
+</div>
+
+<!-- Divider -->
+<div class="divider">
+  <div class="divider-line"></div>
+  <div class="divider-text">Complete Your Profile</div>
+  <div class="divider-line"></div>
+</div>
+
+<!-- Form -->
+<div class="form-section">
+  <div class="form-container">
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSccrpreKXQazQVuWtnRzyuGKE8fVCp-djbqB9ikYTzZEp3_iw/viewform?embedded=true"
+            width="640" height="1420" frameborder="0" marginheight="0" marginwidth="0">
+      Loading…
+    </iframe>
+  </div>
+</div>
+
+<!-- What happens next -->
+<div class="next-steps">
+  <div class="steps-title">What Happens Next</div>
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-num">01</div>
+      <div class="step-label">You Submit</div>
+      <div class="step-desc">Your birth details are sent directly to Preston</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">02</div>
+      <div class="step-label">Preston Builds</div>
+      <div class="step-desc">Your personal 5-dimension energy calendar is calculated</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">03</div>
+      <div class="step-label">You Receive</div>
+      <div class="step-desc">Calendar delivered to your inbox within 24 hours</div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <a href="https://luckify.me">← Back to Luckify.me</a> &nbsp;·&nbsp; Questions? Email us at hello@luckify.me
+</footer>
+
+<script>
+  // Particles
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 3 + 1;
+    p.style.cssText = `
+      width: ${size}px; height: ${size}px;
+      left: ${Math.random() * 100}%;
+      animation-duration: ${Math.random() * 15 + 10}s;
+      animation-delay: ${Math.random() * 10}s;
+    `;
+    container.appendChild(p);
+  }
+</script>
+</body>
+</html>
