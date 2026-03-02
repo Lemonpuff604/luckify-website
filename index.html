@@ -1063,11 +1063,25 @@
   // SWIPE SUPPORT for zone tabs on mobile
   (function() {
     const zones = ['alpha','beta','gamma','delta','omega'];
-    let touchStartX = 0;
+    let touchStartX = 0, touchStartY = 0, intentDecided = false, isHorizontal = false;
     const section = document.getElementById('day-types');
     if (!section) return;
-    section.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, {passive:true});
+    section.addEventListener('touchstart', e => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      intentDecided = false;
+      isHorizontal = false;
+    }, {passive:true});
+    section.addEventListener('touchmove', e => {
+      if (intentDecided) return;
+      const dx = Math.abs(e.touches[0].clientX - touchStartX);
+      const dy = Math.abs(e.touches[0].clientY - touchStartY);
+      if (dx < 6 && dy < 6) return; // not enough movement yet
+      intentDecided = true;
+      isHorizontal = dx > dy * 1.5; // must be clearly horizontal
+    }, {passive:true});
     section.addEventListener('touchend', e => {
+      if (!isHorizontal) return;
       const dx = e.changedTouches[0].clientX - touchStartX;
       if (Math.abs(dx) < 50) return;
       const currentPanel = document.querySelector('.zone-panel.active');
@@ -1078,7 +1092,6 @@
       if (nextIdx === idx) return;
       const nextTab = document.querySelectorAll('.zone-tab')[nextIdx];
       switchZone(zones[nextIdx], nextTab);
-      // Scroll tab into view
       nextTab.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
     }, {passive:true});
   })();
