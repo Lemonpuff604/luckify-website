@@ -531,23 +531,187 @@
   .pain-card p { font-size: 0.9rem; color: #888; line-height: 1.7; }
   .pain-card p strong { color: #bbb; }
 
-  /* ── WHO BUILT THIS ── */
-  #who { padding: 6rem 1.5rem; background: var(--deep); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
-  #who::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 600px; height: 400px; background: radial-gradient(ellipse, rgba(255,107,26,0.04) 0%, transparent 70%); pointer-events: none; }
-  .who-inner { max-width: 680px; margin: 0 auto; text-align: center; position: relative; z-index: 1; }
-  .who-quote { text-align: center; margin: 0 0 3.5rem; }
-  .who-big { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3.2rem, 8vw, 6rem); line-height: 1.0; letter-spacing: 2px; text-transform: uppercase; color: var(--text); }
-  .who-big.orange { color: var(--orange); }
-  .who-body { text-align: left; display: flex; flex-direction: column; gap: 1.4rem; border-top: 1px solid var(--border); padding-top: 2.5rem; }
-  .who-body p { font-size: 0.95rem; color: #888; line-height: 1.85; }
-  .who-body p strong { color: var(--text); }
-  .who-bridge { text-align: center; padding: 3rem 1rem; font-family: 'Lora', serif; font-style: italic; font-size: 1.15rem; color: #777; line-height: 1.8; }
-  .who-note { position: relative; text-align: center; padding: 2rem 1.5rem 4.5rem; }
-  .who-note-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 1.6rem; }
-  .who-note-line { font-family: 'Lora', serif; font-style: italic; font-size: 1.45rem; color: var(--text); line-height: 1.75; animation: soltar-pulse 4s ease-in-out infinite; }
-  .who-sig-wrap { margin-top: 0.5rem; display: flex; flex-direction: column; align-items: center; gap: 0.9rem; }
-  .who-sig-rule { width: 50px; height: 1px; background: linear-gradient(90deg, transparent, var(--orange), transparent); }
-  .who-sig { font-family: 'Lora', serif; font-style: italic; font-weight: 600; font-size: 1.05rem; color: var(--orange); display: block; letter-spacing: 1px; opacity: 0.85; }
+/* ── WHO BUILT THIS ── */
+#who {
+  padding: 6rem 1.5rem;
+  background: var(--deep);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+#who::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 400px;
+  background: radial-gradient(ellipse, rgba(255,107,26,0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.who-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.who-quote {
+  text-align: center;
+  margin: 0 0 3.5rem;
+}
+
+.who-big {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3.2rem, 8vw, 6rem);
+  line-height: 1.0;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.who-big.orange {
+  color: var(--orange);
+}
+
+/* ── PROFILE IMAGE ── */
+.who-image {
+  display: flex;
+  justify-content: center;
+  margin: -1.2rem 0 2.2rem;
+  position: relative;
+}
+
+.who-image img {
+  width: 170px;
+  height: 170px;
+  border-radius: 999px;
+  object-fit: cover;
+
+  border: 1px solid var(--border);
+  box-shadow:
+    0 12px 35px rgba(0,0,0,0.55),
+    0 0 0 6px rgba(255,107,26,0.05);
+
+  filter: saturate(1.05) contrast(1.05);
+  transition: transform 0.35s ease, box-shadow 0.35s ease, filter 0.35s ease;
+}
+
+.who-image::before {
+  content: "";
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255,107,26,0.14) 0%, transparent 65%);
+  filter: blur(2px);
+  opacity: 0.75;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.who-image img:hover {
+  transform: scale(1.03);
+  filter: saturate(1.1) contrast(1.08);
+  box-shadow:
+    0 18px 55px rgba(0,0,0,0.65),
+    0 0 0 7px rgba(255,107,26,0.09),
+    0 0 40px rgba(255,107,26,0.18);
+}
+
+@media (max-width: 520px) {
+  .who-image img {
+    width: 140px;
+    height: 140px;
+  }
+  .who-image::before {
+    width: 200px;
+    height: 200px;
+  }
+}
+
+.who-body {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  border-top: 1px solid var(--border);
+  padding-top: 2.5rem;
+}
+
+.who-body p {
+  font-size: 0.95rem;
+  color: #888;
+  line-height: 1.85;
+}
+
+.who-body p strong {
+  color: var(--text);
+}
+
+.who-bridge {
+  text-align: center;
+  padding: 3rem 1rem;
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 1.15rem;
+  color: #777;
+  line-height: 1.8;
+}
+
+.who-note {
+  position: relative;
+  text-align: center;
+  padding: 2rem 1.5rem 4.5rem;
+}
+
+.who-note-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.6rem;
+}
+
+.who-note-line {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 1.45rem;
+  color: var(--text);
+  line-height: 1.75;
+  animation: soltar-pulse 4s ease-in-out infinite;
+}
+
+.who-sig-wrap {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.who-sig-rule {
+  width: 50px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--orange), transparent);
+}
+
+.who-sig {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--orange);
+  display: block;
+  letter-spacing: 1px;
+  opacity: 0.85;
+}
 
   /* ── TESTIMONIALS ── */
   #testimonials { padding: 6rem 1.5rem; max-width: 1100px; margin: 0 auto; }
@@ -909,6 +1073,7 @@
 <!-- WHO BUILT THIS -->
 <section id="who">
   <div class="who-inner">
+    
     <div class="reveal">
       <p class="section-label">The Mind Behind The Window</p>
       <div class="who-quote">
@@ -916,22 +1081,56 @@
         <p class="who-big orange">As a hypothesis.</p>
       </div>
     </div>
-    <div class="who-body reveal reveal-delay-1">
-      <p>A WSOP bracelet. Twenty years on the felt. And one question that never left: <strong>what if luck isn't random?</strong></p>
-      <p style="font-size:0.78rem; color:var(--subtle); font-family:'Barlow Condensed',sans-serif; letter-spacing:1px; margin-top:-0.6rem;">Preston Chernow — Founder, Luckify.me</p>
-      <p>Every serious player optimizes everything they can touch — ranges, sizing, reads, bankroll. Preston went further. He applied the same edge-hunting logic to the one variable nobody was tracking. The unseen current underneath performance.</p>
-      <p>He found a system of elemental science with roots stretching back three millennia. He ran it against real data — UFC fighters, PGA golfers, NFL players. Moneyline calls tracking above the break-even threshold that separates recreational bettors from the sharpest professionals in the game. The pattern didn't just hold. It compounded.</p>
+
+    <!-- PROFILE IMAGE -->
+    <div class="who-image reveal reveal-delay-1">
+      <img src="https://i.imgur.com/tVaqkvf.jpeg" alt="Preston Chernow" />
     </div>
+
+    <div class="who-body reveal reveal-delay-1">
+      <p>
+        A WSOP bracelet. Twenty years on the felt. And one question that never left:
+        <strong>what if luck isn't random?</strong>
+      </p>
+
+      <p style="font-size:0.78rem; color:var(--subtle); font-family:'Barlow Condensed',sans-serif; letter-spacing:1px; margin-top:-0.6rem;">
+        Preston Chernow — Founder, Luckify.me
+      </p>
+
+      <p>
+        Every serious player optimizes everything they can touch — ranges, sizing, reads, bankroll.
+        Preston went further. He applied the same edge-hunting logic to the one variable nobody was tracking.
+        The unseen current underneath performance.
+      </p>
+
+      <p>
+        He found a system of elemental science with roots stretching back three millennia.
+        He ran it against real data — UFC fighters, PGA golfers, NFL players.
+        Moneyline calls tracking above the break-even threshold that separates recreational bettors
+        from the sharpest professionals in the game. The pattern didn't just hold. It compounded.
+      </p>
+    </div>
+
     <div class="who-note reveal reveal-delay-3">
       <div class="who-note-content">
-        <p class="who-note-line">The math got me here. What kept me here was something else.</p>
-        <div class="who-sig-wrap"><div class="who-sig-rule"></div><span class="who-sig">— Preston & Soltar</span></div>
-        <a href="https://luckify3.gumroad.com/l/nimtpq" class="btn-primary">♠ Play My Hand ♠</a>
+        <p class="who-note-line">
+          The math got me here. What kept me here was something else.
+        </p>
+
+        <div class="who-sig-wrap">
+          <div class="who-sig-rule"></div>
+          <span class="who-sig">— Preston Chernow</span>
+        </div>
+
+        <a href="https://luckify3.gumroad.com/l/nimtpq" class="btn-primary">
+          ♠ Play My Hand ♠
+        </a>
       </div>
     </div>
+
   </div>
 </section>
-
+  
 <!-- TESTIMONIALS — replace with real operator testimonials when available -->
 <section id="testimonials">
   <div class="reveal" style="text-align:center;">
