@@ -405,6 +405,36 @@
   .vector-card-result strong { color: var(--text); }
   .vector-card-timestamp { margin-top: 0.5rem; font-size: 0.68rem; color: var(--subtle); font-family: 'Barlow Condensed', sans-serif; letter-spacing: 1px; }
 
+  /* Vector audit block */
+  .vector-audit-block {
+    height: 100%;
+    display: flex; align-items: center;
+  }
+  .vector-audit-inner {
+    border: 1px solid rgba(255,107,26,0.2);
+    background: rgba(255,107,26,0.03);
+    padding: 2.5rem 2rem;
+    position: relative;
+  }
+  .vector-audit-inner::before {
+    content: 'AUDIT THIS';
+    position: absolute; top: -0.6rem; left: 1.5rem;
+    font-family: 'Barlow Condensed', sans-serif; font-size: 0.62rem; letter-spacing: 3px;
+    background: var(--black); padding: 0 0.5rem; color: var(--orange);
+  }
+  .vector-audit-icon {
+    font-size: 2rem; color: var(--orange); margin-bottom: 1rem;
+    opacity: 0.6;
+  }
+  .vector-audit-headline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem; letter-spacing: 2px;
+    color: var(--text); margin-bottom: 1rem;
+  }
+  .vector-audit-body {
+    font-size: 0.9rem; color: #888; line-height: 1.8;
+  }
+
   /* ── CALENDAR PREVIEW ── */
   #preview { padding: 6rem 1.5rem; background: var(--deep); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
   .preview-inner { max-width: 920px; margin: 0 auto; text-align: center; }
@@ -604,10 +634,10 @@
     <a href="#free-sample" class="btn-primary">♠ Deal Me In ♠</a>
   </div>
   <div class="hero-stats">
-    <div class="hero-stat"><div class="hero-stat-num">✓</div><div class="hero-stat-label">The Study</div></div>
-    <div class="hero-stat"><div class="hero-stat-num">✓</div><div class="hero-stat-label">The Discipline</div></div>
-    <div class="hero-stat"><div class="hero-stat-num">✓</div><div class="hero-stat-label">The Grind</div></div>
-    <div class="hero-stat"><div class="hero-stat-num" style="color:var(--orange);">★</div><div class="hero-stat-label" style="color:var(--orange);">Lucky Window</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">10</div><div class="hero-stat-label">Day Types</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">5</div><div class="hero-stat-label">Energy Zones</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">3K</div><div class="hero-stat-label">Years of Science</div></div>
+    <div class="hero-stat"><div class="hero-stat-num" style="color:var(--orange);">1</div><div class="hero-stat-label" style="color:var(--orange);">Calendar. Yours alone.</div></div>
   </div>
   <div class="hero-scroll-hint"><span>Scroll</span><div class="scroll-line"></div></div>
 </section>
@@ -645,6 +675,16 @@
   </div>
 </section>
 
+<!-- PAIN -->
+<section id="pain">
+  <div class="reveal" style="text-align:center;"><p class="section-label">Sound Familiar?</p><h2 class="section-title">Every player's <span class="orange">biggest blind spot</span></h2></div>
+  <div class="pain-grid">
+    <div class="pain-card reveal reveal-delay-1"><span class="pain-icon">🃏</span><h3>You played perfectly — and still bled chips</h3><p>Good sizing, right reads, stayed patient. Still walked away down. <strong>That's not bad luck. That's playing a Watch Yourself day without knowing it.</strong> Your energy was working against you before you even looked at your hole cards.</p></div>
+    <div class="pain-card reveal reveal-delay-2"><span class="pain-icon">⏰</span><h3>You don't know when to sit down — and when to stay home</h3><p>Some nights you're locked in. Other nights you're splashing the pot on spots you'd fold in your sleep. <strong>The difference isn't the table — it's your day type.</strong> Lucky Window tells you which one it is before you drive to the casino.</p></div>
+    <div class="pain-card reveal reveal-delay-3"><span class="pain-icon">📖</span><h3>Poker advice treats every player the same</h3><p>Solvers, coaches, videos — all built for the average player on an average day. But <strong>your peak performance days run on a personal rhythm tied to your birthday.</strong> Generic strategy doesn't account for when your edge is actually highest.</p></div>
+  </div>
+</section>
+
 <!-- FRAMEWORK -->
 <section id="framework">
   <div class="framework-inner">
@@ -673,7 +713,7 @@
     <div class="reveal" style="text-align:center;">
       <p class="section-label">Know Before You Sit</p>
       <h2 class="section-title">10 windows. <span class="orange">10 different versions of you.</span></h2>
-      <p style="color:#888; font-size:0.9rem; margin-top:0.5rem; max-width:550px; margin-left:auto; margin-right:auto; line-height:1.7;">Every day gets a label. Every label tells you something. The 10 types group into 5 zones — each zone with its own energy character.</p>
+      <p style="color:#888; font-size:0.9rem; margin-top:0.5rem; max-width:580px; margin-left:auto; margin-right:auto; line-height:1.7;">Every day gets a label. Every label tells you something. The 10 types group into 5 zones. Your calendar also flags Execute windows — your highest-edge days — and FLUX periods when the field is shifting too fast to build on.</p>
     </div>
 
     <!-- ALPHA -->
@@ -743,65 +783,8 @@
     <div class="reveal"><p class="section-label">Play What You Were Dealt</p><h2 class="section-title">Three steps. <span class="orange">Then you know.</span></h2></div>
     <div class="steps">
       <div class="step reveal reveal-delay-1"><div class="step-num">01</div><h3>Enter Your Birthday</h3><p>Your birth date, birth location, and where you're playing now. Add your birth time if you have it — it sharpens the read. Nobody else gets the same calendar.</p></div>
-      <div class="step reveal reveal-delay-2"><div class="step-num">02</div><h3>Get Your Calendar</h3><p>Every day of the month gets one of 10 day-type labels — with a short note on what it means and how to use it at the table. Plus weekly field intelligence from Soltar.</p></div>
-      <div class="step reveal reveal-delay-3"><div class="step-num">03</div><h3>Sync and Play</h3><p>Your ICS subscription link drops every day type straight into your phone calendar. Every time you open your schedule, your energy read is already there — before you decide whether to play.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- SOLTAR -->
-<section id="soltar">
-  <div class="soltar-inner">
-    <div class="reveal">
-      <p class="soltar-label">Field Intelligence</p>
-      <h2 class="soltar-title">Who is <span class="purple">Soltar</span></h2>
-    </div>
-    <div class="soltar-body reveal reveal-delay-1">
-      <p>Soltar is the intelligence behind your calendar. <strong>Not a persona. Not a mascot.</strong> A field presence that has been observing human performance cycles and the timing of decisions for longer than recorded history.</p>
-      <p>The day type classifications in your calendar are filed by Soltar. The weekly field reports inside your calendar are filed by Soltar. When you see AskSoltar in your weekly intel section, that is a direct transmission about what your streak pattern means and what to do with it.</p>
-      <p>You do not need to understand what Soltar is. <strong>You just need to know the reports are accurate.</strong></p>
-    </div>
-    <div class="soltar-transmission reveal reveal-delay-2">
-      <p class="soltar-quote">"The window is open. Your hand is already dealt. The only question is whether you are paying attention."</p>
-      <p class="soltar-sig">— Soltar</p>
-    </div>
-  </div>
-</section>
-
-<!-- VECTOR — external validation -->
-<section id="vector">
-  <div class="vector-inner">
-    <div class="reveal" style="text-align:center;">
-      <p class="section-label">See It For Yourself</p>
-      <h2 class="section-title">The same system. <span class="orange">Public record.</span></h2>
-      <p style="color:#888; font-size:0.9rem; margin-top:0.5rem; max-width:580px; margin-left:auto; margin-right:auto; line-height:1.7;">Before you subscribe to anything, you can audit the system yourself. No picks. No predictions. Just scores posted before the fights happen.</p>
-    </div>
-    <div class="vector-grid">
-      <div class="vector-text reveal reveal-delay-1">
-        <p>VECTOR is a public signal feed on X. Before each UFC card it posts window strength scores for the top three aligned fighters that night. Timestamped before the fights. The results are public record.</p>
-        <p>The scores are there before they happen. The fights are documented after. <strong>The same system that scores the fighters generates your poker calendar.</strong> Same intelligence. Different domain.</p>
-        <p>If you want proof before you commit, this is where you go. Audit every card yourself.</p>
-        <a href="https://x.com/vector_signal" class="vector-handle" target="_blank">@vector_signal →</a>
-      </div>
-      <div class="reveal reveal-delay-2">
-        <div class="vector-proof-cards">
-          <div class="vector-card">
-            <div class="vector-card-label">▲ High Window Score</div>
-            <div class="vector-card-result">Fighter scored 87/100 window strength. <strong>Won by TKO in round 2.</strong></div>
-            <div class="vector-card-timestamp">Posted 4 hours before event · Timestamped</div>
-          </div>
-          <div class="vector-card">
-            <div class="vector-card-label">▲ High Window Score</div>
-            <div class="vector-card-result">Fighter scored 91/100 window strength. <strong>Won by unanimous decision.</strong></div>
-            <div class="vector-card-timestamp">Posted 6 hours before event · Timestamped</div>
-          </div>
-          <div class="vector-card">
-            <div class="vector-card-label">◆ Low Window Score</div>
-            <div class="vector-card-result">Fighter scored 34/100 window strength. <strong>Lost by submission round 1.</strong></div>
-            <div class="vector-card-timestamp">Posted 5 hours before event · Timestamped</div>
-          </div>
-        </div>
-      </div>
+      <div class="step reveal reveal-delay-2"><div class="step-num">02</div><h3>Get Your Calendar</h3><p>You receive a Google Sheet with every day of the month labeled — day type, zone, execute flags, and weekly field intelligence from Soltar. Your personal read, laid out before the month starts.</p></div>
+      <div class="step reveal reveal-delay-3"><div class="step-num">03</div><h3>Sync and Play</h3><p>Your ICS subscription link syncs every day type live to your phone or desktop calendar. Open your schedule any morning and your energy read is already there — before you decide whether to sit down.</p></div>
     </div>
   </div>
 </section>
@@ -835,13 +818,50 @@
   </div>
 </section>
 
-<!-- PAIN -->
-<section id="pain">
-  <div class="reveal" style="text-align:center;"><p class="section-label">Sound Familiar?</p><h2 class="section-title">Every player's <span class="orange">biggest blind spot</span></h2></div>
-  <div class="pain-grid">
-    <div class="pain-card reveal reveal-delay-1"><span class="pain-icon">🃏</span><h3>You played perfectly — and still bled chips</h3><p>Good sizing, right reads, stayed patient. Still walked away down. <strong>That's not bad luck. That's playing a Watch Yourself day without knowing it.</strong> Your energy was working against you before you even looked at your hole cards.</p></div>
-    <div class="pain-card reveal reveal-delay-2"><span class="pain-icon">⏰</span><h3>You don't know when to sit down — and when to stay home</h3><p>Some nights you're locked in. Other nights you're splashing the pot on spots you'd fold in your sleep. <strong>The difference isn't the table — it's your day type.</strong> Lucky Window tells you which one it is before you drive to the casino.</p></div>
-    <div class="pain-card reveal reveal-delay-3"><span class="pain-icon">📖</span><h3>Poker advice treats every player the same</h3><p>Solvers, coaches, videos — all built for the average player on an average day. But <strong>your peak performance days run on a personal rhythm tied to your birthday.</strong> Generic strategy doesn't account for when your edge is actually highest.</p></div>
+<!-- SOLTAR -->
+<section id="soltar">
+  <div class="soltar-inner">
+    <div class="reveal">
+      <p class="soltar-label">Field Intelligence</p>
+      <h2 class="soltar-title">Who is <span class="purple">Soltar</span></h2>
+    </div>
+    <div class="soltar-body reveal reveal-delay-1">
+      <p>Soltar is the intelligence behind your calendar. <strong>Not a persona. Not a mascot.</strong> A field presence that has been observing human performance cycles and the timing of decisions for longer than recorded history.</p>
+      <p>The day type classifications in your calendar are filed by Soltar. The weekly field reports inside your calendar are filed by Soltar. When you see AskSoltar in your weekly intel section, that is a direct transmission about what your streak pattern means and what to do with it.</p>
+      <p>You do not need to understand what Soltar is. <strong>You just need to know the reports are accurate.</strong></p>
+    </div>
+    <div class="soltar-transmission reveal reveal-delay-2">
+      <p class="soltar-quote">FIELD REPORT — The operator who checks the window before sitting down is not relying on luck. They are reading the field. That is not mysticism. That is what Soltar has been doing for longer than this game has existed. The intelligence is accurate. Use it.</p>
+      <p class="soltar-sig">— Soltar</p>
+    </div>
+  </div>
+</section>
+
+<!-- VECTOR — external validation -->
+<section id="vector">
+  <div class="vector-inner">
+    <div class="reveal" style="text-align:center;">
+      <p class="section-label">See It For Yourself</p>
+      <h2 class="section-title">The same system. <span class="orange">Public record.</span></h2>
+      <p style="color:#888; font-size:0.9rem; margin-top:0.5rem; max-width:580px; margin-left:auto; margin-right:auto; line-height:1.7;">Before you subscribe to anything, you can audit the system yourself. No picks. No predictions. Just scores posted before the fights happen.</p>
+    </div>
+    <div class="vector-grid">
+      <div class="vector-text reveal reveal-delay-1">
+        <p>VECTOR is a public signal feed on X. Before each UFC card it posts window strength scores for the top three aligned fighters that night. Timestamped before the fights. The results are public record.</p>
+        <p>The scores are there before they happen. The fights are documented after. <strong>The same system that scores the fighters generates your poker calendar.</strong> Same intelligence. Different domain.</p>
+        <p>If you want proof before you commit, this is where you go. Audit every card yourself.</p>
+      </div>
+      <div class="reveal reveal-delay-2">
+        <div class="vector-audit-block">
+          <div class="vector-audit-inner">
+            <div class="vector-audit-icon">◆</div>
+            <p class="vector-audit-headline">The record is public. Go look.</p>
+            <p class="vector-audit-body">Every score is posted before the card starts. Every result is there after. No cherry-picking. No after-the-fact framing. Find a card. Check the scores. Check the outcomes. Do it yourself.</p>
+            <a href="https://x.com/vector_signal" class="vector-handle" target="_blank" style="margin-top:1.5rem; display:inline-block;">@vector_signal →</a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -872,41 +892,31 @@
 </section>
 
 <!-- TESTIMONIALS -->
+<!-- TODO: Replace placeholder testimonials below with real operator testimonials before launch -->
 <section id="testimonials">
   <div class="reveal" style="text-align:center;"><p class="section-label">Players Are Talking</p><h2 class="section-title">Real reads from <span class="orange">real players</span></h2></div>
   <div class="testi-grid">
     <div class="testi-card reveal reveal-delay-1">
       <div class="testi-stars">★★★★★</div>
-      <p class="testi-quote">"I'm a math guy. GTO. Solver work. I tried Luckify as a joke and my <strong>three biggest winning sessions lined up with Locked In days</strong> back to back. I don't need to understand the mechanism. The edge is real."</p>
+      <p class="testi-quote">"I track everything. Win rate, hours, table selection. I added day type to my session log and after one month the correlation was hard to ignore. <strong>My best sessions clustered on ALPHA days. My worst clustered on DELTA.</strong> I don't need to understand why. The data is the data."</p>
       <div class="testi-author"><div class="testi-avatar">M</div><div><div class="testi-name">Marcus T.</div><div class="testi-meta">Cash game reg — $2/$5 live</div></div></div>
     </div>
     <div class="testi-card reveal reveal-delay-2">
       <div class="testi-stars">★★★★★</div>
-      <p class="testi-quote">"Two months of tracking and I realized <strong>every time I took a big loss I was on a Watch Yourself or Touch Grass day.</strong> I thought it was variance. It wasn't. I was just playing when I shouldn't have been."</p>
+      <p class="testi-quote">"I was skeptical. Ran it for two months tracking every session. <strong>Every significant loss happened on a Watch Yourself or Touch Grass day.</strong> That's not coincidence. That's a leak I can actually fix."</p>
       <div class="testi-author"><div class="testi-avatar">J</div><div><div class="testi-name">Janelle K.</div><div class="testi-meta">MTT grinder — regional circuit</div></div></div>
     </div>
     <div class="testi-card reveal reveal-delay-3">
       <div class="testi-stars">★★★★★</div>
-      <p class="testi-quote">"It's like getting a tell on yourself before you even sit down. <strong>Skipping my Touch Grass days alone improved my monthly results</strong> more than any strategy adjustment I've made in years."</p>
+      <p class="testi-quote">"The calendar doesn't tell you how to play. It tells you when to play. <strong>Sitting out my Touch Grass days was the highest-EV decision I made last month</strong> and I didn't play a single hand to get there."</p>
       <div class="testi-author"><div class="testi-avatar">D</div><div><div class="testi-name">Devon R.</div><div class="testi-meta">Home game and casino player</div></div></div>
     </div>
   </div>
 </section>
 
-<!-- FREE SAMPLE -->
-<section id="free-sample">
-  <div class="free-inner">
-    <div class="reveal">
-      <p class="section-label">Try It First</p>
-      <h2 class="section-title">Your first <span class="orange">30 days free.</span> Then $19.99/mo.</h2>
-      <p>All we need is your birthday. You'll get your full 30-day Lucky Window personalized to your current location and energy profile. Cancel anytime before your trial ends and you won't be charged.</p>
-    </div>
-    <div class="reveal reveal-delay-1">
-      <a href="https://luckify3.gumroad.com/l/nimtpq" class="btn-primary" target="_blank" style="display:inline-block; margin-bottom:1rem;">Start My 30 Days Free →</a>
-      <p class="free-fine">30 days free. Then $19.99/mo. Cancel anytime.</p>
-    </div>
-  </div>
-</section>
+
+<!-- FREE SAMPLE anchor -->
+<div id="free-sample"></div>
 
 <!-- PRICING -->
 <section id="pricing">
@@ -925,6 +935,10 @@
     </ul>
     <a href="https://luckify3.gumroad.com/l/nimtpq" class="price-cta">Start My 30 Days Free →</a>
     <p class="price-guarantee">🔒 Secure checkout &nbsp;·&nbsp; Delivered to your inbox monthly &nbsp;·&nbsp; Cancel anytime</p>
+    <p style="margin-top:1.2rem; font-size:0.8rem; color:var(--muted); font-family:'Barlow Condensed',sans-serif; letter-spacing:1px;">
+      Questions about your calendar? The operator community is at 
+      <a href="https://reddit.com/r/asksoltar" target="_blank" style="color:var(--orange); text-decoration:none;">r/asksoltar</a>
+    </p>
   </div>
 </section>
 
@@ -986,6 +1000,8 @@
   <div class="footer-links">
     <a href="#">Privacy</a>
     <a href="#">Terms</a>
+    <a href="https://reddit.com/r/asksoltar" target="_blank">r/asksoltar</a>
+    <a href="https://x.com/vector_signal" target="_blank">@vector_signal</a>
     <a href="https://luckify.me">luckify.me</a>
   </div>
 </footer>
