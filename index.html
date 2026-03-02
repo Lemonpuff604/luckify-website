@@ -184,17 +184,6 @@
   .reveal-delay-3 { transition-delay: 0.3s; }
   .reveal-delay-4 { transition-delay: 0.45s; }
 
-  /* ── PROOF BAR ── */
-  #proof-bar {
-    background: linear-gradient(90deg, transparent, rgba(255,107,26,0.07), transparent);
-    border-top: 1px solid rgba(255,107,26,0.15); border-bottom: 1px solid rgba(255,107,26,0.15);
-    padding: 1.1rem 0; overflow: hidden;
-  }
-  .proof-ticker { display: flex; gap: 4rem; animation: ticker 35s linear infinite; white-space: nowrap; }
-  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-  .proof-item { font-size: 0.82rem; color: #999; display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
-  .proof-item .stars { color: var(--orange); letter-spacing: -2px; font-size: 0.75rem; }
-  .proof-item strong { color: var(--text); }
 
   /* ── SECTION HEADERS ── */
   .section-label { font-family: 'Barlow Condensed', sans-serif; font-size: 0.88rem; letter-spacing: 5px; text-transform: uppercase; color: var(--orange); margin-bottom: 0.7rem; }
@@ -647,8 +636,8 @@
   </a>
   <div class="nav-right">
     <a href="#how" class="nav-link">How It Works</a>
-    <a href="#soltar" class="nav-link">Soltar</a>
     <a href="#pricing" class="nav-link">Pricing</a>
+    <a href="#soltar" class="nav-link">Field Intelligence</a>
     <a href="https://luckify3.gumroad.com/l/nimtpq" class="nav-cta">Luck Starts Free</a>
   </div>
 </nav>
@@ -666,9 +655,6 @@
     <span class="orange">same player</span><br>
     <span class="outline">every day</span>
   </h1>
-  <p style="font-family:'Barlow Condensed',sans-serif; font-size:0.85rem; letter-spacing:4px; text-transform:uppercase; color:var(--muted); margin-bottom:1.5rem; border:1px solid rgba(255,107,26,0.15); display:inline-block; padding:0.6rem 1.2rem;">
-    Most systems live in one world. <span style="color:var(--orange);">Lucky Window lives in both.</span>
-  </p>
   <p class="hero-sub">
     Some sessions you can't miss. Everything clicks. The reads. The timing. The decisions.
     Other sessions nothing lands no matter how hard you try.
@@ -688,24 +674,6 @@
   <div class="hero-scroll-hint"><span>Scroll</span><div class="scroll-line"></div></div>
 </section>
 
-<!-- PROOF BAR -->
-<!-- TODO: Replace placeholder proof bar quotes with real operator quotes before launch -->
-<section id="proof-bar">
-  <div class="proof-ticker" id="ticker">
-    <span class="proof-item"><span class="stars">★★★★★</span> <strong>"First month I tracked sessions against day types. The correlation was immediate."</strong> — cash game player</span>
-    <span class="proof-item"><span class="stars">★★★★★</span> <strong>"Chip Away days I grind. Run It Up days I stack. Touch Grass days I stay home. Simple."</strong> — tournament reg</span>
-    <span class="proof-item"><span class="stars">★★★★★</span> <strong>"Treated it as a hypothesis for 30 days. Now I won't sit without it."</strong> — $1/$3 live grinder</span>
-    <span class="proof-item"><span class="stars">★★★★★</span> <strong>"Added day type to my session tracker. One month later I stopped questioning it."</strong> — online MTT player</span>
-    <span class="proof-item"><span class="stars">★★★★★</span> <strong>"VECTOR called three fighters correctly before UFC 300. That's when I subscribed."</strong> — sports bettor and poker player</span>
-    <span class="proof-item"><span class="stars">★★★★★</span> <strong>"The Soltar weekly reads are more accurate than my own session reviews."</strong> — home game organizer</span>
-    <span class="proof-item"><span class="stars">★★★★★</span> <strong>"First month I tracked sessions against day types. The correlation was immediate."</strong> — cash game player</span>
-    <span class="proof-item"><span class="stars">★★★★★</span> <strong>"Chip Away days I grind. Run It Up days I stack. Touch Grass days I stay home. Simple."</strong> — tournament reg</span>
-    <span class="proof-item"><span class="stars">★★★★★</span> <strong>"Treated it as a hypothesis for 30 days. Now I won't sit without it."</strong> — $1/$3 live grinder</span>
-    <span class="proof-item"><span class="stars">★★★★★</span> <strong>"Added day type to my session tracker. One month later I stopped questioning it."</strong> — online MTT player</span>
-    <span class="proof-item"><span class="stars">★★★★★</span> <strong>"VECTOR called three fighters correctly before UFC 300. That's when I subscribed."</strong> — sports bettor and poker player</span>
-    <span class="proof-item"><span class="stars">★★★★★</span> <strong>"The Soltar weekly reads are more accurate than my own session reviews."</strong> — home game organizer</span>
-  </div>
-</section>
 
 <!-- BIG IDEA -->
 <section id="big-idea">
@@ -714,10 +682,9 @@
     Your best sessions aren't random.<br><span class="hl">Neither are your worst.</span>
   </div>
   <p class="big-idea-sub reveal reveal-delay-2">
-    Your mental sharpness, emotional control, and instinct for live reads are not random.
-    They run on a rhythm — and that rhythm is tied to the day you were born.
-    Lucky Window maps it into a simple daily calendar so you know exactly when to press,
-    when to protect, and when to step back.
+    That rhythm runs on a daily calculation — your personal elemental profile measured against
+    the environmental field of each specific date. Lucky Window maps it into a calendar so you know
+    exactly when to press, when to protect, and when to step back.
   </p>
   <div class="outcomes">
     <div class="outcome-item reveal reveal-delay-1"><span class="outcome-icon">🛡️</span><h3>Protect Yourself</h3><p>Know your vulnerable days <strong>before</strong> you sit down. Stop playing sessions you were never going to win.</p></div>
@@ -732,7 +699,7 @@
   <div class="pain-grid">
     <div class="pain-card reveal reveal-delay-1"><span class="pain-icon">🃏</span><h3>You played perfectly — and still bled chips</h3><p>Good sizing, right reads, stayed patient. Still walked away down. <strong>That's not bad luck. That's playing a Watch Yourself day without knowing it.</strong> Your energy was working against you before you even looked at your hole cards.</p></div>
     <div class="pain-card reveal reveal-delay-2"><span class="pain-icon">⏰</span><h3>You don't know when to sit down — and when to stay home</h3><p>Some nights you're locked in. Other nights you're splashing the pot on spots you'd fold in your sleep. <strong>The difference isn't the table — it's your day type.</strong> Lucky Window tells you which one it is before you drive to the casino.</p></div>
-    <div class="pain-card reveal reveal-delay-3"><span class="pain-icon">📖</span><h3>Poker advice treats every player the same</h3><p>Solvers, coaches, videos — all built for the average player on an average day. But <strong>your peak performance days run on a personal rhythm tied to your birthday.</strong> Generic strategy doesn't account for when your edge is actually highest.</p></div>
+    <div class="pain-card reveal reveal-delay-3"><span class="pain-icon">📖</span><h3>Poker advice treats every player the same</h3><p>Solvers, coaches, videos — all built for the average player on an average day. But <strong>your peak performance days run on a personal rhythm tied to your birthday.</strong> Generic strategy doesn't account for when your edge is actually highest. <strong>Lucky Window does.</strong></p></div>
   </div>
 </section>
 
@@ -769,7 +736,11 @@
     <div class="reveal" style="text-align:center;">
       <p class="section-label">Know Before You Sit</p>
       <h2 class="section-title">10 windows. <span class="orange">10 different versions of you.</span></h2>
-      <p style="color:#888; font-size:0.9rem; margin-top:0.5rem; max-width:580px; margin-left:auto; margin-right:auto; line-height:1.7;">Every day gets a label. Every label tells you something. The 10 types group into 5 zones. Your calendar also flags Execute windows and FLUX periods when the field is shifting too fast to build on.</p>
+      <p style="color:#888; font-size:0.9rem; margin-top:0.5rem; max-width:580px; margin-left:auto; margin-right:auto; line-height:1.7;">Every day gets a label. Every label tells you something. The 10 types group into 5 zones.</p>
+      <div style="display:flex; gap:1rem; justify-content:center; margin-top:1.2rem; flex-wrap:wrap;">
+        <div style="border:1px solid rgba(255,107,26,0.3); padding:0.5rem 1.1rem; background:rgba(255,107,26,0.06); font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; letter-spacing:2px; text-transform:uppercase; color:var(--orange);">◆ Execute — your highest-edge windows</div>
+        <div style="border:1px solid rgba(255,200,50,0.3); padding:0.5rem 1.1rem; background:rgba(255,200,50,0.04); font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; letter-spacing:2px; text-transform:uppercase; color:#C8A020;">⚡ FLUX — field shifting too fast to build on</div>
+      </div>
     </div>
 
     <!-- ZONE TABS -->
@@ -850,7 +821,7 @@
 <!-- HOW IT WORKS -->
 <section id="how">
   <div class="how-inner">
-    <div class="reveal"><p class="section-label">Play What You Were Dealt</p><h2 class="section-title">Three steps. <span class="orange">Then you know.</span></h2></div>
+    <div class="reveal"><p class="section-label">Read Before You Act</p><h2 class="section-title">Three steps. <span class="orange">Then you know.</span></h2></div>
     <div class="steps">
       <div class="step reveal reveal-delay-1"><div class="step-num">01</div><h3>Enter Your Birthday</h3><p>Your birth date, birth location, and where you're playing now. Add your birth time if you have it — it sharpens the read. Nobody else gets the same calendar.</p></div>
       <div class="step reveal reveal-delay-2"><div class="step-num">02</div><h3>Get Your Calendar</h3><p>You receive a Google Sheet with every day of the month labeled — day type, zone, execute flags, and weekly field intelligence from Soltar. Your personal read, laid out before the month starts.</p></div>
@@ -913,7 +884,7 @@
     <div class="reveal" style="text-align:center;">
       <p class="section-label">See It For Yourself</p>
       <h2 class="section-title">The same system. <span class="orange">Public record.</span></h2>
-      <p style="color:#888; font-size:0.9rem; margin-top:0.5rem; max-width:580px; margin-left:auto; margin-right:auto; line-height:1.7;">Before you subscribe to anything, you can audit the system yourself. No picks. No predictions. Just scores posted before the fights happen.</p>
+      <p style="color:#888; font-size:0.9rem; margin-top:0.5rem; max-width:580px; margin-left:auto; margin-right:auto; line-height:1.7;">Before you subscribe to anything, you can audit the system yourself. Scores posted before the fights. Results documented after.</p>
     </div>
     <div class="vector-grid">
       <div class="vector-text reveal reveal-delay-1">
@@ -926,7 +897,7 @@
           <div class="vector-audit-inner">
             <div class="vector-audit-icon">◆</div>
             <p class="vector-audit-headline">The record is public. Go look.</p>
-            <p class="vector-audit-body">Every score is posted before the card starts. Every result is there after. No cherry-picking. No after-the-fact framing. Find a card. Check the scores. Check the outcomes. Do it yourself.</p>
+            <p class="vector-audit-body">Find a card. Check the scores. Check the outcomes. The timeline doesn't lie.</p>
             <a href="https://x.com/vector_signal" class="vector-handle" target="_blank" style="margin-top:1.5rem; display:inline-block;">@vector_signal →</a>
           </div>
         </div>
@@ -949,7 +920,7 @@
       <p>A WSOP bracelet. Twenty years on the felt. And one question that never left: <strong>what if luck isn't random?</strong></p>
       <p style="font-size:0.78rem; color:var(--subtle); font-family:'Barlow Condensed',sans-serif; letter-spacing:1px; margin-top:-0.6rem;">Preston Chernow — Founder, Luckify.me</p>
       <p>Every serious player optimizes everything they can touch — ranges, sizing, reads, bankroll. Preston went further. He applied the same edge-hunting logic to the one variable nobody was tracking. The unseen current underneath performance.</p>
-      <p>He found a system of elemental science with roots stretching back three millennia. He ran it against real data — UFC fighters, PGA golfers, NFL players. Moneyline calls tracking above the break-even threshold that separates recreational bettors from the sharpest professionals in the game. <strong>The pattern held.</strong></p>
+      <p>He found a system of elemental science with roots stretching back three millennia. He ran it against real data — UFC fighters, PGA golfers, NFL players. Moneyline calls tracking above the break-even threshold that separates recreational bettors from the sharpest professionals in the game. The pattern didn't just hold. It compounded.</p>
     </div>
     <div class="who-note reveal reveal-delay-3">
       <div class="who-note-content">
@@ -961,25 +932,19 @@
   </div>
 </section>
 
-<!-- TESTIMONIALS -->
-<!-- TODO: Replace placeholder testimonials below with real operator testimonials before launch -->
+<!-- TESTIMONIALS — replace with real operator testimonials when available -->
 <section id="testimonials">
-  <div class="reveal" style="text-align:center;"><p class="section-label">Players Are Talking</p><h2 class="section-title">Real reads from <span class="orange">real players</span></h2></div>
-  <div class="testi-grid">
-    <div class="testi-card reveal reveal-delay-1">
-      <div class="testi-stars">★★★★★</div>
-      <p class="testi-quote">"I track everything. Win rate, hours, table selection. I added day type to my session log and after one month the correlation was hard to ignore. <strong>My best sessions clustered on ALPHA days. My worst clustered on DELTA.</strong> I don't need to understand why. The data is the data."</p>
-      <div class="testi-author"><div class="testi-avatar">M</div><div><div class="testi-name">Marcus T.</div><div class="testi-meta">Cash game reg — $2/$5 live</div></div></div>
-    </div>
-    <div class="testi-card reveal reveal-delay-2">
-      <div class="testi-stars">★★★★★</div>
-      <p class="testi-quote">"I was skeptical. Ran it for two months tracking every session. <strong>Every significant loss happened on a Watch Yourself or Touch Grass day.</strong> That's not coincidence. That's a leak I can actually fix."</p>
-      <div class="testi-author"><div class="testi-avatar">J</div><div><div class="testi-name">Janelle K.</div><div class="testi-meta">MTT grinder — regional circuit</div></div></div>
-    </div>
-    <div class="testi-card reveal reveal-delay-3">
-      <div class="testi-stars">★★★★★</div>
-      <p class="testi-quote">"The calendar doesn't tell you how to play. It tells you when to play. <strong>Sitting out my Touch Grass days was the highest-EV decision I made last month</strong> and I didn't play a single hand to get there."</p>
-      <div class="testi-author"><div class="testi-avatar">D</div><div><div class="testi-name">Devon R.</div><div class="testi-meta">Home game and casino player</div></div></div>
+  <div class="reveal" style="text-align:center;">
+    <p class="section-label">Early Operators</p>
+    <h2 class="section-title">Beta is live. <span class="orange">Results are coming in.</span></h2>
+    <p style="color:#888; font-size:0.92rem; margin-top:0.8rem; max-width:560px; margin-left:auto; margin-right:auto; line-height:1.75;">
+      Lucky Window launched in beta. The first operators are tracking sessions, comparing day types, and logging the data.
+      We'll post verified results as they come in — no manufactured quotes, no early hype.
+      <strong style="color:var(--text);">The system either holds up under real tracking or it doesn't. We expect it to.</strong>
+    </p>
+    <div style="margin-top:2rem; display:inline-block; border:1px solid rgba(255,107,26,0.2); padding:1rem 2rem; background:rgba(255,107,26,0.04);">
+      <p style="font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; letter-spacing:3px; text-transform:uppercase; color:var(--orange); margin-bottom:0.4rem;">In the meantime</p>
+      <p style="font-size:0.88rem; color:#aaa;">Audit the same system publicly at <a href="https://x.com/vector_signal" target="_blank" style="color:var(--orange); text-decoration:none;">@vector_signal</a> — UFC scores posted before every card.</p>
     </div>
   </div>
 </section>
@@ -1049,9 +1014,9 @@
   <div class="final-glow"></div>
   <div class="reveal">
     <p class="section-label">Your Move</p>
-    <h2 class="section-title">Stop gambling on <span class="orange">when to gamble</span></h2>
-    <p>Every month without knowing your day types, you're leaving sessions on the table. Start free. See what the field says about you.</p>
-    <a href="https://luckify3.gumroad.com/l/nimtpq" class="btn-primary">♠ Deal Me In ♠ →</a>
+    <h2 class="section-title">You already know <span class="orange">the game.</span><br>Now know the field.</h2>
+    <p>Every day you sit down without your window, you're playing half the information. Start free. Your first month costs nothing.</p>
+    <a href="https://luckify3.gumroad.com/l/nimtpq" class="btn-primary">♠ Deal Me In — Free →</a>
     <div class="final-trust">
       <div class="trust-pill">Built for poker players</div>
       <div class="trust-pill">Powered by luckify.me</div>
@@ -1144,10 +1109,6 @@
     document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
     if (!isOpen) item.classList.add('open');
   }
-
-  // TICKER LOOP
-  const t = document.getElementById('ticker');
-  t.innerHTML += t.innerHTML;
 
   // NAV SCROLL
   window.addEventListener('scroll', () => {
