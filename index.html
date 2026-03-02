@@ -221,7 +221,8 @@
   @media (max-width: 700px) { .framework-inner { grid-template-columns: 1fr; gap: 3rem; } }
   .framework-text p { font-size: 0.95rem; color: #888; line-height: 1.85; margin-top: 1.4rem; }
   .framework-text p strong { color: var(--text); }
-  .dimensions { display: flex; flex-direction: column; gap: 0.7rem; margin-top: 2rem; }
+  .dim-label-row { display: flex; justify-content: space-between; margin-top: 2rem; margin-bottom: 0.5rem; }
+  .dimensions { display: flex; flex-direction: column; gap: 0.7rem; }
   .dim-item { display: flex; align-items: center; gap: 1rem; padding: 0.85rem 1.1rem; border: 1px solid var(--border); background: var(--card); transition: border-color 0.3s, background 0.3s; }
   .dim-item:hover { border-color: rgba(255,107,26,0.35); background: var(--orange-dim); }
   .dim-num { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; color: var(--orange); width: 26px; flex-shrink: 0; }
@@ -280,7 +281,10 @@
   }
 
   .day-types-grid { background: var(--border); border: 1px solid var(--border); gap: 1px; }
-  .day-types-grid:not(.banner) { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+  .day-types-grid:not(.banner) { display: grid; grid-template-columns: repeat(var(--col-count, 3), 1fr); }
+  @media (max-width: 700px) {
+    .day-types-grid:not(.banner) { grid-template-columns: 1fr; }
+  }
   .day-type-card { background: var(--card); padding: 1.6rem 1.4rem; position: relative; overflow: hidden; transition: background 0.3s, transform 0.2s; cursor: default; }
   .day-type-card:hover { background: #1a1a1a; transform: scale(1.01); }
   .day-type-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--card-accent, var(--orange)); }
@@ -376,6 +380,21 @@
     font-family: 'Barlow Condensed', sans-serif; font-size: 0.88rem; letter-spacing: 5px; text-transform: uppercase;
     color: var(--soltar); margin-bottom: 0.7rem;
   }
+  /* Soltar signal dot — appears wherever Soltar is referenced */
+  .soltar-dot {
+    display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--soltar); margin-right: 0.4rem; vertical-align: middle;
+    box-shadow: 0 0 5px rgba(123,104,238,0.6);
+    animation: soltar-dot-pulse 3s ease-in-out infinite;
+  }
+  @keyframes soltar-dot-pulse {
+    0%, 100% { opacity: 0.7; box-shadow: 0 0 4px rgba(123,104,238,0.4); }
+    50%       { opacity: 1;   box-shadow: 0 0 10px rgba(123,104,238,0.8); }
+  }
+  .soltar-tag {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 0.62rem; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--soltar); opacity: 0.8;
+  }
   .soltar-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.2rem, 5vw, 3.8rem); line-height: 1.0; letter-spacing: 1px; margin-bottom: 2rem; }
   .soltar-title .purple { color: var(--soltar); }
   .soltar-body { text-align: left; border-top: 1px solid rgba(123,104,238,0.15); padding-top: 2.5rem; display: flex; flex-direction: column; gap: 1.4rem; }
@@ -393,6 +412,7 @@
     font-family: 'Barlow Condensed', sans-serif; font-size: 0.62rem; letter-spacing: 3px;
     background: #07060f; padding: 0 0.5rem; color: var(--soltar);
   }
+  .soltar-section-bg { background: #07060f; }
   .soltar-quote {
     font-family: 'Lora', serif; font-style: italic;
     font-size: 1.15rem; color: var(--text); line-height: 1.8;
@@ -627,6 +647,7 @@
   </a>
   <div class="nav-right">
     <a href="#how" class="nav-link">How It Works</a>
+    <a href="#soltar" class="nav-link">Soltar</a>
     <a href="#pricing" class="nav-link">Pricing</a>
     <a href="https://luckify3.gumroad.com/l/nimtpq" class="nav-cta">Luck Starts Free</a>
   </div>
@@ -726,6 +747,10 @@
       <p><strong>The calendar doesn't tell you how to play poker. It tells you when you're built for it.</strong></p>
     </div>
     <div class="reveal reveal-delay-2">
+      <div class="dim-label-row">
+        <span style="font-family:'Barlow Condensed',sans-serif; font-size:0.6rem; letter-spacing:2px; text-transform:uppercase; color:var(--subtle);">The 5 tracked dimensions</span>
+        <span style="font-family:'Barlow Condensed',sans-serif; font-size:0.6rem; letter-spacing:2px; text-transform:uppercase; color:var(--subtle);">Impact on session outcome →</span>
+      </div>
       <div class="dimensions">
         <div class="dim-item"><div class="dim-num">01</div><div class="dim-info"><div class="dim-name">Mental Clarity</div><div class="dim-desc">Reading ranges, recall under pressure, decision speed</div></div><div class="dim-bar"><div class="dim-fill" style="--fill-pct:85%"></div></div></div>
         <div class="dim-item"><div class="dim-num">02</div><div class="dim-info"><div class="dim-name">Emotional Regulation</div><div class="dim-desc">Tilt resistance, bad-beat recovery, bankroll discipline</div></div><div class="dim-bar"><div class="dim-fill" style="--fill-pct:72%"></div></div></div>
@@ -733,6 +758,7 @@
         <div class="dim-item"><div class="dim-num">04</div><div class="dim-info"><div class="dim-name">Physical Endurance</div><div class="dim-desc">Cognitive endurance, sustained focus across long sessions</div></div><div class="dim-bar"><div class="dim-fill" style="--fill-pct:65%"></div></div></div>
         <div class="dim-item"><div class="dim-num">05</div><div class="dim-info"><div class="dim-name">Coherence</div><div class="dim-desc">Full-spectrum alignment — when reads, body, and edge converge</div></div><div class="dim-bar"><div class="dim-fill" style="--fill-pct:78%"></div></div></div>
       </div>
+      <p style="font-size:0.7rem; color:var(--subtle); margin-top:0.8rem; font-family:'Barlow Condensed',sans-serif; letter-spacing:1px;">Relative weighting based on session outcome analysis across player profiles.</p>
     </div>
   </div>
 </section>
@@ -786,7 +812,7 @@
 
     <!-- BETA PANEL -->
     <div class="zone-panel" id="panel-beta">
-      <div class="day-types-grid">
+      <div class="day-types-grid" style="--col-count:2">
         <div class="day-type-card" style="--card-accent:#3a7a34; --tag-bg:rgba(58,122,52,0.12); --tag-color:#3a7a34; --tag-border:rgba(58,122,52,0.25); --action-color:#3a7a34;"><span class="day-type-icon">⛏️</span><div class="day-type-name">Chip Away</div><div class="day-type-tag">Build Phase</div><div class="day-type-desc-line">Accumulate. Small wins, position building, quiet compounding. Every deliberate move stacks.</div><div class="day-type-action">Stack quietly. Nobody sees it coming.</div></div>
         <div class="day-type-card" style="--card-accent:#5aa048; --tag-bg:rgba(90,160,72,0.12); --tag-color:#5aa048; --tag-border:rgba(90,160,72,0.25); --action-color:#5aa048;"><span class="day-type-icon">🏛️</span><div class="day-type-name">Know Your Game</div><div class="day-type-tag">Hold Phase</div><div class="day-type-desc-line">Preserve. Stick to what you know. Protect position. No experiments today.</div><div class="day-type-action">Play proven. Hold your ground.</div></div>
       </div>
@@ -921,10 +947,10 @@
     </div>
     <div class="who-body reveal reveal-delay-1">
       <p>A WSOP bracelet. Twenty years on the felt. And one question that never left: <strong>what if luck isn't random?</strong></p>
+      <p style="font-size:0.78rem; color:var(--subtle); font-family:'Barlow Condensed',sans-serif; letter-spacing:1px; margin-top:-0.6rem;">Preston Chernow — Founder, Luckify.me</p>
       <p>Every serious player optimizes everything they can touch — ranges, sizing, reads, bankroll. Preston went further. He applied the same edge-hunting logic to the one variable nobody was tracking. The unseen current underneath performance.</p>
       <p>He found a system of elemental science with roots stretching back three millennia. He ran it against real data — UFC fighters, PGA golfers, NFL players. Moneyline calls tracking above the break-even threshold that separates recreational bettors from the sharpest professionals in the game. <strong>The pattern held.</strong></p>
     </div>
-    <div class="who-bridge reveal reveal-delay-2">Not everything that's real can be calculated. The math got him here. What kept him here was something else.</div>
     <div class="who-note reveal reveal-delay-3">
       <div class="who-note-content">
         <p class="who-note-line">The math got me here. What kept me here was something else.</p>
@@ -992,7 +1018,7 @@
     <div class="faq-list reveal">
       <div class="faq-item">
         <button class="faq-question" onclick="toggleFaq(this)">Is this just astrology with a poker label on it?<span class="faq-icon">+</span></button>
-        <div class="faq-answer"><p>Not quite. Astrology is about planetary positions and zodiac signs. <strong>The Lucky Window framework is about your personal energy cycle</strong> — a rhythm that peaks and dips across the month based on your birthday, mapped across 5 dimensions. Think of it less like a horoscope and more like a performance rhythm chart. Same concept as tracking your A-game hours — but mapped to dates.</p></div>
+        <div class="faq-answer"><p>Not quite. Astrology is about planetary positions and zodiac signs. <strong>Lucky Window is a daily Person–Environment interaction model</strong> — your personal elemental profile is calculated once from your birth data, then measured against a recalculated environmental field every single day. The output is a score. The score determines your zone. It's less like a horoscope and more like a daily edge calculation — same concept as tracking your A-game hours, but driven by a 3,000 year old elemental science rather than your own subjective assessment.</p></div>
       </div>
       <div class="faq-item">
         <button class="faq-question" onclick="toggleFaq(this)">How exactly is this personalized to me?<span class="faq-icon">+</span></button>
