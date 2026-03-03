@@ -807,7 +807,7 @@
 </nav>
 
 <!-- =========================
-     SECTION 1 — HERO (CALIBRATED)
+     SECTION 1 — HERO (CALIBRATED + REFINED)
 ========================= -->
 <section id="hero">
   <div class="hero-bg-glow"></div>
@@ -849,13 +849,13 @@
   </div>
 
   <p style="margin-top:0.75rem; font-family:'Barlow Condensed',sans-serif; font-size:0.8rem; letter-spacing:2px; text-transform:uppercase; color:var(--subtle);">
-    Run it for a month. Track your sessions. Decide for yourself. Cancel anytime.
+    Run it for 30 days. Track session quality. Decide objectively. Cancel anytime.
   </p>
 
   <div class="hero-stats">
     <div class="hero-stat"><div class="hero-stat-num">10</div><div class="hero-stat-label">Day Types</div></div>
     <div class="hero-stat"><div class="hero-stat-num">3</div><div class="hero-stat-label">Actions</div></div>
-    <div class="hero-stat"><div class="hero-stat-num">Daily</div><div class="hero-stat-label">Personal Read</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">Pre-Session</div><div class="hero-stat-label">Read</div></div>
     <div class="hero-stat"><div class="hero-stat-num" style="color:var(--orange);">1</div><div class="hero-stat-label" style="color:var(--orange);">Calendar. Yours alone.</div></div>
   </div>
 
@@ -865,7 +865,6 @@
 
 <!-- =========================
      SECTION 2 — BIG IDEA (ULTRA-CLEAN)
-     Purpose: install the model. Nothing else.
 ========================= -->
 <section id="big-idea">
   <div class="big-idea-inner" style="max-width:900px; margin:0 auto; text-align:center;">
@@ -902,7 +901,8 @@
         <p>Contain variance when decision quality is compromised.</p>
       </div>
 
-      <div class="outcome-icon outcome-item">
+      <!-- FIXED: removed accidental "outcome-icon" class on the container -->
+      <div class="outcome-item">
         <span class="outcome-icon">⏸️</span>
         <h3>Stand Down</h3>
         <p>Use the day for study, review, recovery — not forced action.</p>
@@ -915,6 +915,7 @@
 
   </div>
 </section>
+
 
 <!-- =========================
      SECTION 3 — BLIND SPOT (CALIBRATED)
@@ -971,7 +972,7 @@
     <p style="font-size:1.1rem; max-width:720px; margin:0 auto; line-height:1.6;">
       Most players try to fix strategy.
       <br>
-      <strong class="orange">The real edge is knowing when your edge is usable.</strong>
+      <strong class="orange">The real edge is knowing when your decision quality is usable.</strong>
       <br>
       <span style="display:block; margin-top:0.6rem; font-size:0.95rem; opacity:0.85;">
         Then you adjust like a pro: press, protect, or stand down.
@@ -994,7 +995,7 @@
 
 
 <!-- =========================
-     SECTION 4 — FRAMEWORK (CALIBRATED)
+     SECTION 4 — FRAMEWORK (CALIBRATED + AUDIT LINE)
 ========================= -->
 <section id="framework">
   <div class="framework-inner">
@@ -1019,6 +1020,11 @@
       <p>
         <strong>No journaling.</strong> No mood tracking. No daily guesswork.
         You check the window, then choose: <strong>press</strong>, <strong>protect</strong>, or <strong>stand down</strong>.
+      </p>
+
+      <p>
+        You don’t have to believe anything —
+        <strong>run the 30-day audit</strong> and compare session quality across windows.
       </p>
 
       <p>
@@ -1093,7 +1099,7 @@
       </div>
 
       <p style="font-size:0.7rem; color:var(--subtle); margin-top:0.8rem; font-family:'Barlow Condensed',sans-serif; letter-spacing:1px;">
-        Relative weighting based on observed session outcomes across player profiles.
+        Relative weighting based on observed session outcomes across profiles.
       </p>
     </div>
   </div>
@@ -1102,11 +1108,11 @@
 
 <!-- =========================
      SECTION 5 — DAY TYPES (REWRITTEN FOR CLARITY + AUTHORITY)
+     NOTE: Ensure you only have ONE section with id="day-types" on the page.
 ========================= -->
 <section id="day-types">
   <div class="day-types-inner">
 
-    <!-- SECTION HEADER -->
     <div class="reveal" style="text-align:center;">
       <p class="section-label">Know Before You Sit</p>
 
@@ -1122,7 +1128,6 @@
       </p>
     </div>
 
-    <!-- ZONE TABS -->
     <div class="zone-tabs reveal" id="zoneTabs">
       <button class="zone-tab active" style="--tab-color:#D030A0" onclick="switchZone('alpha', this)">
         <span class="zone-tab-name">ALPHA</span>
@@ -1151,11 +1156,10 @@
       </button>
     </div>
 
-    <!-- ================= ALPHA ================= -->
+    <!-- ALPHA -->
     <div class="zone-panel active" id="panel-alpha">
       <div class="day-types-grid">
 
-        <!-- RUN IT UP (Pink Tag) -->
         <div class="day-type-card" style="
           --card-accent:#FF6B1A;
           --tag-bg:rgba(224,64,176,0.12);
@@ -1165,38 +1169,30 @@
           <span class="day-type-icon">🚀</span>
           <div class="day-type-name">Run It Up</div>
           <div class="day-type-tag">PRESS</div>
-          <div class="day-type-desc-line">
-            Peak clarity and emotional stability. Decisions compound cleanly.
-          </div>
+          <div class="day-type-desc-line">Peak clarity and emotional stability. Decisions compound cleanly.</div>
           <div class="day-type-action">Press — one target, full focus.</div>
         </div>
 
-        <!-- LOCKED IN -->
         <div class="day-type-card" style="--card-accent:#E040B0; --tag-bg:rgba(224,64,176,0.12); --tag-color:#E040B0; --tag-border:rgba(224,64,176,0.25); --action-color:#E040B0;">
           <span class="day-type-icon">🔒</span>
           <div class="day-type-name">Locked In</div>
           <div class="day-type-tag">PRESS</div>
-          <div class="day-type-desc-line">
-            Execution is automatic. Do not over-adjust.
-          </div>
+          <div class="day-type-desc-line">Execution is automatic. Do not over-adjust.</div>
           <div class="day-type-action">Press — follow the clean signal.</div>
         </div>
 
-        <!-- TRUST YOUR GUT -->
         <div class="day-type-card" style="--card-accent:#E87020; --tag-bg:rgba(232,112,32,0.12); --tag-color:#E87020; --tag-border:rgba(232,112,32,0.25); --action-color:#E87020;">
           <span class="day-type-icon">📈</span>
           <div class="day-type-name">Trust Your Gut</div>
           <div class="day-type-tag">PRESS</div>
-          <div class="day-type-desc-line">
-            Not explosive — steady edge stacking.
-          </div>
+          <div class="day-type-desc-line">Not explosive — steady edge stacking.</div>
           <div class="day-type-action">Press — trust the first clean read.</div>
         </div>
 
       </div>
     </div>
 
-    <!-- ================= BETA ================= -->
+    <!-- BETA -->
     <div class="zone-panel" id="panel-beta">
       <div class="day-types-grid" style="--col-count:2">
 
@@ -1204,9 +1200,7 @@
           <span class="day-type-icon">⛏️</span>
           <div class="day-type-name">Chip Away</div>
           <div class="day-type-tag">PROTECT</div>
-          <div class="day-type-desc-line">
-            Quiet compounding. Discipline over aggression.
-          </div>
+          <div class="day-type-desc-line">Quiet compounding. Discipline over aggression.</div>
           <div class="day-type-action">Protect — controlled volume.</div>
         </div>
 
@@ -1214,16 +1208,14 @@
           <span class="day-type-icon">🏛️</span>
           <div class="day-type-name">Know Your Game</div>
           <div class="day-type-tag">PROTECT</div>
-          <div class="day-type-desc-line">
-            No experimentation. Play proven lines only.
-          </div>
+          <div class="day-type-desc-line">No experimentation. Play proven lines only.</div>
           <div class="day-type-action">Protect — A-game only.</div>
         </div>
 
       </div>
     </div>
 
-    <!-- ================= GAMMA ================= -->
+    <!-- GAMMA -->
     <div class="zone-panel" id="panel-gamma">
       <div class="day-types-grid banner">
 
@@ -1233,6 +1225,7 @@
           <div class="day-type-tag">PROTECT</div>
           <div class="day-type-desc-line">
             Fast swings. Emotional amplification. Risk of overextension.
+            Shorter sessions. Hard stop-loss. No late punts.
           </div>
           <div class="day-type-action">Protect — reduce exposure and contain variance.</div>
         </div>
@@ -1240,7 +1233,7 @@
       </div>
     </div>
 
-    <!-- ================= DELTA ================= -->
+    <!-- DELTA -->
     <div class="zone-panel" id="panel-delta">
       <div class="day-types-grid">
 
@@ -1248,9 +1241,7 @@
           <span class="day-type-icon">🎭</span>
           <div class="day-type-name">Watch Yourself</div>
           <div class="day-type-tag">STAND DOWN</div>
-          <div class="day-type-desc-line">
-            Identity activation risk. Emotional certainty may not equal edge.
-          </div>
+          <div class="day-type-desc-line">Identity activation risk. Emotional certainty may not equal edge.</div>
           <div class="day-type-action">Stand Down — protect decision quality.</div>
         </div>
 
@@ -1258,9 +1249,7 @@
           <span class="day-type-icon">🥷</span>
           <div class="day-type-name">Under The Radar</div>
           <div class="day-type-tag">PROTECT</div>
-          <div class="day-type-desc-line">
-            Subtle edge. Low volatility. Move deliberately.
-          </div>
+          <div class="day-type-desc-line">Subtle edge. Low volatility. Move deliberately.</div>
           <div class="day-type-action">Protect — disciplined, controlled aggression.</div>
         </div>
 
@@ -1268,16 +1257,14 @@
           <span class="day-type-icon">🌊</span>
           <div class="day-type-name">Ride The Wave</div>
           <div class="day-type-tag">STAND DOWN</div>
-          <div class="day-type-desc-line">
-            Momentum shifts rapidly. Emotional swings likely.
-          </div>
+          <div class="day-type-desc-line">Momentum shifts rapidly. Emotional swings likely.</div>
           <div class="day-type-action">Stand Down — avoid high-variance exposure.</div>
         </div>
 
       </div>
     </div>
 
-    <!-- ================= OMEGA ================= -->
+    <!-- OMEGA -->
     <div class="zone-panel" id="panel-omega">
       <div class="day-types-grid banner">
 
@@ -1285,20 +1272,15 @@
           <span class="day-type-icon">🌱</span>
           <div class="day-type-name">Reset Window</div>
           <div class="day-type-tag">STAND DOWN</div>
-          <div class="day-type-desc-line">
-            Rare reset cycle. High exposure is structurally misaligned.
-          </div>
+          <div class="day-type-desc-line">Rare reset cycle. High exposure is structurally misaligned.</div>
           <div class="day-type-action">Stand Down — full reset recommended.</div>
         </div>
 
       </div>
     </div>
 
-    <!-- CTA -->
     <div class="reveal" style="text-align:center; margin-top:3rem;">
-      <a href="https://luckify3.gumroad.com/l/nimtpq" class="btn-primary">
-        ♠ Start My 30-Day Trial ♠
-      </a>
+      <a href="https://luckify3.gumroad.com/l/nimtpq" class="btn-primary">♠ Start My 30-Day Trial ♠</a>
       <p style="margin-top:0.8rem; color:var(--subtle); font-size:0.85rem;">
         Run it for a month. Track your sessions. Decide objectively.
       </p>
@@ -1309,7 +1291,7 @@
 
 
 <!-- =========================
-     SECTION 6 — HOW IT WORKS (CALIBRATED)
+     SECTION 6 — HOW IT WORKS (CALIBRATED + VECTOR DEMOTED)
 ========================= -->
 <section id="how">
   <div class="how-inner">
@@ -1323,7 +1305,7 @@
         <div class="step-num">01</div>
         <h3>Enter Your Fixed Inputs</h3>
         <p>
-          Birth date + birth location + where you play now.
+          Fixed inputs (birth date + birth location) + where you play now.
           Birth time is optional — it sharpens precision if you have it.
         </p>
       </div>
@@ -1347,12 +1329,12 @@
       </div>
     </div>
 
-    <div class="reveal" style="text-align:center; margin-top:2rem; display:flex; gap:0.7rem; justify-content:center; flex-wrap:wrap;">
+    <!-- CTA: only trial button; VECTOR is a quiet text link -->
+    <div class="reveal" style="text-align:center; margin-top:2rem;">
       <a href="https://luckify3.gumroad.com/l/nimtpq" class="btn-primary">♠ Start My 30-Day Trial ♠</a>
-      <a href="#vector"
-         style="display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; padding:0.85rem 1.15rem; border-radius:999px; border:1px solid var(--border); color:var(--text); text-decoration:none; font-family:'Barlow Condensed',sans-serif; letter-spacing:1px; text-transform:uppercase; opacity:0.9;">
-        View VECTOR Tracker <span style="opacity:0.8;">→</span>
-      </a>
+      <p style="margin-top:0.9rem; font-family:'Barlow Condensed',sans-serif; font-size:0.8rem; letter-spacing:1px; opacity:0.8;">
+        Want proof first? <a href="#vector" style="text-decoration:none; opacity:0.9;">View VECTOR Tracker →</a>
+      </p>
     </div>
 
     <p class="reveal" style="margin-top:1rem; text-align:center; color:var(--subtle); font-size:0.85rem; line-height:1.6;">
