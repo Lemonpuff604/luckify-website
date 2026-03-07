@@ -33,24 +33,39 @@
     line-height: 1.65;
     color: var(--dark);
     background: #FAFAFA;
-    padding: 0;
   }
 
+  /* ── LAYOUT ── */
   .page {
-    max-width: 720px;
+    max-width: 860px;
     margin: 0 auto;
-    padding: 32px 20px 64px;
+    padding: 40px 24px 80px;
+  }
+
+  /* Desktop: two-column for zones section */
+  @media (min-width: 700px) {
+    .zones-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .zones-grid .tier-label {
+      grid-column: 1 / -1;
+    }
+    .zone-card.full-width {
+      grid-column: 1 / -1;
+    }
   }
 
   /* ── HEADER ── */
   .header {
     padding-bottom: 24px;
     border-bottom: 3px solid var(--orange);
-    margin-bottom: 32px;
+    margin-bottom: 36px;
   }
   .header h1 {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: clamp(28px, 7vw, 48px);
+    font-size: clamp(26px, 6vw, 52px);
     font-weight: 600;
     color: var(--black);
     letter-spacing: -0.02em;
@@ -58,14 +73,14 @@
   }
   .header .subtitle {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: clamp(11px, 2.5vw, 13px);
+    font-size: clamp(10px, 2.2vw, 13px);
     color: var(--orange);
     font-weight: 600;
     letter-spacing: 0.08em;
     margin-top: 6px;
   }
   .hero-line {
-    font-size: clamp(14px, 3.5vw, 17px);
+    font-size: clamp(14px, 3vw, 18px);
     font-style: italic;
     font-weight: 600;
     color: var(--black);
@@ -74,45 +89,49 @@
     line-height: 1.4;
   }
   .intro {
-    font-size: 14px;
+    font-size: clamp(13px, 2vw, 15px);
     color: var(--mid);
     line-height: 1.7;
   }
-  .intro strong {
-    color: var(--dark);
-  }
+  .intro strong { color: var(--dark); }
 
   /* ── SECTION ── */
-  .section {
-    margin-top: 48px;
-  }
+  .section { margin-top: 52px; }
   .section-title {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: clamp(13px, 3vw, 15px);
+    font-size: clamp(12px, 2.5vw, 14px);
     font-weight: 600;
     color: var(--black);
-    letter-spacing: 0.06em;
+    letter-spacing: 0.07em;
     padding-bottom: 10px;
     border-bottom: 2px solid var(--orange);
-    margin-bottom: 20px;
+    margin-bottom: 22px;
   }
 
   /* ── ACTION CARDS ── */
+  .actions-grid {
+    display: grid;
+    gap: 10px;
+  }
+  @media (min-width: 600px) {
+    .actions-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
   .action-card {
     border-left: 5px solid;
-    padding: 16px 20px;
-    margin-bottom: 12px;
+    padding: 16px 18px;
     border-radius: 0 6px 6px 0;
   }
   .action-card .action-label {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px;
+    font-size: clamp(11px, 2vw, 13px);
     font-weight: 600;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.05em;
     margin-bottom: 6px;
   }
   .action-card p {
-    font-size: 14px;
+    font-size: clamp(12px, 1.8vw, 14px);
     color: var(--dark);
     line-height: 1.6;
   }
@@ -132,7 +151,7 @@
     margin: 28px 0 10px;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
   }
   .tier-label::after {
     content: '';
@@ -145,8 +164,8 @@
   .zone-card {
     border-left: 5px solid;
     padding: 14px 16px;
-    margin-bottom: 10px;
     border-radius: 0 6px 6px 0;
+    margin-bottom: 0;
   }
   .zone-header {
     display: flex;
@@ -159,28 +178,27 @@
   }
   .zone-name {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: clamp(12px, 2.8vw, 14px);
+    font-size: clamp(11px, 2.5vw, 13px);
     font-weight: 600;
     color: var(--black);
     line-height: 1.3;
   }
   .zone-action {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 600;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
     white-space: nowrap;
-    padding: 3px 8px;
+    padding: 3px 7px;
     border-radius: 3px;
     flex-shrink: 0;
   }
   .zone-desc {
-    font-size: 13px;
+    font-size: clamp(12px, 1.8vw, 13px);
     color: var(--dark);
     line-height: 1.65;
   }
 
-  /* Zone color variants */
   .zone-press   { border-color: var(--green);  background: var(--green-bg); }
   .zone-protect { border-color: var(--yellow); background: var(--yellow-bg); }
   .zone-down    { border-color: var(--red);    background: var(--red-bg); }
@@ -191,71 +209,73 @@
   .zone-down    .zone-action { color: var(--red);    background: rgba(192,57,43,0.1); }
   .zone-gamma   .zone-action { color: var(--gamma);  background: rgba(138,96,0,0.1); }
 
-  /* split label for PROTECT / STAND DOWN */
   .zone-action-split {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 600;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.03em;
     white-space: nowrap;
-    padding: 3px 8px;
+    padding: 3px 7px;
     border-radius: 3px;
     flex-shrink: 0;
     background: rgba(192,57,43,0.08);
   }
-  .zone-action-split .p { color: var(--yellow); }
-  .zone-action-split .sep { color: #999; }
-  .zone-action-split .s { color: var(--red); }
+  .zone-action-split .p  { color: var(--yellow); }
+  .zone-action-split .sep { color: #aaa; }
+  .zone-action-split .s  { color: var(--red); }
 
   .zone-action-pp {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 600;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.03em;
     white-space: nowrap;
-    padding: 3px 8px;
+    padding: 3px 7px;
     border-radius: 3px;
     flex-shrink: 0;
     background: rgba(138,96,0,0.08);
   }
-  .zone-action-pp .pr { color: var(--green); }
-  .zone-action-pp .sep { color: #999; }
-  .zone-action-pp .pt { color: var(--yellow); }
+  .zone-action-pp .pr  { color: var(--green); }
+  .zone-action-pp .sep { color: #aaa; }
+  .zone-action-pp .pt  { color: var(--yellow); }
 
-  /* ── CALENDAR TABLE ── */
+  /* ── CALENDAR TABLE — responsive ── */
+  .cal-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .cal-table {
     width: 100%;
+    min-width: 360px;
     border-collapse: collapse;
-    font-size: 13px;
+    font-size: clamp(12px, 1.8vw, 13px);
   }
   .cal-table th {
     background: var(--black);
     color: var(--white);
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
+    font-size: clamp(10px, 1.5vw, 11px);
     letter-spacing: 0.06em;
-    padding: 10px 12px;
+    padding: 10px 14px;
     text-align: left;
+    white-space: nowrap;
   }
   .cal-table td {
-    padding: 10px 12px;
+    padding: 10px 14px;
     vertical-align: top;
     border-bottom: 1px solid var(--border);
     line-height: 1.55;
   }
-  .cal-table tr:nth-child(odd) td  { background: var(--light); }
+  .cal-table tr:nth-child(odd)  td { background: var(--light); }
   .cal-table tr:nth-child(even) td { background: var(--white); }
   .cal-table td:first-child {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
+    font-size: clamp(10px, 1.5vw, 11px);
     font-weight: 600;
     color: var(--black);
     white-space: nowrap;
-    width: 110px;
+    width: 100px;
   }
   .cal-table td strong { color: var(--black); }
 
-  /* ── BETA BOX ── */
+  /* ── BETA ── */
   .beta-label {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 12px;
@@ -265,13 +285,13 @@
     margin-bottom: 10px;
   }
   .beta-body {
-    font-size: 14px;
+    font-size: clamp(13px, 2vw, 14px);
     color: var(--mid);
     line-height: 1.7;
     margin-bottom: 10px;
   }
   .beta-bold {
-    font-size: 14px;
+    font-size: clamp(13px, 2vw, 14px);
     font-weight: 700;
     color: var(--black);
     line-height: 1.5;
@@ -282,24 +302,17 @@
     background: var(--orange-bg);
     padding: 20px 22px;
     border-radius: 4px;
-    margin-top: 4px;
-  }
-  .contact-box h3 {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--black);
-    margin-bottom: 6px;
   }
   .contact-box p {
-    font-size: 13px;
+    font-size: clamp(12px, 2vw, 13px);
     color: var(--dark);
-    line-height: 1.6;
-    margin-bottom: 16px;
+    line-height: 1.65;
+    margin-bottom: 12px;
   }
   .contact-box p:last-child { margin-bottom: 0; }
   .contact-link {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px;
+    font-size: clamp(12px, 2vw, 13px);
     font-weight: 600;
     color: var(--orange);
   }
@@ -311,13 +324,13 @@
     border-top: 1px solid var(--border);
   }
   .from-preston h2 {
-    font-size: 18px;
+    font-size: clamp(16px, 3vw, 20px);
     font-weight: 700;
     color: var(--black);
     margin-bottom: 14px;
   }
   .from-preston p {
-    font-size: 14px;
+    font-size: clamp(13px, 2vw, 14px);
     color: var(--mid);
     line-height: 1.75;
     margin-bottom: 12px;
@@ -325,25 +338,38 @@
   .somatic {
     font-style: italic;
     font-weight: 600;
-    font-size: 15px;
+    font-size: clamp(14px, 2.2vw, 16px) !important;
     color: var(--black) !important;
     margin: 16px 0 !important;
   }
-  .signoff {
-    margin-top: 20px;
+  .closing-philosophy {
+    margin: 20px 0 24px;
+    padding: 18px 22px;
+    border-left: 3px solid var(--orange);
+    background: var(--orange-bg);
+    border-radius: 0 6px 6px 0;
   }
+  .closing-philosophy p {
+    font-size: clamp(13px, 2vw, 14px);
+    color: var(--dark);
+    line-height: 1.75;
+    margin-bottom: 10px;
+    font-style: italic;
+  }
+  .closing-philosophy p:last-child { margin-bottom: 0; }
+  .signoff { margin-top: 20px; }
   .signoff .play-well {
     font-weight: 700;
-    font-size: 15px;
+    font-size: clamp(14px, 2.2vw, 16px);
     color: var(--black);
   }
   .signoff .name {
-    font-size: 15px;
+    font-size: clamp(14px, 2.2vw, 15px);
     font-weight: 700;
     color: var(--black);
   }
   .signoff .title {
-    font-size: 13px;
+    font-size: clamp(12px, 1.8vw, 13px);
     color: var(--mid);
     margin-top: 2px;
   }
@@ -360,35 +386,16 @@
     letter-spacing: 0.05em;
   }
 
-  /* ── DIVIDER ── */
-  hr {
-    border: none;
-    border-bottom: 1px solid var(--border);
-    margin: 28px 0;
-  }
+  hr { border: none; border-bottom: 1px solid var(--border); margin: 28px 0; }
 
-
-  .closing-philosophy {
-    margin: 20px 0 24px;
-    padding: 20px 22px;
-    border-left: 3px solid var(--orange);
-    background: var(--orange-bg);
-    border-radius: 0 6px 6px 0;
-  }
-  .closing-philosophy p {
-    font-size: 14px;
-    color: var(--dark);
-    line-height: 1.75;
-    margin-bottom: 10px;
-    font-style: italic;
-  }
-  .closing-philosophy p:last-child { margin-bottom: 0; }
-
+  /* ── MOBILE OVERRIDES ── */
   @media (max-width: 480px) {
-    .page { padding: 24px 16px 48px; }
+    .page { padding: 24px 16px 56px; }
     .zone-header { flex-direction: column; gap: 4px; }
-    .zone-action, .zone-action-split, .zone-action-pp { align-self: flex-start; }
-    .cal-table td:first-child { width: 90px; font-size: 10px; }
+    .zone-action,
+    .zone-action-split,
+    .zone-action-pp { align-self: flex-start; }
+    .zones-grid { display: flex; flex-direction: column; gap: 8px; }
   }
 </style>
 </head>
@@ -407,6 +414,7 @@
   <div class="section">
     <div class="section-title">THE THREE ACTIONS</div>
 
+  <div class="actions-grid">
     <div class="action-card action-press">
       <div class="action-label">PRESS</div>
       <p>Edge is available. Engage fully.</p>
@@ -422,11 +430,13 @@
       <p>The value today is in not playing. Study, rest, reset.</p>
     </div>
   </div>
+  </div>
 
   <!-- THE 10 WINDOWS -->
   <div class="section">
     <div class="section-title">THE 10 EXECUTE WINDOWS</div>
 
+  <div class="zones-grid">
     <div class="tier-label" style="color:var(--green)">PRESS</div>
 
     <div class="zone-card zone-press">
@@ -509,7 +519,7 @@
 
     <div class="tier-label" style="color:var(--red)">STAND DOWN</div>
 
-    <div class="zone-card zone-down">
+    <div class="zone-card zone-down full-width">
       <div class="zone-header">
         <div class="zone-name">TOUCH GRASS</div>
         <div class="zone-action">STAND DOWN</div>
@@ -518,11 +528,14 @@
     </div>
   </div>
 
+  </div><!-- end zones-grid -->
+
   <!-- READING YOUR CALENDAR -->
   <div class="section">
     <div class="section-title">READING YOUR CALENDAR</div>
     <p style="font-size:14px;color:var(--mid);margin-bottom:16px;">Your calendar cell tells you five things — here's what each one means:</p>
 
+  <div class="cal-wrap">
     <table class="cal-table">
       <thead>
         <tr><th>FIELD</th><th>WHAT IT TELLS YOU</th></tr>
@@ -551,6 +564,7 @@
       </tbody>
     </table>
   </div>
+  </div><!-- end cal-wrap -->
 
   <!-- BETA -->
   <div class="section">
