@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lucky Window — Beta Operator Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange:     #D4620A;
+    --orange-bg:  #FFF8F0;
+    --green:      #2E7D32;
+    --green-bg:   #EAF4EA;
+    --yellow:     #8a6800;
+    --yellow-bg:  #FBF6E6;
+    --red:        #C0392B;
+    --red-bg:     #FAEAEA;
+    --gamma:      #8a6000;
+    --gamma-bg:   #F5F0E0;
+    --black:      #111111;
+    --dark:       #333333;
+    --mid:        #666666;
+    --light:      #F5F5F5;
+    --border:     #DDDDDD;
+    --white:      #FFFFFF;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--dark);
+    background: #FAFAFA;
+    padding: 0;
+  }
+
+  .page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 32px 20px 64px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    padding-bottom: 24px;
+    border-bottom: 3px solid var(--orange);
+    margin-bottom: 32px;
+  }
+  .header h1 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: clamp(28px, 7vw, 48px);
+    font-weight: 600;
+    color: var(--black);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .header .subtitle {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: clamp(11px, 2.5vw, 13px);
+    color: var(--orange);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    margin-top: 6px;
+  }
+  .hero-line {
+    font-size: clamp(14px, 3.5vw, 17px);
+    font-style: italic;
+    font-weight: 600;
+    color: var(--black);
+    margin-top: 24px;
+    margin-bottom: 12px;
+    line-height: 1.4;
+  }
+  .intro {
+    font-size: 14px;
+    color: var(--mid);
+    line-height: 1.7;
+  }
+  .intro strong {
+    color: var(--dark);
+  }
+
+  /* ── SECTION ── */
+  .section {
+    margin-top: 48px;
+  }
+  .section-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: clamp(13px, 3vw, 15px);
+    font-weight: 600;
+    color: var(--black);
+    letter-spacing: 0.06em;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--orange);
+    margin-bottom: 20px;
+  }
+
+  /* ── ACTION CARDS ── */
+  .action-card {
+    border-left: 5px solid;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    border-radius: 0 6px 6px 0;
+  }
+  .action-card .action-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+  .action-card p {
+    font-size: 14px;
+    color: var(--dark);
+    line-height: 1.6;
+  }
+  .action-press   { border-color: var(--green);  background: var(--green-bg); }
+  .action-protect { border-color: var(--yellow); background: var(--yellow-bg); }
+  .action-down    { border-color: var(--red);    background: var(--red-bg); }
+  .action-press   .action-label { color: var(--green); }
+  .action-protect .action-label { color: var(--yellow); }
+  .action-down    .action-label { color: var(--red); }
+
+  /* ── TIER LABEL ── */
+  .tier-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    margin: 28px 0 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tier-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── ZONE CARDS ── */
+  .zone-card {
+    border-left: 5px solid;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    border-radius: 0 6px 6px 0;
+  }
+  .zone-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+  }
+  .zone-name {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: clamp(12px, 2.8vw, 14px);
+    font-weight: 600;
+    color: var(--black);
+    line-height: 1.3;
+  }
+  .zone-action {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    padding: 3px 8px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .zone-desc {
+    font-size: 13px;
+    color: var(--dark);
+    line-height: 1.65;
+  }
+
+  /* Zone color variants */
+  .zone-press   { border-color: var(--green);  background: var(--green-bg); }
+  .zone-protect { border-color: var(--yellow); background: var(--yellow-bg); }
+  .zone-down    { border-color: var(--red);    background: var(--red-bg); }
+  .zone-gamma   { border-color: var(--gamma);  background: var(--gamma-bg); }
+
+  .zone-press   .zone-action { color: var(--green);  background: rgba(46,125,50,0.1); }
+  .zone-protect .zone-action { color: var(--yellow); background: rgba(138,104,0,0.1); }
+  .zone-down    .zone-action { color: var(--red);    background: rgba(192,57,43,0.1); }
+  .zone-gamma   .zone-action { color: var(--gamma);  background: rgba(138,96,0,0.1); }
+
+  /* split label for PROTECT / STAND DOWN */
+  .zone-action-split {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    padding: 3px 8px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    background: rgba(192,57,43,0.08);
+  }
+  .zone-action-split .p { color: var(--yellow); }
+  .zone-action-split .sep { color: #999; }
+  .zone-action-split .s { color: var(--red); }
+
+  .zone-action-pp {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    padding: 3px 8px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    background: rgba(138,96,0,0.08);
+  }
+  .zone-action-pp .pr { color: var(--green); }
+  .zone-action-pp .sep { color: #999; }
+  .zone-action-pp .pt { color: var(--yellow); }
+
+  /* ── CALENDAR TABLE ── */
+  .cal-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .cal-table th {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    padding: 10px 12px;
+    text-align: left;
+  }
+  .cal-table td {
+    padding: 10px 12px;
+    vertical-align: top;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.55;
+  }
+  .cal-table tr:nth-child(odd) td  { background: var(--light); }
+  .cal-table tr:nth-child(even) td { background: var(--white); }
+  .cal-table td:first-child {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--black);
+    white-space: nowrap;
+    width: 110px;
+  }
+  .cal-table td strong { color: var(--black); }
+
+  /* ── BETA BOX ── */
+  .beta-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--orange);
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+  }
+  .beta-body {
+    font-size: 14px;
+    color: var(--mid);
+    line-height: 1.7;
+    margin-bottom: 10px;
+  }
+  .beta-bold {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--black);
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+  .contact-box {
+    border: 2px solid var(--orange);
+    background: var(--orange-bg);
+    padding: 20px 22px;
+    border-radius: 4px;
+    margin-top: 4px;
+  }
+  .contact-box h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 6px;
+  }
+  .contact-box p {
+    font-size: 13px;
+    color: var(--dark);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  .contact-box p:last-child { margin-bottom: 0; }
+  .contact-link {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--orange);
+  }
+
+  /* ── FROM PRESTON ── */
+  .from-preston {
+    margin-top: 40px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+  }
+  .from-preston h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 14px;
+  }
+  .from-preston p {
+    font-size: 14px;
+    color: var(--mid);
+    line-height: 1.75;
+    margin-bottom: 12px;
+  }
+  .somatic {
+    font-style: italic;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--black) !important;
+    margin: 16px 0 !important;
+  }
+  .signoff {
+    margin-top: 20px;
+  }
+  .signoff .play-well {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--black);
+  }
+  .signoff .name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--black);
+  }
+  .signoff .title {
+    font-size: 13px;
+    color: var(--mid);
+    margin-top: 2px;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    margin-top: 48px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #999;
+    text-align: center;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── DIVIDER ── */
+  hr {
+    border: none;
+    border-bottom: 1px solid var(--border);
+    margin: 28px 0;
+  }
+
+
+  .closing-philosophy {
+    margin: 20px 0 24px;
+    padding: 20px 22px;
+    border-left: 3px solid var(--orange);
+    background: var(--orange-bg);
+    border-radius: 0 6px 6px 0;
+  }
+  .closing-philosophy p {
+    font-size: 14px;
+    color: var(--dark);
+    line-height: 1.75;
+    margin-bottom: 10px;
+    font-style: italic;
+  }
+  .closing-philosophy p:last-child { margin-bottom: 0; }
+
+  @media (max-width: 480px) {
+    .page { padding: 24px 16px 48px; }
+    .zone-header { flex-direction: column; gap: 4px; }
+    .zone-action, .zone-action-split, .zone-action-pp { align-self: flex-start; }
+    .cal-table td:first-child { width: 90px; font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1>LUCKY WINDOW</h1>
+    <div class="subtitle">BETA OPERATOR GUIDE</div>
+    <p class="hero-line">You are not the same player every day. Your edge isn't either.</p>
+    <p class="intro">Most players try to fix their game. Lucky Window asks a different question — when is your decision quality actually usable? One of 10 execute windows, one clear action: press, protect, or stand down.<br><br><strong>Check your window before you sit down. That's it.</strong></p>
+  </div>
+
+  <!-- THE THREE ACTIONS -->
+  <div class="section">
+    <div class="section-title">THE THREE ACTIONS</div>
+
+    <div class="action-card action-press">
+      <div class="action-label">PRESS</div>
+      <p>Edge is available. Engage fully.</p>
+    </div>
+
+    <div class="action-card action-protect">
+      <div class="action-label">PROTECT</div>
+      <p>Decision quality is compromised. Proven patterns only.</p>
+    </div>
+
+    <div class="action-card action-down">
+      <div class="action-label">STAND DOWN</div>
+      <p>The value today is in not playing. Study, rest, reset.</p>
+    </div>
+  </div>
+
+  <!-- THE 10 WINDOWS -->
+  <div class="section">
+    <div class="section-title">THE 10 EXECUTE WINDOWS</div>
+
+    <div class="tier-label" style="color:var(--green)">PRESS</div>
+
+    <div class="zone-card zone-press">
+      <div class="zone-header">
+        <div class="zone-name">RUN IT UP</div>
+        <div class="zone-action-pp"><span class="pr">PRESS</span><span class="sep"> / </span><span class="pt">STAND DOWN</span></div>
+      </div>
+      <p class="zone-desc">This day comes with a full tank — but unfocused energy at the table is still a leak. Show up completely locked in and use it all, or take the day off entirely and let the energy work somewhere else. Half-present is the one thing this day punishes.</p>
+    </div>
+
+    <div class="zone-card zone-press">
+      <div class="zone-header">
+        <div class="zone-name">PRESS HARD</div>
+        <div class="zone-action">PRESS</div>
+      </div>
+      <p class="zone-desc">There's a forward pull today that rewards preparation — the player who came ready gets more than they expected.</p>
+    </div>
+
+    <div class="zone-card zone-press">
+      <div class="zone-header">
+        <div class="zone-name">TRUST YOUR READ</div>
+        <div class="zone-action">PRESS</div>
+      </div>
+      <p class="zone-desc">Your instincts are running ahead of your analysis today — the first read is usually the right one.</p>
+    </div>
+
+    <div class="tier-label" style="color:var(--gamma)">PRESS / PROTECT</div>
+
+    <div class="zone-card zone-gamma">
+      <div class="zone-header">
+        <div class="zone-name">FIND YOUR EDGE</div>
+        <div class="zone-action-pp"><span class="pr">PRESS</span><span class="sep"> / </span><span class="pt">PROTECT</span></div>
+      </div>
+      <p class="zone-desc">The energy is here but it won't organize itself — the player who picks one lane and commits will outperform the one chasing the whole table.</p>
+    </div>
+
+    <div class="tier-label" style="color:var(--yellow)">PROTECT</div>
+
+    <div class="zone-card zone-protect">
+      <div class="zone-header">
+        <div class="zone-name">CHIP AWAY</div>
+        <div class="zone-action">PROTECT</div>
+      </div>
+      <p class="zone-desc">This is a volume day, not a peak day — edge lives in accumulation, not in the big moment.</p>
+    </div>
+
+    <div class="zone-card zone-protect">
+      <div class="zone-header">
+        <div class="zone-name">PLAY YOUR GAME</div>
+        <div class="zone-action">PROTECT</div>
+      </div>
+      <p class="zone-desc">The session has a settled, almost mechanical quality — your best poker today comes from trusting the system you already built, not testing a new one.</p>
+    </div>
+
+    <div class="tier-label" style="color:var(--red)">PROTECT / STAND DOWN</div>
+
+    <div class="zone-card zone-down">
+      <div class="zone-header">
+        <div class="zone-name">WATCH YOURSELF</div>
+        <div class="zone-action-split"><span class="p">PROTECT</span><span class="sep"> / </span><span class="s">STAND DOWN</span></div>
+      </div>
+      <p class="zone-desc">Today asks more of you than usual — emotional, mental, and physical stability are the real edge here. Seasoned players who can hold structure may find an advantage. If you are not prepared to do that work, this is not the day to sit down.</p>
+    </div>
+
+    <div class="zone-card zone-down">
+      <div class="zone-header">
+        <div class="zone-name">STAY SMALL</div>
+        <div class="zone-action-split"><span class="p">PROTECT</span><span class="sep"> / </span><span class="s">STAND DOWN</span></div>
+      </div>
+      <p class="zone-desc">Today gives you a kind of invisibility — you can move through the session undetected if you let it work for you. Seasoned players can use this quietly to their advantage. If your natural game is loud and aggressive, this day will work against you.</p>
+    </div>
+
+    <div class="zone-card zone-down">
+      <div class="zone-header">
+        <div class="zone-name">RIDE OR FOLD</div>
+        <div class="zone-action-split"><span class="p">PROTECT</span><span class="sep"> / </span><span class="s">STAND DOWN</span></div>
+      </div>
+      <p class="zone-desc">This is where your luck window has its highest potential — for better or for worse. The full variance window is open and the tide can pull hard in either direction. Set your stop loss before you sit. Seasoned players who can weather the swings may find something here — everyone else: stand down.</p>
+    </div>
+
+    <div class="tier-label" style="color:var(--red)">STAND DOWN</div>
+
+    <div class="zone-card zone-down">
+      <div class="zone-header">
+        <div class="zone-name">TOUCH GRASS</div>
+        <div class="zone-action">STAND DOWN</div>
+      </div>
+      <p class="zone-desc">The environment itself is working against you today — this isn't about discipline, the field is just closed.</p>
+    </div>
+  </div>
+
+  <!-- READING YOUR CALENDAR -->
+  <div class="section">
+    <div class="section-title">READING YOUR CALENDAR</div>
+    <p style="font-size:14px;color:var(--mid);margin-bottom:16px;">Your calendar cell tells you five things — here's what each one means:</p>
+
+    <table class="cal-table">
+      <thead>
+        <tr><th>FIELD</th><th>WHAT IT TELLS YOU</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>[ ZONE ]</td>
+          <td>ALPHA / BETA / GAMMA / DELTA / OMEGA — zone family, color-coded.</td>
+        </tr>
+        <tr>
+          <td>Window Name</td>
+          <td>Your execute window — Run It Up, Find Your Edge, Touch Grass, etc.</td>
+        </tr>
+        <tr>
+          <td>STREAK</td>
+          <td>Consecutive days in the same window. Sustained ALPHA = durable edge. Sustained OMEGA = real reset.</td>
+        </tr>
+        <tr>
+          <td>MOMENTUM</td>
+          <td>RISING = window opening. FALLING = window closing. <strong>Late night operators:</strong> check tomorrow — sessions crossing midnight transition zones at 12am.</td>
+        </tr>
+        <tr>
+          <td>ACTION</td>
+          <td>Your directive — PRESS, PROTECT, or STAND DOWN.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- BETA -->
+  <div class="section">
+    <hr>
+    <div class="beta-label">BETA — 2 WEEKS</div>
+    <p class="beta-body">This is a two-week beta. The system is actively growing — the windows, descriptions, and field intelligence all sharpen as more operators run real tracking and report back.</p>
+    <p class="beta-bold">You are not a customer. You are a contributor to something being built in real time.</p>
+
+    <div class="contact-box">
+      <p>Beta operators have access to special pricing. Personalized calendars and one-on-one reads are also available. Reach out directly to talk through what fits.</p>
+      <p><span class="contact-link">Direct DM &nbsp;//&nbsp; r/asksoltar</span></p>
+    </div>
+  </div>
+
+  <!-- FROM PRESTON -->
+  <div class="from-preston">
+    <h2>From Preston</h2>
+    <p>I have been playing poker seriously for nearly two decades. I hold a WSOP bracelet. I have sat in every kind of session — the ones where everything flows and the ones where nothing does — and I spent a long time trying to understand the difference.</p>
+    <p class="somatic">Something in the body knew before the numbers confirmed it.</p>
+    <p>Lucky Window is my attempt to build a rigorous system around that intuition. Not just to sharpen the game — but to finally understand where the game belongs.</p>
+    <div class="closing-philosophy">
+      <p>Presence is the edge most people never think to protect.</p>
+      <p>The day tells you where to put yourself.</p>
+    </div>
+    <div class="signoff">
+      <div class="play-well">Play well everywhere.</div>
+      <div class="name">— Preston Lee</div>
+      <div class="title">Founder, Luckify.me</div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    luckify.me &nbsp;//&nbsp; @vector_signal &nbsp;//&nbsp; r/asksoltar
+  </div>
+
+</div>
+</body>
+</html>
