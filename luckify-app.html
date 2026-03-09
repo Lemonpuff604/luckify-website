@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Lucky Window</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #080808;
+    --surface:   #0f0f0f;
+    --border:    #1c1c1c;
+    --muted:     #3a3a3a;
+    --subtle:    #555;
+    --text:      #e8e8e8;
+    --text-dim:  #888;
+    --mono:      'Space Mono', monospace;
+    --sans:      'DM Sans', sans-serif;
+
+    --pink-bg:   #4a1040; --pink-text:   #f9c8ee;
+    --orange-bg: #3d1a00; --orange-text: #ffd6a0;
+    --blue-bg:   #0a1e35; --blue-text:   #a8d4f5;
+    --yellow-bg: #2a2200; --yellow-text: #fff1a0;
+    --green-bg:  #0e1f10; --green-text:  #b8f0c0;
+    --purple-bg: #1a0a2e; --purple-text: #d4b8f5;
+    --red-bg:    #2e0a08; --red-text:    #ffc0bc;
+    --brown-bg:  #1a0f08; --brown-text:  #d4b898;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── VIEWS ── */
+  .view { display: none; min-height: 100vh; }
+  .view.active { display: block; }
+
+  /* ── ADMIN ── */
+  #admin {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  .admin-header {
+    margin-bottom: 40px;
+  }
+
+  .wordmark {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--subtle);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .admin-title {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+
+  .field-group {
+    margin-bottom: 28px;
+  }
+
+  label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--subtle);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  input[type="text"], select {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    padding: 12px 14px;
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.15s;
+    appearance: none;
+  }
+
+  input[type="text"]:focus, select:focus {
+    border-color: var(--muted);
+  }
+
+  .month-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  /* ── DAY ZONE GRID ── */
+  .zone-grid-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--subtle);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .zone-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+
+  .dow-label {
+    font-family: var(--mono);
+    font-size: 8px;
+    color: var(--muted);
+    text-align: center;
+    padding: 4px 0;
+    letter-spacing: 0.1em;
+  }
+
+  .day-cell-admin {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 4px;
+    cursor: pointer;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    transition: transform 0.1s;
+    user-select: none;
+  }
+
+  .day-cell-admin:hover { transform: scale(1.05); }
+  .day-cell-admin.empty { background: transparent; border-color: transparent; cursor: default; }
+  .day-cell-admin.empty:hover { transform: none; }
+
+  .day-cell-admin .dn {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .day-cell-admin .zl {
+    font-family: var(--mono);
+    font-size: 6px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    opacity: 0.8;
+  }
+
+  /* zone colors on admin cells */
+  .zc-pink   { background: var(--pink-bg)   !important; border-color: var(--pink-bg)   !important; }
+  .zc-orange { background: var(--orange-bg) !important; border-color: var(--orange-bg) !important; }
+  .zc-blue   { background: var(--blue-bg)   !important; border-color: var(--blue-bg)   !important; }
+  .zc-yellow { background: var(--yellow-bg) !important; border-color: var(--yellow-bg) !important; }
+  .zc-green  { background: var(--green-bg)  !important; border-color: var(--green-bg)  !important; }
+  .zc-purple { background: var(--purple-bg) !important; border-color: var(--purple-bg) !important; }
+  .zc-red    { background: var(--red-bg)    !important; border-color: var(--red-bg)    !important; }
+  .zc-brown  { background: var(--brown-bg)  !important; border-color: var(--brown-bg)  !important; }
+
+  .zc-pink   .dn, .zc-pink   .zl { color: var(--pink-text);   }
+  .zc-orange .dn, .zc-orange .zl { color: var(--orange-text); }
+  .zc-blue   .dn, .zc-blue   .zl { color: var(--blue-text);   }
+  .zc-yellow .dn, .zc-yellow .zl { color: var(--yellow-text); }
+  .zc-green  .dn, .zc-green  .zl { color: var(--green-text);  }
+  .zc-purple .dn, .zc-purple .zl { color: var(--purple-text); }
+  .zc-red    .dn, .zc-red    .zl { color: var(--red-text);    }
+  .zc-brown  .dn, .zc-brown  .zl { color: var(--brown-text);  }
+
+  /* ── ZONE PICKER POPUP ── */
+  .zone-picker-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .zone-picker-overlay.open {
+    display: flex;
+  }
+
+  .zone-picker {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    width: 280px;
+  }
+
+  .zone-picker-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--subtle);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    text-align: center;
+  }
+
+  .zone-picker-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .zone-option {
+    padding: 10px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 0.05em;
+    transition: opacity 0.1s, transform 0.1s;
+    border: none;
+  }
+
+  .zone-option:hover { opacity: 0.85; transform: scale(1.02); }
+
+  .zone-option-clear {
+    grid-column: span 2;
+    background: var(--surface);
+    border: 1px solid var(--border) !important;
+    color: var(--muted);
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-align: center;
+    transition: border-color 0.1s;
+  }
+
+  .zone-option-clear:hover { border-color: var(--subtle) !important; color: var(--text-dim); }
+
+  /* ── GENERATE BTN ── */
+  .generate-btn {
+    width: 100%;
+    background: var(--text);
+    color: var(--bg);
+    border: none;
+    border-radius: 6px;
+    padding: 14px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-top: 32px;
+    transition: opacity 0.15s;
+  }
+
+  .generate-btn:hover { opacity: 0.88; }
+
+  .share-box {
+    display: none;
+    margin-top: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  .share-box.visible { display: block; }
+
+  .share-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--subtle);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .share-url {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text);
+    word-break: break-all;
+    margin-bottom: 12px;
+    line-height: 1.6;
+  }
+
+  .copy-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    padding: 8px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .copy-btn:hover { border-color: var(--muted); color: var(--text); }
+  .copy-btn.copied { border-color: var(--green-text); color: var(--green-text); }
+
+  /* ── CLIENT CALENDAR ── */
+  #client {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 24px 16px 80px;
+  }
+
+  .client-header {
+    margin-bottom: 24px;
+  }
+
+  .client-wordmark {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: var(--subtle);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .client-name {
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--text);
+  }
+
+  .client-month {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 2px;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── CLIENT CALENDAR GRID ── */
+  .cal-dow-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+    margin-bottom: 3px;
+  }
+
+  .cal-dow {
+    font-family: var(--mono);
+    font-size: 8px;
+    color: var(--muted);
+    text-align: center;
+    padding: 4px 0;
+    letter-spacing: 0.1em;
+  }
+
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+  }
+
+  .cal-day {
+    aspect-ratio: 1;
+    border-radius: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cal-day:hover { transform: scale(1.06); z-index: 2; }
+  .cal-day.today { box-shadow: 0 0 0 2px white; }
+  .cal-day.empty { background: transparent; border-color: transparent; cursor: default; }
+  .cal-day.empty:hover { transform: none; }
+
+  .cal-day .day-num {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .cal-day .day-zone {
+    font-family: var(--mono);
+    font-size: 5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    opacity: 0.85;
+  }
+
+  /* zone coloring on client cells */
+  .cal-day.zc-pink   { background: var(--pink-bg);   border-color: var(--pink-bg);   }
+  .cal-day.zc-orange { background: var(--orange-bg); border-color: var(--orange-bg); }
+  .cal-day.zc-blue   { background: var(--blue-bg);   border-color: var(--blue-bg);   }
+  .cal-day.zc-yellow { background: var(--yellow-bg); border-color: var(--yellow-bg); }
+  .cal-day.zc-green  { background: var(--green-bg);  border-color: var(--green-bg);  }
+  .cal-day.zc-purple { background: var(--purple-bg); border-color: var(--purple-bg); }
+  .cal-day.zc-red    { background: var(--red-bg);    border-color: var(--red-bg);    }
+  .cal-day.zc-brown  { background: var(--brown-bg);  border-color: var(--brown-bg);  }
+
+  .cal-day.zc-pink   .day-num, .cal-day.zc-pink   .day-zone { color: var(--pink-text);   }
+  .cal-day.zc-orange .day-num, .cal-day.zc-orange .day-zone { color: var(--orange-text); }
+  .cal-day.zc-blue   .day-num, .cal-day.zc-blue   .day-zone { color: var(--blue-text);   }
+  .cal-day.zc-yellow .day-num, .cal-day.zc-yellow .day-zone { color: var(--yellow-text); }
+  .cal-day.zc-green  .day-num, .cal-day.zc-green  .day-zone { color: var(--green-text);  }
+  .cal-day.zc-purple .day-num, .cal-day.zc-purple .day-zone { color: var(--purple-text); }
+  .cal-day.zc-red    .day-num, .cal-day.zc-red    .day-zone { color: var(--red-text);    }
+  .cal-day.zc-brown  .day-num, .cal-day.zc-brown  .day-zone { color: var(--brown-text);  }
+
+  /* ── DAY DETAIL SHEET ── */
+  .detail-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 200;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .detail-overlay.open {
+    display: flex;
+  }
+
+  .detail-sheet {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-radius: 16px 16px 0 0;
+    padding: 20px 20px 40px;
+    width: 100%;
+    max-width: 500px;
+    animation: slideUp 0.22s ease-out;
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+
+  .detail-handle {
+    width: 36px;
+    height: 4px;
+    background: var(--muted);
+    border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+
+  .detail-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .detail-date {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .detail-zone-name {
+    font-family: var(--mono);
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .detail-tagline {
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 300;
+    margin-top: 4px;
+    opacity: 0.7;
+  }
+
+  .detail-close {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 16px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-left: 12px;
+    transition: color 0.15s;
+  }
+
+  .detail-close:hover { color: var(--text); }
+
+  .score-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .score-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .score-emoji {
+    font-size: 16px;
+    width: 22px;
+    flex-shrink: 0;
+    text-align: center;
+  }
+
+  .score-cat {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    width: 80px;
+    flex-shrink: 0;
+  }
+
+  .score-bar-wrap {
+    flex: 1;
+    height: 6px;
+    background: var(--bg);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .score-bar {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.4s ease-out;
+  }
+
+  .score-val {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    width: 28px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .score-guide {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--text-dim);
+    width: 110px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  /* ── LEGEND ── */
+  .legend {
+    margin-top: 28px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .legend-chip {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 4px 8px;
+    border-radius: 3px;
+  }
+
+  /* ── FOOTER ── */
+  .client-footer {
+    margin-top: 28px;
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-align: center;
+  }
+
+  /* ── MOBILE TWEAKS ── */
+  @media (max-width: 380px) {
+    .cal-day .day-num { font-size: 11px; }
+    .cal-day .day-zone { font-size: 5px; }
+    .score-guide { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  ADMIN VIEW                                        -->
+<!-- ══════════════════════════════════════════════════ -->
+<div id="admin" class="view active">
+  <div class="admin-header">
+    <div class="wordmark">luckify.me</div>
+    <div class="admin-title">// CALENDAR GENERATOR</div>
+  </div>
+
+  <div class="field-group">
+    <label>Client Handle</label>
+    <input type="text" id="clientName" placeholder="e.g. mkcrusher" autocomplete="off" autocapitalize="off">
+  </div>
+
+  <div class="field-group">
+    <div class="month-row">
+      <div>
+        <label>Month</label>
+        <select id="selMonth">
+          <option value="0">January</option><option value="1">February</option>
+          <option value="2">March</option><option value="3">April</option>
+          <option value="4">May</option><option value="5">June</option>
+          <option value="6">July</option><option value="7">August</option>
+          <option value="8">September</option><option value="9">October</option>
+          <option value="10">November</option><option value="11">December</option>
+        </select>
+      </div>
+      <div>
+        <label>Year</label>
+        <select id="selYear"></select>
+      </div>
+    </div>
+  </div>
+
+  <div class="field-group">
+    <div class="zone-grid-label">Tap each day to assign zone</div>
+    <div class="zone-grid" id="adminGrid"></div>
+  </div>
+
+  <button class="generate-btn" onclick="generateLink()">GENERATE LINK →</button>
+
+  <div class="share-box" id="shareBox">
+    <div class="share-label">Share with client</div>
+    <div class="share-url" id="shareUrl"></div>
+    <button class="copy-btn" id="copyBtn" onclick="copyLink()">COPY LINK</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  ZONE PICKER POPUP (admin)                         -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="zone-picker-overlay" id="pickerOverlay" onclick="closePicker(event)">
+  <div class="zone-picker">
+    <div class="zone-picker-title">SELECT ZONE</div>
+    <div class="zone-picker-options" id="pickerOptions"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  CLIENT VIEW                                       -->
+<!-- ══════════════════════════════════════════════════ -->
+<div id="client" class="view">
+  <div class="client-header">
+    <div class="client-wordmark">Lucky Window // luckify.me</div>
+    <div class="client-name" id="clientNameDisplay"></div>
+    <div class="client-month" id="clientMonthDisplay"></div>
+  </div>
+
+  <div class="cal-dow-row">
+    <div class="cal-dow">SUN</div><div class="cal-dow">MON</div>
+    <div class="cal-dow">TUE</div><div class="cal-dow">WED</div>
+    <div class="cal-dow">THU</div><div class="cal-dow">FRI</div>
+    <div class="cal-dow">SAT</div>
+  </div>
+  <div class="cal-grid" id="clientGrid"></div>
+
+  <div class="legend" id="clientLegend"></div>
+
+  <div class="client-footer">COLOR ZONE = DAILY ENVIRONMENTAL ALIGNMENT // AM READING</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  DAY DETAIL BOTTOM SHEET (client)                  -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="detail-overlay" id="detailOverlay" onclick="closeDetail(event)">
+  <div class="detail-sheet" id="detailSheet">
+    <div class="detail-handle"></div>
+    <div class="detail-top">
+      <div>
+        <div class="detail-date" id="detailDate"></div>
+        <div class="detail-zone-name" id="detailZoneName"></div>
+        <div class="detail-tagline" id="detailTagline"></div>
+      </div>
+      <button class="detail-close" onclick="closeDetailBtn()">✕</button>
+    </div>
+    <div class="score-rows" id="scoreRows"></div>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════
+   ZONE DATA
+════════════════════════════════════════════════════ */
+const ZONES = {
+  Pink:   { bg:'#4a1040', text:'#f9c8ee', cls:'zc-pink'   },
+  Orange: { bg:'#3d1a00', text:'#ffd6a0', cls:'zc-orange' },
+  Blue:   { bg:'#0a1e35', text:'#a8d4f5', cls:'zc-blue'   },
+  Yellow: { bg:'#2a2200', text:'#fff1a0', cls:'zc-yellow' },
+  Green:  { bg:'#0e1f10', text:'#b8f0c0', cls:'zc-green'  },
+  Purple: { bg:'#1a0a2e', text:'#d4b8f5', cls:'zc-purple' },
+  Red:    { bg:'#2e0a08', text:'#ffc0bc', cls:'zc-red'    },
+  Brown:  { bg:'#1a0f08', text:'#d4b898', cls:'zc-brown'  },
+};
+
+const ZONE_NAMES = ['Pink','Orange','Blue','Yellow','Green','Purple','Red','Brown'];
+
+const CELL_LINE = {
+  Orange:'Make your move', Blue:'Think it through',   Red:'Careful aggression',
+  Green:'Build the habit', Yellow:'Show up present',  Purple:'Go inward',
+  Pink:'Full expression',  Brown:'Rest and reset',
+};
+
+const CAT_EMOJI = { Action:'⚡', Strategy:'🧠', Discipline:'🔒', Social:'🤝', Creativity:'✨', Risk:'🎯' };
+
+const BASE_WEIGHTS = {
+  Orange: { Action:10, Strategy:8,  Discipline:8, Social:6, Creativity:6,  Risk:10 },
+  Blue:   { Action:5,  Strategy:10, Discipline:4, Social:6, Creativity:8,  Risk:6  },
+  Red:    { Action:9,  Strategy:5,  Discipline:3, Social:5, Creativity:4,  Risk:9  },
+  Green:  { Action:6,  Strategy:6,  Discipline:9, Social:6, Creativity:5,  Risk:4  },
+  Yellow: { Action:5,  Strategy:6,  Discipline:6, Social:9, Creativity:6,  Risk:5  },
+  Purple: { Action:3,  Strategy:7,  Discipline:6, Social:4, Creativity:10, Risk:3  },
+  Pink:   { Action:8,  Strategy:6,  Discipline:3, Social:7, Creativity:10, Risk:8  },
+  Brown:  { Action:2,  Strategy:4,  Discipline:4, Social:3, Creativity:4,  Risk:2  },
+};
+
+const MULT = { Orange:2.57, Blue:2.04, Red:2.25, Green:1.70, Yellow:0.75, Purple:0.50, Pink:1.50, Brown:1.00 };
+
+const GUIDANCE = {
+  Orange: { Action:'Move on it now',       Strategy:'Plan while moving',  Discipline:'Stay in structure',   Social:'Leverage your network',  Creativity:'Channel into output', Risk:'Take the calculated bet' },
+  Blue:   { Action:'Only what matters',    Strategy:'Deep work pays off', Discipline:'Follow the process',  Social:'Build key alliances',    Creativity:'Explore freely',      Risk:'Calculated exposure' },
+  Red:    { Action:'Controlled aggression',Strategy:'Adapt in real time', Discipline:'Hold your ground',   Social:'Keep your own counsel',  Creativity:'Improvise',           Risk:'Know your exit first' },
+  Green:  { Action:'Steady progress',      Strategy:'Long game thinking', Discipline:'This is your edge',  Social:'Strengthen foundations', Creativity:'Practice, not perform',Risk:'Minimal today' },
+  Yellow: { Action:'Show up fully',        Strategy:'Build your plan',    Discipline:'Keep the routine',   Social:'Connection is the edge', Creativity:'Express naturally',   Risk:'Read the room' },
+  Purple: { Action:'Minimal action',       Strategy:'Reflect first',      Discipline:'Anchor to routine',  Social:'Limit exposure',         Creativity:'Inner work pays off', Risk:'Not today' },
+  Pink:   { Action:'Seize the moment',     Strategy:'Bold moves work',    Discipline:'Channel the energy', Social:'Radiate, connect',       Creativity:'Full expression now', Risk:'Size up when clear' },
+  Brown:  { Action:'One task only',        Strategy:'Simplify',           Discipline:'Maintain baseline',  Social:'Low bandwidth today',    Creativity:'Rest the mind',       Risk:'Preserve capital' },
+};
+
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+/* ════════════════════════════════════════════════════
+   SCORING ENGINE
+════════════════════════════════════════════════════ */
+function getZoneScores(zone) {
+  const w = BASE_WEIGHTS[zone];
+  const m = MULT[zone];
+  if (!w || !m) return [];
+
+  const raw = Object.entries(w)
+    .map(([cat, wt]) => ({ cat, raw: wt * m }))
+    .sort((a, b) => b.raw - a.raw);
+
+  const zMax = raw[0].raw;
+  return raw.map(r => ({
+    cat: r.cat,
+    normalized: Math.round((r.raw / zMax) * 100) / 10
+  }));
+}
+
+/* ════════════════════════════════════════════════════
+   ADMIN — SETUP
+════════════════════════════════════════════════════ */
+const adminDayZones = {};
+let pickerTargetDay = null;
+
+function initAdmin() {
+  const now = new Date();
+  // populate year select
+  const ys = document.getElementById('selYear');
+  for (let y = now.getFullYear(); y <= now.getFullYear() + 2; y++) {
+    const o = document.createElement('option');
+    o.value = y; o.textContent = y;
+    ys.appendChild(o);
+  }
+  document.getElementById('selMonth').value = now.getMonth();
+
+  document.getElementById('selMonth').addEventListener('change', renderAdminGrid);
+  document.getElementById('selYear').addEventListener('change', renderAdminGrid);
+
+  // zone picker options
+  const po = document.getElementById('pickerOptions');
+  ZONE_NAMES.forEach(z => {
+    const btn = document.createElement('button');
+    btn.className = 'zone-option';
+    btn.style.background = ZONES[z].bg;
+    btn.style.color = ZONES[z].text;
+    btn.textContent = z.toUpperCase();
+    btn.onclick = () => assignZone(z);
+    po.appendChild(btn);
+  });
+  const clr = document.createElement('div');
+  clr.className = 'zone-option-clear';
+  clr.textContent = '— CLEAR —';
+  clr.onclick = () => assignZone(null);
+  po.appendChild(clr);
+
+  renderAdminGrid();
+}
+
+function getAdminMonthYear() {
+  return {
+    month: parseInt(document.getElementById('selMonth').value),
+    year:  parseInt(document.getElementById('selYear').value),
+  };
+}
+
+function renderAdminGrid() {
+  const { month, year } = getAdminMonthYear();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDow    = new Date(year, month, 1).getDay();
+  const grid = document.getElementById('adminGrid');
+  grid.innerHTML = '';
+
+  // DOW headers
+  ['S','M','T','W','T','F','S'].forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'dow-label';
+    el.textContent = d;
+    grid.appendChild(el);
+  });
+
+  // Empty cells before day 1
+  for (let i = 0; i < firstDow; i++) {
+    const el = document.createElement('div');
+    el.className = 'day-cell-admin empty';
+    grid.appendChild(el);
+  }
+
+  // Day cells
+  for (let d = 1; d <= daysInMonth; d++) {
+    const el = document.createElement('div');
+    el.className = 'day-cell-admin';
+    el.dataset.day = d;
+
+    const zone = adminDayZones[`${year}-${month}-${d}`] || null;
+    applyZoneToAdminCell(el, d, zone);
+
+    el.onclick = () => openPicker(d);
+    grid.appendChild(el);
+  }
+}
+
+function applyZoneToAdminCell(el, day, zone) {
+  el.className = 'day-cell-admin';
+  el.innerHTML = '';
+
+  if (zone) {
+    el.classList.add(ZONES[zone].cls);
+    const dn = document.createElement('div');
+    dn.className = 'dn';
+    dn.textContent = day;
+    const zl = document.createElement('div');
+    zl.className = 'zl';
+    zl.textContent = zone.substring(0,3).toUpperCase();
+    el.appendChild(dn);
+    el.appendChild(zl);
+  } else {
+    const dn = document.createElement('div');
+    dn.className = 'dn';
+    dn.style.color = '#333';
+    dn.textContent = day;
+    el.appendChild(dn);
+  }
+}
+
+function openPicker(day) {
+  pickerTargetDay = day;
+  document.getElementById('pickerOverlay').classList.add('open');
+}
+
+function closePicker(e) {
+  if (e.target === document.getElementById('pickerOverlay')) {
+    document.getElementById('pickerOverlay').classList.remove('open');
+  }
+}
+
+function assignZone(zone) {
+  const { month, year } = getAdminMonthYear();
+  const key = `${year}-${month}-${pickerTargetDay}`;
+
+  if (zone) adminDayZones[key] = zone;
+  else delete adminDayZones[key];
+
+  // update the cell in the grid
+  const cells = document.querySelectorAll('#adminGrid .day-cell-admin');
+  cells.forEach(c => {
+    if (parseInt(c.dataset.day) === pickerTargetDay) {
+      applyZoneToAdminCell(c, pickerTargetDay, zone || null);
+    }
+  });
+
+  document.getElementById('pickerOverlay').classList.remove('open');
+}
+
+/* ════════════════════════════════════════════════════
+   LINK GENERATION
+════════════════════════════════════════════════════ */
+function generateLink() {
+  const name = document.getElementById('clientName').value.trim();
+  if (!name) { document.getElementById('clientName').focus(); return; }
+
+  const { month, year } = getAdminMonthYear();
+
+  // Encode day zones compactly: comma-sep "day:zone" pairs
+  const entries = Object.entries(adminDayZones)
+    .filter(([k]) => {
+      const parts = k.split('-');
+      return parseInt(parts[1]) === month && parseInt(parts[0]) === year;
+    })
+    .map(([k, z]) => `${k.split('-')[2]}:${z}`);
+
+  const params = new URLSearchParams({
+    n: name,
+    m: month,
+    y: year,
+    d: entries.join(',')
+  });
+
+  const url = `${location.origin}${location.pathname}?${params.toString()}`;
+  document.getElementById('shareUrl').textContent = url;
+  document.getElementById('shareBox').classList.add('visible');
+  document.getElementById('copyBtn').textContent = 'COPY LINK';
+  document.getElementById('copyBtn').classList.remove('copied');
+}
+
+function copyLink() {
+  const url = document.getElementById('shareUrl').textContent;
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = 'COPIED ✓';
+    btn.classList.add('copied');
+  });
+}
+
+/* ════════════════════════════════════════════════════
+   CLIENT VIEW — RENDER FROM URL PARAMS
+════════════════════════════════════════════════════ */
+function initClient(params) {
+  const name  = params.get('n') || 'OPERATOR';
+  const month = parseInt(params.get('m'));
+  const year  = parseInt(params.get('y'));
+  const raw   = params.get('d') || '';
+
+  // parse day:zone pairs
+  const dayZones = {};
+  raw.split(',').forEach(pair => {
+    const [day, zone] = pair.split(':');
+    if (day && zone) dayZones[parseInt(day)] = zone;
+  });
+
+  document.getElementById('clientNameDisplay').textContent = name.toUpperCase();
+  document.getElementById('clientMonthDisplay').textContent = `${MONTHS[month]} ${year}`;
+
+  renderClientCalendar(year, month, dayZones);
+  renderLegend(dayZones);
+
+  document.getElementById('admin').classList.remove('active');
+  document.getElementById('client').classList.add('active');
+}
+
+function renderClientCalendar(year, month, dayZones) {
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDow    = new Date(year, month, 1).getDay();
+  const now = new Date();
+  const todayNum = (now.getFullYear() === year && now.getMonth() === month) ? now.getDate() : -1;
+
+  const grid = document.getElementById('clientGrid');
+  grid.innerHTML = '';
+
+  // Empty padding
+  for (let i = 0; i < firstDow; i++) {
+    const el = document.createElement('div');
+    el.className = 'cal-day empty';
+    grid.appendChild(el);
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const zone = dayZones[d] || null;
+    const el   = document.createElement('div');
+    el.className = 'cal-day';
+
+    if (d === todayNum) el.classList.add('today');
+    if (zone && ZONES[zone]) el.classList.add(ZONES[zone].cls);
+
+    const dn = document.createElement('div');
+    dn.className = 'day-num';
+    if (!zone) dn.style.color = '#333';
+    dn.textContent = d;
+    el.appendChild(dn);
+
+    if (zone) {
+      const dz = document.createElement('div');
+      dz.className = 'day-zone';
+      dz.textContent = zone.substring(0,3).toUpperCase();
+      el.appendChild(dz);
+
+      el.onclick = () => openDetail(d, zone, month, year);
+    }
+
+    grid.appendChild(el);
+  }
+}
+
+function renderLegend(dayZones) {
+  const present = [...new Set(Object.values(dayZones))];
+  const sorted  = ZONE_NAMES.filter(z => present.includes(z));
+  const wrap = document.getElementById('clientLegend');
+  wrap.innerHTML = '';
+  sorted.forEach(z => {
+    const chip = document.createElement('div');
+    chip.className = 'legend-chip';
+    chip.style.background = ZONES[z].bg;
+    chip.style.color = ZONES[z].text;
+    chip.textContent = z.toUpperCase();
+    wrap.appendChild(chip);
+  });
+}
+
+/* ════════════════════════════════════════════════════
+   DAY DETAIL SHEET
+════════════════════════════════════════════════════ */
+function openDetail(day, zone, month, year) {
+  const z = ZONES[zone];
+  const dateStr = `${MONTHS[month].substring(0,3).toUpperCase()} ${day}, ${year}`;
+
+  document.getElementById('detailDate').textContent = dateStr;
+
+  const zn = document.getElementById('detailZoneName');
+  zn.textContent = zone.toUpperCase();
+  zn.style.color = z.text;
+
+  document.getElementById('detailTagline').textContent = CELL_LINE[zone] || '';
+  document.getElementById('detailTagline').style.color = z.text;
+  document.getElementById('detailSheet').style.background = z.bg;
+  document.getElementById('detailSheet').style.borderColor = z.bg;
+
+  const scores = getZoneScores(zone);
+  const guidance = GUIDANCE[zone] || {};
+  const rows = document.getElementById('scoreRows');
+  rows.innerHTML = '';
+
+  scores.forEach(({ cat, normalized }, i) => {
+    const row = document.createElement('div');
+    row.className = 'score-row';
+
+    const pct = normalized * 10; // 0–100
+
+    row.innerHTML = `
+      <div class="score-emoji">${CAT_EMOJI[cat] || '·'}</div>
+      <div class="score-cat" style="color:${z.text}">${cat}</div>
+      <div class="score-bar-wrap">
+        <div class="score-bar" style="width:0%;background:${z.text}" data-pct="${pct}"></div>
+      </div>
+      <div class="score-val" style="color:${z.text}">${normalized.toFixed(1)}</div>
+      <div class="score-guide" style="color:${z.text};opacity:0.65">${guidance[cat] || ''}</div>
+    `;
+    rows.appendChild(row);
+  });
+
+  document.getElementById('detailOverlay').classList.add('open');
+
+  // Animate bars after render
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      rows.querySelectorAll('.score-bar').forEach(bar => {
+        bar.style.width = bar.dataset.pct + '%';
+      });
+    });
+  });
+}
+
+function closeDetailBtn() {
+  document.getElementById('detailOverlay').classList.remove('open');
+}
+
+function closeDetail(e) {
+  if (e.target === document.getElementById('detailOverlay')) {
+    document.getElementById('detailOverlay').classList.remove('open');
+  }
+}
+
+/* ════════════════════════════════════════════════════
+   BOOT
+════════════════════════════════════════════════════ */
+const urlParams = new URLSearchParams(location.search);
+if (urlParams.has('n') && urlParams.has('m') && urlParams.has('y')) {
+  initClient(urlParams);
+} else {
+  initAdmin();
+}
+</script>
+</body>
+</html>
