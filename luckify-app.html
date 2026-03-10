@@ -147,7 +147,6 @@
   /* ── WINDOW DIRECTIVE ── */
   .window-block { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 14px 16px; margin-bottom: 20px; }
   .window-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.4; margin-bottom: 6px; }
-  .window-name-display { font-family: var(--mono); font-size: 13px; font-weight: 700; margin-bottom: 6px; }
   .window-directive { font-family: var(--sans); font-size: 13px; line-height: 1.6; opacity: 0.75; }
 
   /* ── SCORE ROWS ── */
@@ -286,8 +285,7 @@
     </div>
     <div class="sheet-identity" id="sheetIdentity"></div>
     <div class="window-block" id="windowBlock">
-      <div class="window-label">Window Directive</div>
-      <div class="window-name-display" id="windowNameDisplay"></div>
+      <div class="window-label">Energy Pattern</div>
       <div class="window-directive" id="windowDirective"></div>
     </div>
     <div class="scores-label">TODAY'S FOCUS — TAP TO GO DEEPER</div>
@@ -1111,11 +1109,9 @@ function openDaySheet(day, zone, month, year) {
   document.getElementById('daySheetInner').style.background = z.bg;
   document.getElementById('daySheetInner').style.borderColor = z.bg;
 
-  // Window directive
-  if (wd) {
-    document.getElementById('windowNameDisplay').textContent = `${wd.name}  ·  ${wd.score}`;
-    document.getElementById('windowNameDisplay').style.color = z.text;
-    document.getElementById('windowDirective').textContent = wd.text;
+  // Wave pattern
+  if (rd && rd.waveNote) {
+    document.getElementById('windowDirective').textContent = rd.waveNote;
     document.getElementById('windowDirective').style.color = z.text;
     document.getElementById('windowBlock').style.borderColor = `${z.acc}33`;
   }
@@ -1132,7 +1128,7 @@ function openDaySheet(day, zone, month, year) {
       <div class="score-cat" style="color:${z.text}">${cat}</div>
       <div class="score-bar-wrap"><div class="score-bar" style="width:0%;background:${z.acc}" data-pct="${normalized*10}"></div></div>
       <div class="score-val" style="color:${z.text};opacity:0.6">${normalized.toFixed(1)}</div>
-      <div class="tap-hint" style="color:${z.text}">TAP →</div>
+      <div class="tap-hint" style="color:${z.text};pointer-events:none">TAP →</div>
     `;
     row.onclick = () => openDeepSheet(cat, zone);
     rows.appendChild(row);
