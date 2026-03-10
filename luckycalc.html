@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lucky Window // Zone Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050505;
+    --surface: #0c0c0c;
+    --border: #1c1c1c;
+    --muted: #333;
+    --dim: #555;
+    --text: #ccc;
+    --bright: #eee;
+    --accent: #c8a96e;
+
+    --pink-bg:   #4a1040; --pink-text:   #f9c8ee;
+    --orange-bg: #3d1a00; --orange-text: #ffd6a0;
+    --blue-bg:   #0a1e35; --blue-text:   #a8d4f5;
+    --yellow-bg: #2a2200; --yellow-text: #fff1a0;
+    --green-bg:  #0e1f10; --green-text:  #b8f0c0;
+    --purple-bg: #1a0a2e; --purple-text: #d4b8f5;
+    --red-bg:    #2e0a08; --red-text:    #ffc0bc;
+    --brown-bg:  #1a0f08; --brown-text:  #d4b898;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Courier Prime', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 0 60px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
+
+  header {
+    width: 100%;
+    max-width: 680px;
+    padding: 48px 24px 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .sys-label {
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(42px, 8vw, 72px);
+    letter-spacing: 0.08em;
+    color: var(--bright);
+    line-height: 0.9;
+    margin-bottom: 4px;
+  }
+
+  h1 span {
+    color: var(--accent);
+  }
+
+  .sub {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-top: 10px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .card {
+    width: 100%;
+    max-width: 680px;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+    margin-top: 32px;
+  }
+
+  .section-label {
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+
+  input, select {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--bright);
+    font-family: 'Courier Prime', monospace;
+    font-size: 14px;
+    padding: 10px 12px;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+  }
+
+  input:focus, select:focus {
+    border-color: var(--accent);
+  }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23555'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+    cursor: pointer;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 28px 0;
+  }
+
+  .btn-run {
+    width: 100%;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.15em;
+    padding: 16px;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    margin-top: 8px;
+  }
+
+  .btn-run:hover { opacity: 0.88; }
+  .btn-run:active { transform: scale(0.99); }
+
+  /* Result */
+  #result-wrap {
+    width: 100%;
+    max-width: 680px;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+    margin-top: 32px;
+  }
+
+  .result-zone {
+    padding: 28px 24px 24px;
+    border: 1px solid;
+    position: relative;
+    animation: fadeIn 0.35s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .result-zone.Pink   { background: var(--pink-bg);   border-color: var(--pink-text);   color: var(--pink-text); }
+  .result-zone.Orange { background: var(--orange-bg); border-color: var(--orange-text); color: var(--orange-text); }
+  .result-zone.Blue   { background: var(--blue-bg);   border-color: var(--blue-text);   color: var(--blue-text); }
+  .result-zone.Yellow { background: var(--yellow-bg); border-color: var(--yellow-text); color: var(--yellow-text); }
+  .result-zone.Green  { background: var(--green-bg);  border-color: var(--green-text);  color: var(--green-text); }
+  .result-zone.Purple { background: var(--purple-bg); border-color: var(--purple-text); color: var(--purple-text); }
+  .result-zone.Red    { background: var(--red-bg);    border-color: var(--red-text);    color: var(--red-text); }
+  .result-zone.Brown  { background: var(--brown-bg);  border-color: var(--brown-text);  color: var(--brown-text); }
+
+  .result-zone-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    letter-spacing: 0.1em;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .result-band {
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 20px;
+  }
+
+  .result-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    border-top: 1px solid currentColor;
+    padding-top: 18px;
+    opacity: 0.85;
+  }
+
+  .stat-block label {
+    font-size: 8px;
+    letter-spacing: 0.25em;
+    opacity: 0.6;
+    display: block;
+    margin-bottom: 4px;
+    color: currentColor;
+  }
+
+  .stat-block .val {
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .result-mantra {
+    margin-top: 18px;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    font-style: italic;
+  }
+
+  .error-msg {
+    background: var(--red-bg);
+    border: 1px solid var(--red-text);
+    color: var(--red-text);
+    padding: 14px 16px;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    animation: fadeIn 0.3s ease;
+  }
+
+  /* Zone reference strip */
+  .zone-strip {
+    width: 100%;
+    max-width: 680px;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+    margin-top: 48px;
+  }
+
+  .strip-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    margin-bottom: 2px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+  }
+
+  .strip-chip {
+    width: 10px;
+    height: 10px;
+    flex-shrink: 0;
+  }
+
+  .strip-name { font-weight: 700; width: 52px; }
+  .strip-range { opacity: 0.5; flex: 1; }
+  .strip-band { opacity: 0.35; font-size: 9px; letter-spacing: 0.15em; text-align: right; }
+
+  /* batch section */
+  .batch-toggle {
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    color: var(--dim);
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 10px 0;
+    border: none;
+    background: none;
+    font-family: 'Courier Prime', monospace;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s;
+  }
+  .batch-toggle:hover { color: var(--accent); }
+  .batch-toggle .arrow { display: inline-block; transition: transform 0.2s; }
+  .batch-toggle.open .arrow { transform: rotate(90deg); }
+
+  #batch-section {
+    display: none;
+    margin-top: 16px;
+  }
+  #batch-section.visible { display: block; }
+
+  textarea {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--bright);
+    font-family: 'Courier Prime', monospace;
+    font-size: 11px;
+    padding: 12px;
+    resize: vertical;
+    min-height: 120px;
+    outline: none;
+  }
+  textarea:focus { border-color: var(--accent); }
+
+  .batch-hint {
+    font-size: 9px;
+    color: var(--dim);
+    letter-spacing: 0.1em;
+    margin-top: 6px;
+  }
+
+  .batch-results {
+    margin-top: 16px;
+  }
+
+  .batch-row {
+    display: grid;
+    grid-template-columns: 110px 1fr 80px 60px;
+    gap: 8px;
+    padding: 8px 10px;
+    border-left: 3px solid;
+    margin-bottom: 4px;
+    font-size: 11px;
+    align-items: center;
+    animation: fadeIn 0.2s ease;
+  }
+
+  .batch-row .b-date { opacity: 0.6; font-size: 10px; }
+  .batch-row .b-zone { font-weight: 700; letter-spacing: 0.1em; }
+  .batch-row .b-score { opacity: 0.7; font-size: 10px; }
+  .batch-row .b-band { opacity: 0.5; font-size: 9px; letter-spacing: 0.1em; text-align: right; }
+
+  .batch-row.Pink   { background: var(--pink-bg);   border-color: var(--pink-text);   color: var(--pink-text); }
+  .batch-row.Orange { background: var(--orange-bg); border-color: var(--orange-text); color: var(--orange-text); }
+  .batch-row.Blue   { background: var(--blue-bg);   border-color: var(--blue-text);   color: var(--blue-text); }
+  .batch-row.Yellow { background: var(--yellow-bg); border-color: var(--yellow-text); color: var(--yellow-text); }
+  .batch-row.Green  { background: var(--green-bg);  border-color: var(--green-text);  color: var(--green-text); }
+  .batch-row.Purple { background: var(--purple-bg); border-color: var(--purple-text); color: var(--purple-text); }
+  .batch-row.Red    { background: var(--red-bg);    border-color: var(--red-text);    color: var(--red-text); }
+  .batch-row.Brown  { background: var(--brown-bg);  border-color: var(--brown-text);  color: var(--brown-text); }
+
+  /* Location autocomplete */
+  .loc-wrap {
+    position: relative;
+  }
+
+  .loc-badge {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    margin-top: 4px;
+    min-height: 14px;
+    transition: opacity 0.2s;
+  }
+
+  .loc-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0; right: 0;
+    background: #111;
+    border: 1px solid var(--accent);
+    border-top: none;
+    z-index: 100;
+    max-height: 220px;
+    overflow-y: auto;
+  }
+
+  .loc-dropdown:empty { display: none; }
+
+  .loc-option {
+    padding: 9px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    letter-spacing: 0.05em;
+    transition: background 0.1s;
+  }
+
+  .loc-option:hover, .loc-option.active {
+    background: #1a1a1a;
+    color: var(--bright);
+  }
+
+  .loc-option .loc-tz {
+    font-size: 9px;
+    color: var(--dim);
+    float: right;
+    letter-spacing: 0.1em;
+  }
+
+  @media (max-width: 500px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .grid-3 { grid-template-columns: 1fr 1fr; }
+    .result-stats { grid-template-columns: 1fr 1fr; }
+    .batch-row { grid-template-columns: 90px 1fr 60px; }
+    .batch-row .b-band { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="sys-label">luckify.me // elemental alignment</div>
+  <h1>LUCKY<br><span>WINDOW</span></h1>
+  <div class="sub">Daily Zone Calculator &nbsp;·&nbsp; BaZi Engine v2</div>
+</header>
+
+<div class="card">
+  <div class="section-label">Birth Data</div>
+  <div class="grid-2">
+    <div class="field">
+      <label>Birthday</label>
+      <input type="date" id="birthDate" value="1963-08-30">
+    </div>
+    <div class="field">
+      <label>Birth Time (HH:MM)</label>
+      <input type="text" id="birthTime" placeholder="12:00" value="12:00">
+    </div>
+  </div>
+  <div class="grid-2" style="margin-top:12px">
+    <div class="field">
+      <label>Birth Location</label>
+      <div class="loc-wrap">
+        <input type="text" id="birthLocInput" placeholder="e.g. New York, Toronto…" autocomplete="off" oninput="locSearch(this,'birthLocDrop','birthLocBadge','birthGMT')" onkeydown="locKey(event,'birthLocDrop','birthLocBadge','birthGMT')">
+        <div class="loc-dropdown" id="birthLocDrop"></div>
+      </div>
+      <div class="loc-badge" id="birthLocBadge"></div>
+      <input type="hidden" id="birthGMT" value="-5">
+    </div>
+    <div class="field">
+      <label>Boundary</label>
+      <select id="boundary">
+        <option value="MIDNIGHT" selected>Midnight</option>
+        <option value="ZI">Zi Hour (11pm)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-label">Event / Target Day</div>
+  <div class="grid-3">
+    <div class="field">
+      <label>Date</label>
+      <input type="date" id="eventDate">
+    </div>
+    <div class="field">
+      <label>Event Location</label>
+      <div class="loc-wrap">
+        <input type="text" id="eventLocInput" placeholder="e.g. Las Vegas, London…" autocomplete="off" oninput="locSearch(this,'eventLocDrop','eventLocBadge','eventGMT')" onkeydown="locKey(event,'eventLocDrop','eventLocBadge','eventGMT')">
+        <div class="loc-dropdown" id="eventLocDrop"></div>
+      </div>
+      <div class="loc-badge" id="eventLocBadge"></div>
+      <input type="hidden" id="eventGMT" value="-7">
+    </div>
+    <div class="field">
+      <label>Window</label>
+      <select id="window">
+        <option value="AM" selected>AM (10:00)</option>
+        <option value="PM">PM (19:00)</option>
+      </select>
+    </div>
+  </div>
+
+  <button class="btn-run" onclick="runSingle()">CALCULATE ZONE</button>
+</div>
+
+<div id="result-wrap"></div>
+
+<div class="card" style="margin-top:40px">
+  <button class="batch-toggle" id="batchToggle" onclick="toggleBatch()">
+    <span class="arrow">▶</span> Batch Mode — Multiple Dates
+  </button>
+  <div id="batch-section">
+    <div class="section-label">Enter one date per line (YYYY-MM-DD)</div>
+    <textarea id="batchDates" placeholder="2026-03-01&#10;2026-03-02&#10;2026-03-03&#10;2026-03-04&#10;2026-03-05"></textarea>
+    <div class="batch-hint">Uses birth data + GMT settings from above. One result per line.</div>
+    <button class="btn-run" style="margin-top:12px" onclick="runBatch()">RUN BATCH</button>
+    <div class="batch-results" id="batchResults"></div>
+  </div>
+</div>
+
+<div class="zone-strip">
+  <div class="section-label" style="margin-bottom:10px">Zone Reference</div>
+  <div id="zoneRef"></div>
+</div>
+
+<script>
+/* ============================================================
+   BAZI ENGINE — full port from Apps Script
+   ============================================================ */
+
+const LUCKY_CFG = {
+  AM_HOUR: 10, PM_HOUR: 19, MINUTE: 0,
+  DEFAULT_BOUNDARY: "MIDNIGHT",
+  DEFAULT_PRESET: "CLASSIC",
+  NATAL_W: { year: 1, month: 2, day: 3, hour: 1 },
+  NATAL_YEAR_MULT: 1.5,
+  ENV_W_DAY: 0.7, ENV_W_YEAR: 0.3,
+  ENV_COUNTER_BOOST: 0.08,
+  SHAPE_TANH_K: 1.2,
+  PEAK_ENV_GAIN: 0.25,
+  STABLE_MAX: 0.30, SWINGY_MIN: 0.45,
+  ENV_MATRIX: [
+    [1,    0.35, 0,   -0.9, 0.85],
+    [0.85, 1,    0.35, 0.85,-0.9],
+    [0,    0.85, 1,    0.35, 0.85],
+    [-0.9, 0,    0.85, 1,    0.35],
+    [0.35,-0.9,  0,    0.85, 1]
+  ]
+};
+
+const EL_ORDER = ["Wood","Fire","Earth","Metal","Water"];
+const LUCKY_BASELINE = 72;
+
+const STEMS = [
+  {key:"Jia",  yin:false, element:"Wood"},
+  {key:"Yi",   yin:true,  element:"Wood"},
+  {key:"Bing", yin:false, element:"Fire"},
+  {key:"Ding", yin:true,  element:"Fire"},
+  {key:"Wu",   yin:false, element:"Earth"},
+  {key:"Ji",   yin:true,  element:"Earth"},
+  {key:"Geng", yin:false, element:"Metal"},
+  {key:"Xin",  yin:true,  element:"Metal"},
+  {key:"Ren",  yin:false, element:"Water"},
+  {key:"Gui",  yin:true,  element:"Water"}
+];
+const STEM_KEYS   = STEMS.map(s => s.key);
+
+const BRANCHES = [
+  {key:"Zi",animal:"Rat"},{key:"Chou",animal:"Ox"},{key:"Yin",animal:"Tiger"},
+  {key:"Mao",animal:"Rabbit"},{key:"Chen",animal:"Dragon"},{key:"Si",animal:"Snake"},
+  {key:"Wu",animal:"Horse"},{key:"Wei",animal:"Goat"},{key:"Shen",animal:"Monkey"},
+  {key:"You",animal:"Rooster"},{key:"Xu",animal:"Dog"},{key:"Hai",animal:"Pig"}
+];
+const BRANCH_KEYS = BRANCHES.map(b => b.key);
+
+const BRANCH_HIDDEN_STEMS = {
+  Rat:["Gui"], Ox:["Ji","Xin","Gui"], Tiger:["Jia","Bing","Wu"], Rabbit:["Yi"],
+  Dragon:["Wu","Yi","Gui"], Snake:["Bing","Geng","Wu"], Horse:["Ding","Ji"],
+  Goat:["Ji","Yi","Ding"], Monkey:["Geng","Ren","Wu"], Rooster:["Xin"],
+  Dog:["Wu","Xin","Ding"], Pig:["Ren","Jia"]
+};
+
+const HIDDEN_WEIGHTS_BY_COUNT = { 1:[1.00], 2:[0.70,0.30], 3:[0.70,0.20,0.10] };
+
+const SEASONAL_PRESETS = {
+  CLASSIC: { "旺":1.00,"相":0.85,"休":0.70,"囚":0.50,"死":0.30 },
+  TWELVE:  { "旺":1.00,"相":0.90,"休":0.75,"囚":0.55,"死":0.30 }
+};
+
+const GEN_CYCLE = ["Wood","Fire","Earth","Metal","Water"];
+const KE_CYCLE  = ["Wood","Earth","Water","Fire","Metal"];
+
+const TIGER_MONTH_STEM_BASE = {0:3, 1:5, 2:7, 3:9, 4:1};
+
+/* --- Date helpers --- */
+function coerceDate(v) {
+  if (v instanceof Date) return new Date(v.getTime());
+  const d = new Date(v);
+  if (!isNaN(d)) return d;
+  throw new Error("Invalid date: " + v);
+}
+
+function jdFromDate(date) {
+  return date.getTime() / 86400000 + 2440587.5;
+}
+
+function norm360(x) { x = x % 360; return x < 0 ? x + 360 : x; }
+
+function localToUTC(localDate, tzHours) {
+  return new Date(+coerceDate(localDate) - Number(tzHours) * 3600000);
+}
+
+function solarLongitudeUTC(utcDate) {
+  const JD = jdFromDate(utcDate);
+  const T  = (JD - 2451545.0) / 36525.0;
+  const L0 = norm360(280.46646 + 36000.76983*T + 0.0003032*T*T);
+  const M  = norm360(357.52911 + 35999.05029*T - 0.0001537*T*T);
+  const Mr = M * Math.PI / 180;
+  const C  = (1.914602 - 0.004817*T - 0.000014*T*T)*Math.sin(Mr)
+           + (0.019993 - 0.000101*T)*Math.sin(2*Mr)
+           + 0.000289*Math.sin(3*Mr);
+  const trueLong = L0 + C;
+  const omega = 125.04 - 1934.136*T;
+  return norm360(trueLong - 0.00569 - 0.00478*Math.sin(omega*Math.PI/180));
+}
+
+function solarLon(localDate, tzHours) {
+  return solarLongitudeUTC(localToUTC(localDate, Number(tzHours)));
+}
+
+/* --- Pillar helpers --- */
+function pillarFromIdx(stemIdx, branchIdx) {
+  const stemKey = STEM_KEYS[stemIdx - 1];
+  const branchKey = BRANCH_KEYS[branchIdx - 1];
+  const stem = STEMS.find(s => s.key === stemKey) || {};
+  return { stemIdx, branchIdx, stemKey, stemElement: stem.element,
+           branchKey, branchAnimal: BRANCHES.find(b=>b.key===branchKey)?.animal };
+}
+
+function adjustedYearForLichun(d, tz) {
+  const y = d.getFullYear();
+  const lon = solarLon(d, tz);
+  const m = d.getMonth();
+  const after = (m > 1) || (m===1 && d.getDate()>=4) || (lon>=315||lon<45);
+  return after ? y : y-1;
+}
+
+function stemFromYear(y)   { return 1 + ((y-4)%10+10)%10; }
+function branchFromYear(y) { return 1 + ((y-4)%12+12)%12; }
+
+function monthBranchFromLon(lon) {
+  const l = ((+lon%360)+360)%360;
+  const k = Math.floor(((l-315+360)%360)/30);
+  return (k%12)+1;
+}
+
+function monthStemFromYearStem(ys, mb) {
+  const group = Math.floor((ys-1)/2);
+  const base = TIGER_MONTH_STEM_BASE[group];
+  return 1 + ((base-1+(mb-1))%10);
+}
+
+function hourBranchFromTime(d) {
+  const h = d.getHours() + d.getMinutes()/60;
+  const slot = Math.floor(((h+1)%24)/2);
+  return slot+1;
+}
+
+function hourStemFromDayStem(ds, hb) {
+  const bases = [1,3,5,7,9];
+  const g = Math.floor((ds-1)/2);
+  return 1+((bases[g]-1+(hb-1))%10);
+}
+
+function sexagenaryDay(localDT, tzHours, boundary) {
+  let y=localDT.getFullYear(), m=localDT.getMonth(), d=localDT.getDate();
+  if (String(boundary||"MIDNIGHT").toUpperCase()==="ZI") {
+    const hrs = localDT.getHours()+localDT.getMinutes()/60;
+    if (hrs>=23) {
+      const next=new Date(localDT.getTime()+86400000);
+      y=next.getFullYear(); m=next.getMonth(); d=next.getDate();
+    }
+  }
+  const localMid = new Date(y,m,d,0,0,0);
+  const utcMid   = localToUTC(localMid, tzHours);
+  const JDN      = Math.floor(jdFromDate(utcMid)+0.5);
+  return { stemNum: 1+((JDN+9)%10+10)%10, branchNum: 1+((JDN+1)%12+12)%12 };
+}
+
+function dayStemObj(localDT, tzHours, boundary) {
+  const n = sexagenaryDay(localDT, tzHours, boundary);
+  const s = STEMS[n.stemNum-1];
+  return { key:s.key, element:s.element, yin:s.yin };
+}
+
+function dayBranchObj(localDT, tzHours, boundary) {
+  const n = sexagenaryDay(localDT, tzHours, boundary);
+  const b = BRANCHES[n.branchNum-1];
+  return { key:b.key, animal:b.animal };
+}
+
+function stemKeyToElement(key) {
+  return STEMS.find(s=>s.key===key)?.element||"";
+}
+
+function seasonElementFromLon(lon) {
+  const l = ((+lon%360)+360)%360;
+  if (l>=315||l<45)  return "Wood";
+  if (l>=45&&l<135)  return "Fire";
+  if (l>=135&&l<225) return "Metal";
+  return "Water";
+}
+
+function statusForElement(el, seasonEl) {
+  if (el===seasonEl) return "旺";
+  const si = GEN_CYCLE.indexOf(seasonEl);
+  if (el===GEN_CYCLE[(si+1)%5]) return "相";
+  if (el===GEN_CYCLE[(si+4)%5]) return "休";
+  const ki = KE_CYCLE.indexOf(seasonEl);
+  if (el===KE_CYCLE[(ki+1)%5]) return "囚";
+  return "死";
+}
+
+function seasonalMult(el, sunLon, preset) {
+  const table = SEASONAL_PRESETS[(preset||"CLASSIC").toUpperCase()]||SEASONAL_PRESETS.CLASSIC;
+  return table[statusForElement(el, seasonElementFromLon(sunLon))]||1.0;
+}
+
+function accumulatePillar(totals, pillar, weight, sunLon, preset) {
+  totals[pillar.stemElement] += weight * seasonalMult(pillar.stemElement, sunLon, preset);
+  const hidden  = BRANCH_HIDDEN_STEMS[pillar.branchAnimal]||[];
+  const splits  = HIDDEN_WEIGHTS_BY_COUNT[hidden.length]||[];
+  for (let i=0;i<hidden.length;i++) {
+    const el = stemKeyToElement(hidden[i]);
+    totals[el] += (splits[i]||0) * weight * seasonalMult(el, sunLon, preset);
+  }
+}
+
+function fullPillars(localDT, tzHours, boundary) {
+  const tz = Number(tzHours);
+  const lon = solarLon(localDT, tz);
+  const adjY = adjustedYearForLichun(localDT, tz);
+  const yStem = stemFromYear(adjY), yBranch = branchFromYear(adjY);
+  const year = pillarFromIdx(yStem, yBranch);
+  const mBranch = monthBranchFromLon(lon);
+  const mStem   = monthStemFromYearStem(yStem, mBranch);
+  const month = pillarFromIdx(mStem, mBranch);
+  const dStemO   = dayStemObj(localDT, tz, boundary);
+  const dBranchO = dayBranchObj(localDT, tz, boundary);
+  const dStem   = STEM_KEYS.indexOf(dStemO.key)+1;
+  const dBranch = BRANCH_KEYS.indexOf(dBranchO.key)+1;
+  const day = pillarFromIdx(dStem, dBranch);
+  const hBranch = hourBranchFromTime(localDT);
+  const hStem   = hourStemFromDayStem(dStem, hBranch);
+  const hour = pillarFromIdx(hStem, hBranch);
+  return { year, month, day, hour, sunLon: lon };
+}
+
+function fullChartElementPct(localDT, tzHours, boundary, preset, wts) {
+  const P = fullPillars(localDT, tzHours, boundary);
+  if (!P) return null;
+  const W = Object.assign({year:1,month:2,day:3,hour:1}, wts||{});
+  const totals = {Wood:0,Fire:0,Earth:0,Metal:0,Water:0};
+  accumulatePillar(totals, P.year,  W.year,  P.sunLon, preset);
+  accumulatePillar(totals, P.month, W.month, P.sunLon, preset);
+  accumulatePillar(totals, P.day,   W.day,   P.sunLon, preset);
+  accumulatePillar(totals, P.hour,  W.hour,  P.sunLon, preset);
+  const sum = Object.values(totals).reduce((a,b)=>a+b,0)||1;
+  const out={};
+  for (const el of EL_ORDER) out[el]=Math.round((totals[el]/sum)*100);
+  return out;
+}
+
+function dayElementPct(localDT, tzHours, boundary, preset) {
+  const s = dayStemObj(localDT, tzHours, boundary);
+  const b = dayBranchObj(localDT, tzHours, boundary);
+  if (!s||!b) return null;
+  const lon = solarLon(localDT, tzHours);
+  const totals = {Wood:0,Fire:0,Earth:0,Metal:0,Water:0};
+  totals[s.element] += 1 * seasonalMult(s.element, lon, preset);
+  const hidden  = BRANCH_HIDDEN_STEMS[b.animal]||[];
+  const weights = HIDDEN_WEIGHTS_BY_COUNT[hidden.length]||[];
+  for (let i=0;i<hidden.length;i++) {
+    const el=stemKeyToElement(hidden[i]);
+    totals[el] += (weights[i]||0) * seasonalMult(el, lon, preset);
+  }
+  const sum = Object.values(totals).reduce((a,b)=>a+b,0)||1;
+  const out={};
+  for (const el of EL_ORDER) out[el]=Math.round((totals[el]/sum)*100);
+  return out;
+}
+
+/* --- Math helpers --- */
+function toVec01(pct) { return EL_ORDER.map(el=>(pct&&pct[el]!=null?Number(pct[el]):0)/100); }
+
+function dotRel(from, to, M) {
+  const left=new Array(5).fill(0);
+  for (let i=0;i<5;i++){let s=0;for(let j=0;j<5;j++) s+=from[j]*M[j][i]; left[i]=s;}
+  let out=0; for(let i=0;i<5;i++) out+=left[i]*to[i]; return out;
+}
+
+function shape(x) { return Math.tanh(LUCKY_CFG.SHAPE_TANH_K*x); }
+
+function entropy(v) {
+  const eps=1e-9; let H=0;
+  for(let i=0;i<5;i++){const p=Math.max(eps,v[i]); H-=p*Math.log(p);}
+  return H;
+}
+
+function peakiness(v) { return (Math.log(5)-entropy(v))/Math.log(5); }
+
+function controllerOf(el) {
+  return {Wood:"Metal",Fire:"Water",Earth:"Wood",Metal:"Fire",Water:"Earth"}[el]||null;
+}
+
+function dominantEl(pct) {
+  let best="Wood",bestV=-1;
+  for(const el of EL_ORDER){const v=Number(pct[el]||0); if(v>bestV){bestV=v;best=el;}}
+  return best;
+}
+
+/* --- Core scorer --- */
+function personEnvScore(birthLocalDT, birthGMT, envLocalDT, envGMT, opts) {
+  opts=opts||{};
+  const boundary = String(opts.boundary||LUCKY_CFG.DEFAULT_BOUNDARY).toUpperCase();
+  const preset   = String(opts.preset||LUCKY_CFG.DEFAULT_PRESET).toUpperCase();
+
+  const W = Object.assign({}, LUCKY_CFG.NATAL_W);
+  W.year *= LUCKY_CFG.NATAL_YEAR_MULT;
+
+  const personPct  = fullChartElementPct(birthLocalDT, Number(birthGMT), boundary, preset, W);
+  const envDayPct  = dayElementPct(envLocalDT, Number(envGMT), boundary, preset);
+  const envYearPct = fullChartElementPct(envLocalDT, Number(envGMT), boundary, preset, {year:1,month:0,day:0,hour:0});
+
+  if (!personPct||!envDayPct||!envYearPct) return null;
+
+  const ed = toVec01(envDayPct);
+  const ey = toVec01(envYearPct);
+
+  const P = fullPillars(envLocalDT, Number(envGMT), boundary);
+  const yearStemEl = P?.year?.stemElement||"Earth";
+  const counterEl  = controllerOf(yearStemEl);
+
+  let eblend = new Array(5);
+  for(let i=0;i<5;i++) eblend[i] = LUCKY_CFG.ENV_W_DAY*ed[i] + LUCKY_CFG.ENV_W_YEAR*ey[i];
+
+  if (counterEl) {
+    const idx = EL_ORDER.indexOf(counterEl);
+    if (idx>=0) eblend[idx] += LUCKY_CFG.ENV_COUNTER_BOOST;
+  }
+
+  const sumE = eblend.reduce((a,b)=>a+Math.max(0,b),0)||1;
+  for(let i=0;i<5;i++) eblend[i]=Math.max(0,eblend[i])/sumE;
+
+  const a = toVec01(personPct);
+  const e = eblend;
+
+  const env_peak = peakiness(e);
+  const raw = shape(dotRel(e,a,LUCKY_CFG.ENV_MATRIX)*(1+LUCKY_CFG.PEAK_ENV_GAIN*env_peak));
+
+  const total = Math.round((raw*0.5+0.5)*100);
+  const edge50 = total-50;
+  const stability = env_peak<=LUCKY_CFG.STABLE_MAX?"Stable":env_peak>=LUCKY_CFG.SWINGY_MIN?"Swingy":"Normal";
+
+  return { total, edge50, stability, env_peak, yearStemEl,
+           dom_person: dominantEl(personPct),
+           dom_env: dominantEl({Wood:Math.round(e[0]*100),Fire:Math.round(e[1]*100),
+             Earth:Math.round(e[2]*100),Metal:Math.round(e[3]*100),Water:Math.round(e[4]*100)}) };
+}
+
+/* --- Color zone --- */
+function colorZoneFromDelta(d) {
+  if (d>=14)  return "Pink";
+  if (d>=7)   return "Orange";
+  if (d>=4)   return "Blue";
+  if (d>=-2)  return "Yellow";
+  if (d>=-4)  return "Green";
+  if (d>=-9)  return "Purple";
+  if (d>=-11) return "Green";
+  if (d>=-15) return "Blue";
+  if (d>=-29) return "Red";
+  return "Brown";
+}
+
+function bandFromDelta(d) {
+  if (d>=14)  return "Peak";
+  if (d>=7)   return "Strong";
+  if (d>=4)   return "Favorable";
+  if (d>=-2)  return "Baseline";
+  if (d>=-4)  return "Mild friction";
+  if (d>=-9)  return "Challenged";
+  if (d>=-11) return "Recovery";
+  if (d>=-15) return "Recovery";
+  if (d>=-29) return "Adverse";
+  return "Floor";
+}
+
+const ZONE_MANTRAS = {
+  Pink:   "Full expression",
+  Orange: "Make your move",
+  Blue:   "Think it through",
+  Yellow: "Show up present",
+  Green:  "Build the habit",
+  Purple: "Go inward",
+  Red:    "Careful aggression",
+  Brown:  "Rest and reset"
+};
+
+/* --- Time helpers --- */
+function normTime(t, def) {
+  if (!t||t==="") return def;
+  if (typeof t==="number") {
+    let frac = t>=1 ? t-Math.floor(t) : t;
+    const totalMin = Math.round(frac*1440);
+    const hh=Math.floor(totalMin/60), mm=totalMin%60;
+    return String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0");
+  }
+  const s=String(t).trim();
+  const parts=s.split(":");
+  if (parts.length>=2) {
+    return String(parseInt(parts[0],10)).padStart(2,"0")+":"+String(parseInt(parts[1],10)).padStart(2,"0");
+  }
+  return def;
+}
+
+function buildLocalDT(dateStr, hhmm) {
+  const [hh,mm] = hhmm.split(":").map(Number);
+  const d = coerceDate(dateStr);
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate(), hh, mm, 0);
+}
+
+function parseDateInput(val) {
+  // "YYYY-MM-DD" from input[type=date]
+  const parts = val.split("-");
+  if (parts.length===3) return new Date(+parts[0], +parts[1]-1, +parts[2], 12, 0, 0);
+  return coerceDate(val);
+}
+
+/* --- Main calc --- */
+function calcZone(birthDateStr, birthTimeStr, birthGMT, eventDateStr, eventGMT, windowType, boundary) {
+  const bt = normTime(birthTimeStr, "12:00");
+  const birthLocalDT = buildLocalDT(parseDateInput(birthDateStr), bt);
+
+  const hour = windowType==="PM" ? LUCKY_CFG.PM_HOUR : LUCKY_CFG.AM_HOUR;
+  const envLocalDT = buildLocalDT(parseDateInput(eventDateStr), String(hour).padStart(2,"0")+":00");
+
+  const r = personEnvScore(birthLocalDT, Number(birthGMT), envLocalDT, Number(eventGMT), {
+    boundary: boundary||"MIDNIGHT",
+    preset: "CLASSIC"
+  });
+  if (!r) throw new Error("Calculation failed — check inputs.");
+
+  const delta = r.total - LUCKY_BASELINE;
+  const zone  = colorZoneFromDelta(delta);
+  const band  = bandFromDelta(delta);
+
+  return { zone, band, delta, total: r.total, edge50: r.edge50, stability: r.stability,
+           domPerson: r.dom_person, domEnv: r.dom_env, yearStemEl: r.yearStemEl };
+}
+
+/* ============================================================
+   UI
+   ============================================================ */
+
+// Set default event date to today
+(function() {
+  const today = new Date();
+  const y = today.getFullYear();
+  const m = String(today.getMonth()+1).padStart(2,"0");
+  const d = String(today.getDate()).padStart(2,"0");
+  document.getElementById("eventDate").value = `${y}-${m}-${d}`;
+})();
+
+function toggleBatch() {
+  const sec = document.getElementById("batch-section");
+  const btn = document.getElementById("batchToggle");
+  sec.classList.toggle("visible");
+  btn.classList.toggle("open");
+}
+
+/* --- Zone reference --- */
+(function() {
+  const zones = [
+    {name:"Pink",   range:"delta ≥ 14",           band:"Peak",          bg:"#4a1040",text:"#f9c8ee"},
+    {name:"Orange", range:"delta 7 → 13",          band:"Strong",        bg:"#3d1a00",text:"#ffd6a0"},
+    {name:"Blue",   range:"delta 4 → 6",           band:"Favorable",     bg:"#0a1e35",text:"#a8d4f5"},
+    {name:"Yellow", range:"delta -2 → 3",          band:"Baseline",      bg:"#2a2200",text:"#fff1a0"},
+    {name:"Green",  range:"delta -4 → -3",         band:"Mild friction", bg:"#0e1f10",text:"#b8f0c0"},
+    {name:"Purple", range:"delta -9 → -5",         band:"Challenged",    bg:"#1a0a2e",text:"#d4b8f5"},
+    {name:"Green",  range:"delta -11 → -10",       band:"Recovery",      bg:"#0e1f10",text:"#b8f0c0"},
+    {name:"Blue",   range:"delta -15 → -12",       band:"Recovery",      bg:"#0a1e35",text:"#a8d4f5"},
+    {name:"Red",    range:"delta -29 → -16",       band:"Adverse",       bg:"#2e0a08",text:"#ffc0bc"},
+    {name:"Brown",  range:"delta < -29",            band:"Floor",         bg:"#1a0f08",text:"#d4b898"},
+  ];
+
+  const container = document.getElementById("zoneRef");
+  zones.forEach(z => {
+    container.innerHTML += `
+      <div class="strip-row" style="background:${z.bg};color:${z.text}">
+        <div class="strip-chip" style="background:${z.text};opacity:0.7"></div>
+        <span class="strip-name">${z.name}</span>
+        <span class="strip-range">${z.range}</span>
+        <span class="strip-band">${z.band}</span>
+      </div>`;
+  });
+})();
+
+/* ============================================================
+   GEONAMES CITY SEARCH — live API, every city on earth
+   username: luckifyme
+   ============================================================ */
+
+const GEONAMES_PROXY = "https://geonames-proxy.luckifyme.workers.dev";
+
+/* --- UTC offset via Intl (DST-aware) --- */
+function getOffsetForTZ(tzid, forDate) {
+  try {
+    const d = forDate || new Date();
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      timeZone: tzid,
+      timeZoneName: "shortOffset"
+    });
+    const parts = formatter.formatToParts(d);
+    const tzPart = parts.find(p => p.type === "timeZoneName");
+    if (!tzPart) return 0;
+    const raw = tzPart.value;
+    if (raw === "GMT") return 0;
+    const m = raw.match(/GMT([+-])(\d+)(?::(\d+))?/);
+    if (!m) return 0;
+    const sign = m[1]==="+" ? 1 : -1;
+    const h = parseInt(m[2],10);
+    const min = m[3] ? parseInt(m[3],10)/60 : 0;
+    return sign * (h + min);
+  } catch(e) { return 0; }
+}
+
+/* Get offset for a specific tz on a specific date string — handles DST per date */
+function getOffsetForDateStr(tzid, dateStr) {
+  if (!tzid) return null;
+  try {
+    const d = new Date(dateStr + "T12:00:00");
+    return getOffsetForTZ(tzid, d);
+  } catch(e) { return null; }
+}
+
+/* --- Stored TZ IDs for DST-correct batch calculations --- */
+const _selectedTZ = { birthGMT: null, eventGMT: null };
+
+/* --- Debounce helper --- */
+function debounce(fn, ms) {
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+}
+
+/* --- Country/region → IANA timezone map --- */
+const TZ_MAP = {
+  "CA:BC":"America/Vancouver","CA:AB":"America/Edmonton","CA:SK":"America/Regina",
+  "CA:MB":"America/Winnipeg","CA:ON":"America/Toronto","CA:QC":"America/Toronto",
+  "CA:NB":"America/Halifax","CA:NS":"America/Halifax","CA:PE":"America/Halifax",
+  "CA:NL":"America/St_Johns","CA:YT":"America/Whitehorse","CA:NT":"America/Yellowknife",
+  "CA:NU":"America/Rankin_Inlet",
+  "US:AL":"America/Chicago","US:AK":"America/Anchorage","US:AZ":"America/Phoenix",
+  "US:AR":"America/Chicago","US:CA":"America/Los_Angeles","US:CO":"America/Denver",
+  "US:CT":"America/New_York","US:DE":"America/New_York","US:FL":"America/New_York",
+  "US:GA":"America/New_York","US:HI":"Pacific/Honolulu","US:ID":"America/Denver",
+  "US:IL":"America/Chicago","US:IN":"America/Indiana/Indianapolis","US:IA":"America/Chicago",
+  "US:KS":"America/Chicago","US:KY":"America/New_York","US:LA":"America/Chicago",
+  "US:ME":"America/New_York","US:MD":"America/New_York","US:MA":"America/New_York",
+  "US:MI":"America/Detroit","US:MN":"America/Chicago","US:MS":"America/Chicago",
+  "US:MO":"America/Chicago","US:MT":"America/Denver","US:NE":"America/Chicago",
+  "US:NV":"America/Los_Angeles","US:NH":"America/New_York","US:NJ":"America/New_York",
+  "US:NM":"America/Denver","US:NY":"America/New_York","US:NC":"America/New_York",
+  "US:ND":"America/Chicago","US:OH":"America/New_York","US:OK":"America/Chicago",
+  "US:OR":"America/Los_Angeles","US:PA":"America/New_York","US:RI":"America/New_York",
+  "US:SC":"America/New_York","US:SD":"America/Chicago","US:TN":"America/Chicago",
+  "US:TX":"America/Chicago","US:UT":"America/Denver","US:VT":"America/New_York",
+  "US:VA":"America/New_York","US:WA":"America/Los_Angeles","US:WV":"America/New_York",
+  "US:WI":"America/Chicago","US:WY":"America/Denver","US:DC":"America/New_York",
+  "US:PR":"America/Puerto_Rico",
+  "MX:*":"America/Mexico_City","MX:BCN":"America/Tijuana","MX:SON":"America/Hermosillo",
+  "MX:CHH":"America/Chihuahua","MX:ROO":"America/Cancun",
+  "GB:*":"Europe/London","IE:*":"Europe/Dublin","FR:*":"Europe/Paris",
+  "DE:*":"Europe/Berlin","IT:*":"Europe/Rome","ES:*":"Europe/Madrid",
+  "PT:*":"Europe/Lisbon","NL:*":"Europe/Amsterdam","BE:*":"Europe/Brussels",
+  "CH:*":"Europe/Zurich","AT:*":"Europe/Vienna","SE:*":"Europe/Stockholm",
+  "NO:*":"Europe/Oslo","DK:*":"Europe/Copenhagen","FI:*":"Europe/Helsinki",
+  "PL:*":"Europe/Warsaw","CZ:*":"Europe/Prague","SK:*":"Europe/Bratislava",
+  "HU:*":"Europe/Budapest","RO:*":"Europe/Bucharest","BG:*":"Europe/Sofia",
+  "HR:*":"Europe/Zagreb","RS:*":"Europe/Belgrade","BA:*":"Europe/Sarajevo",
+  "SI:*":"Europe/Ljubljana","MK:*":"Europe/Skopje","AL:*":"Europe/Tirane",
+  "GR:*":"Europe/Athens","TR:*":"Europe/Istanbul","RU:*":"Europe/Moscow",
+  "UA:*":"Europe/Kiev","BY:*":"Europe/Minsk","MD:*":"Europe/Chisinau",
+  "LT:*":"Europe/Vilnius","LV:*":"Europe/Riga","EE:*":"Europe/Tallinn",
+  "IS:*":"Atlantic/Reykjavik","LU:*":"Europe/Luxembourg","MC:*":"Europe/Monaco",
+  "IN:*":"Asia/Kolkata","PK:*":"Asia/Karachi","BD:*":"Asia/Dhaka",
+  "LK:*":"Asia/Colombo","NP:*":"Asia/Kathmandu","AF:*":"Asia/Kabul",
+  "IR:*":"Asia/Tehran","IQ:*":"Asia/Baghdad","SA:*":"Asia/Riyadh",
+  "AE:*":"Asia/Dubai","QA:*":"Asia/Qatar","KW:*":"Asia/Kuwait",
+  "OM:*":"Asia/Muscat","YE:*":"Asia/Aden","JO:*":"Asia/Amman",
+  "LB:*":"Asia/Beirut","IL:*":"Asia/Jerusalem","SY:*":"Asia/Damascus",
+  "CN:*":"Asia/Shanghai","JP:*":"Asia/Tokyo","KR:*":"Asia/Seoul",
+  "HK:*":"Asia/Hong_Kong","TW:*":"Asia/Taipei","MO:*":"Asia/Macau",
+  "MN:*":"Asia/Ulaanbaatar","KZ:*":"Asia/Almaty","UZ:*":"Asia/Tashkent",
+  "TM:*":"Asia/Ashgabat","TJ:*":"Asia/Dushanbe","KG:*":"Asia/Bishkek",
+  "AZ:*":"Asia/Baku","GE:*":"Asia/Tbilisi","AM:*":"Asia/Yerevan",
+  "TH:*":"Asia/Bangkok","VN:*":"Asia/Ho_Chi_Minh","KH:*":"Asia/Phnom_Penh",
+  "LA:*":"Asia/Vientiane","MM:*":"Asia/Rangoon","MY:*":"Asia/Kuala_Lumpur",
+  "SG:*":"Asia/Singapore","ID:JK":"Asia/Jakarta","ID:BA":"Asia/Makassar",
+  "ID:*":"Asia/Jakarta","PH:*":"Asia/Manila","TL:*":"Asia/Dili",
+  "BN:*":"Asia/Brunei","AU:NSW":"Australia/Sydney","AU:VIC":"Australia/Melbourne",
+  "AU:QLD":"Australia/Brisbane","AU:WA":"Australia/Perth",
+  "AU:SA":"Australia/Adelaide","AU:TAS":"Australia/Hobart",
+  "AU:NT":"Australia/Darwin","AU:ACT":"Australia/Sydney","AU:*":"Australia/Sydney",
+  "NZ:*":"Pacific/Auckland","FJ:*":"Pacific/Fiji","PG:*":"Pacific/Port_Moresby",
+  "SB:*":"Pacific/Guadalcanal","VU:*":"Pacific/Efate","WS:*":"Pacific/Apia",
+  "TO:*":"Pacific/Tongatapu","CK:*":"Pacific/Rarotonga",
+  "EG:*":"Africa/Cairo","NG:*":"Africa/Lagos","ZA:*":"Africa/Johannesburg",
+  "KE:*":"Africa/Nairobi","ET:*":"Africa/Addis_Ababa","GH:*":"Africa/Accra",
+  "TZ:*":"Africa/Dar_es_Salaam","UG:*":"Africa/Kampala","MA:*":"Africa/Casablanca",
+  "DZ:*":"Africa/Algiers","TN:*":"Africa/Tunis","LY:*":"Africa/Tripoli",
+  "SD:*":"Africa/Khartoum","AO:*":"Africa/Luanda","CM:*":"Africa/Douala",
+  "CI:*":"Africa/Abidjan","SN:*":"Africa/Dakar","MZ:*":"Africa/Maputo",
+  "ZM:*":"Africa/Lusaka","ZW:*":"Africa/Harare","BW:*":"Africa/Gaborone",
+  "BR:SP":"America/Sao_Paulo","BR:RJ":"America/Sao_Paulo","BR:MG":"America/Sao_Paulo",
+  "BR:RS":"America/Sao_Paulo","BR:AM":"America/Manaus","BR:PA":"America/Belem",
+  "BR:*":"America/Sao_Paulo","AR:*":"America/Argentina/Buenos_Aires",
+  "CL:*":"America/Santiago","CO:*":"America/Bogota","PE:*":"America/Lima",
+  "VE:*":"America/Caracas","EC:*":"America/Guayaquil","BO:*":"America/La_Paz",
+  "PY:*":"America/Asuncion","UY:*":"America/Montevideo","GY:*":"America/Guyana",
+  "SR:*":"America/Paramaribo","GT:*":"America/Guatemala","BZ:*":"America/Belize",
+  "HN:*":"America/Tegucigalpa","SV:*":"America/El_Salvador","NI:*":"America/Managua",
+  "CR:*":"America/Costa_Rica","PA:*":"America/Panama","CU:*":"America/Havana",
+  "JM:*":"America/Jamaica","HT:*":"America/Port-au-Prince","DO:*":"America/Santo_Domingo",
+  "TT:*":"America/Port_of_Spain","BB:*":"America/Barbados",
+};
+
+function tzFromCountryAdmin(countryCode, adminCode) {
+  const specific = TZ_MAP[`${countryCode}:${adminCode}`];
+  if (specific) return specific;
+  const general = TZ_MAP[`${countryCode}:*`];
+  if (general) return general;
+  return null;
+}
+
+/* --- GeoNames search — uses lat/lng for timezone, works for every city --- */
+async function searchGeoNames(query) {
+  const cleanQuery = query.split(",")[0].trim();
+  const url = `${GEONAMES_PROXY}?q=${encodeURIComponent(cleanQuery)}&maxRows=8`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Search failed");
+  const data = await res.json();
+  if (data.status) throw new Error(data.status.message);
+
+  const cities = data.geonames || [];
+
+  // Fetch timezone for each city in parallel via lat/lng
+  const results = await Promise.all(cities.map(async c => {
+    try {
+      const tzRes = await fetch(`${GEONAMES_PROXY}?lat=${c.lat}&lng=${c.lng}`);
+      const tzData = await tzRes.json();
+      const tzId = tzData.timezoneId;
+      if (!tzId) return null;
+      return {
+        city:    c.name,
+        country: c.countryCode,
+        admin:   c.adminName1 || "",
+        tz:      tzId
+      };
+    } catch(e) { return null; }
+  }));
+
+  return results.filter(Boolean);
+}
+
+/* --- Render dropdown --- */
+function renderDrop(results, inputEl, dropId, badgeId, hiddenId) {
+  const drop = document.getElementById(dropId);
+  drop.innerHTML = "";
+  if (!results.length) {
+    drop.innerHTML = `<div class="loc-option" style="opacity:0.4;cursor:default">No results</div>`;
+    return;
+  }
+  results.forEach((c, i) => {
+    const div = document.createElement("div");
+    div.className = "loc-option" + (i===0 ? " active" : "");
+    const offset = getOffsetForTZ(c.tz, new Date());
+    const sign = offset >= 0 ? "+" : "";
+    const admin = c.admin ? `<span style="opacity:0.35;font-size:9px"> · ${c.admin}</span>` : "";
+    div.innerHTML = `${c.city}${admin} <span style="opacity:0.45;font-size:10px">${c.country}</span><span class="loc-tz">UTC${sign}${offset}</span>`;
+    div.addEventListener("mousedown", () => selectCity(c, inputEl, dropId, badgeId, hiddenId));
+    drop.appendChild(div);
+  });
+}
+
+/* --- Per-field search state --- */
+const _searchState = {};
+
+function locSearch(inputEl, dropId, badgeId, hiddenId) {
+  const q = inputEl.value.trim();
+  const drop = document.getElementById(dropId);
+  _selectedTZ[hiddenId] = null;
+
+  if (q.length < 2) { drop.innerHTML = ""; return; }
+
+  // Show loading indicator
+  drop.innerHTML = `<div class="loc-option" style="opacity:0.4;cursor:default;letter-spacing:0.15em;font-size:10px">searching…</div>`;
+
+  // Debounce per field
+  if (!_searchState[hiddenId]) {
+    _searchState[hiddenId] = debounce(async (query, iEl, dId, bId, hId) => {
+      try {
+        const results = await searchGeoNames(query);
+        // Only render if input still matches (user hasn't typed something new)
+        if (iEl.value.trim() === query) renderDrop(results, iEl, dId, bId, hId);
+      } catch(err) {
+        document.getElementById(dId).innerHTML =
+          `<div class="loc-option" style="opacity:0.4;cursor:default;font-size:10px">⚠ ${err.message}</div>`;
+      }
+    }, 320);
+  }
+  _searchState[hiddenId](q, inputEl, dropId, badgeId, hiddenId);
+}
+
+function selectCity(cityObj, inputEl, dropId, badgeId, hiddenId) {
+  const offset = getOffsetForTZ(cityObj.tz, new Date());
+  const sign = offset >= 0 ? "+" : "";
+  const label = cityObj.admin
+    ? `${cityObj.city}, ${cityObj.admin}, ${cityObj.country}`
+    : `${cityObj.city}, ${cityObj.country}`;
+  inputEl.value = label;
+  document.getElementById(hiddenId).value = offset;
+  document.getElementById(badgeId).textContent = `UTC${sign}${offset}  ·  ${cityObj.tz}`;
+  document.getElementById(dropId).innerHTML = "";
+  _selectedTZ[hiddenId] = cityObj.tz;
+}
+
+function locKey(e, dropId, badgeId, hiddenId) {
+  const drop = document.getElementById(dropId);
+  const opts = drop.querySelectorAll(".loc-option:not([style*='cursor:default'])");
+  if (!opts.length) return;
+  const active = drop.querySelector(".loc-option.active");
+  let idx = Array.from(opts).indexOf(active);
+
+  if (e.key === "ArrowDown") {
+    e.preventDefault();
+    if (active) active.classList.remove("active");
+    opts[Math.min(idx+1, opts.length-1)].classList.add("active");
+  } else if (e.key === "ArrowUp") {
+    e.preventDefault();
+    if (active) active.classList.remove("active");
+    opts[Math.max(idx-1, 0)].classList.add("active");
+  } else if (e.key === "Enter" || e.key === "Tab") {
+    const sel = drop.querySelector(".loc-option.active");
+    if (sel) {
+      e.preventDefault();
+      sel.dispatchEvent(new MouseEvent("mousedown"));
+    }
+  } else if (e.key === "Escape") {
+    drop.innerHTML = "";
+  }
+}
+
+/* Updated runBatch uses DST-correct offset per date when tz is stored */
+function runBatch() {
+  const raw = document.getElementById("batchDates").value;
+  const lines = raw.split("\n").map(l=>l.trim()).filter(Boolean);
+  const container = document.getElementById("batchResults");
+  if (!lines.length) { container.innerHTML=""; return; }
+
+  const birthDate  = document.getElementById("birthDate").value;
+  const birthTime  = document.getElementById("birthTime").value;
+  const windowType = document.getElementById("window").value;
+  const boundary   = document.getElementById("boundary").value;
+
+  let html = "";
+  for (const line of lines) {
+    try {
+      // Get DST-aware offsets for this specific date
+      const birthGMT = _selectedTZ.birthGMT
+        ? (getOffsetForDateStr(_selectedTZ.birthGMT, birthDate) ?? Number(document.getElementById("birthGMT").value))
+        : Number(document.getElementById("birthGMT").value);
+      const eventGMT = _selectedTZ.eventGMT
+        ? (getOffsetForDateStr(_selectedTZ.eventGMT, line) ?? Number(document.getElementById("eventGMT").value))
+        : Number(document.getElementById("eventGMT").value);
+
+      const r = calcZone(birthDate, birthTime, birthGMT, line, eventGMT, windowType, boundary);
+      const edgeStr = (r.edge50>=0?"+":"")+r.edge50;
+      html += `<div class="batch-row ${r.zone}">
+        <span class="b-date">${line}</span>
+        <span class="b-zone">${r.zone.toUpperCase()}</span>
+        <span class="b-score">Score ${r.total} (${edgeStr})</span>
+        <span class="b-band">${r.band}</span>
+      </div>`;
+    } catch(e) {
+      html += `<div class="batch-row Red"><span class="b-date">${line}</span><span class="b-zone">ERROR</span><span class="b-score">${e.message}</span></div>`;
+    }
+  }
+  container.innerHTML = html;
+}
+
+/* Updated runSingle uses DST-aware offset for the event date */
+function runSingle() {
+  const wrap = document.getElementById("result-wrap");
+  try {
+    const eventDateStr = document.getElementById("eventDate").value;
+    const birthDateStr = document.getElementById("birthDate").value;
+
+    const birthGMT = _selectedTZ.birthGMT
+      ? (getOffsetForDateStr(_selectedTZ.birthGMT, birthDateStr) ?? Number(document.getElementById("birthGMT").value))
+      : Number(document.getElementById("birthGMT").value);
+    const eventGMT = _selectedTZ.eventGMT
+      ? (getOffsetForDateStr(_selectedTZ.eventGMT, eventDateStr) ?? Number(document.getElementById("eventGMT").value))
+      : Number(document.getElementById("eventGMT").value);
+
+    const r = calcZone(
+      birthDateStr,
+      document.getElementById("birthTime").value,
+      birthGMT,
+      eventDateStr,
+      eventGMT,
+      document.getElementById("window").value,
+      document.getElementById("boundary").value
+    );
+    const edgeStr = (r.edge50>=0?"+":"")+r.edge50;
+    wrap.innerHTML = `
+      <div class="result-zone ${r.zone}">
+        <div class="result-zone-name">${r.zone.toUpperCase()}</div>
+        <div class="result-band">${r.band} &nbsp;·&nbsp; ${eventDateStr}</div>
+        <div class="result-stats">
+          <div class="stat-block">
+            <label>Score</label>
+            <div class="val">${r.total}</div>
+          </div>
+          <div class="stat-block">
+            <label>Delta</label>
+            <div class="val">${r.delta>=0?"+":""}${r.delta}</div>
+          </div>
+          <div class="stat-block">
+            <label>Edge</label>
+            <div class="val">${edgeStr}</div>
+          </div>
+          <div class="stat-block">
+            <label>Stability</label>
+            <div class="val" style="font-size:13px">${r.stability}</div>
+          </div>
+          <div class="stat-block">
+            <label>Person El</label>
+            <div class="val" style="font-size:13px">${r.domPerson}</div>
+          </div>
+          <div class="stat-block">
+            <label>Env El</label>
+            <div class="val" style="font-size:13px">${r.domEnv}</div>
+          </div>
+        </div>
+        <div class="result-mantra">${ZONE_MANTRAS[r.zone]||""}</div>
+      </div>`;
+  } catch(e) {
+    wrap.innerHTML = `<div class="error-msg">⚠ ${e.message}</div>`;
+  }
+}
+
+// Close dropdowns on outside click
+document.addEventListener("click", e => {
+  if (!e.target.closest(".loc-wrap")) {
+    document.querySelectorAll(".loc-dropdown").forEach(d => d.innerHTML="");
+  }
+});
+</script>
+</body>
+</html>
