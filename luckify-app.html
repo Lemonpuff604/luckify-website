@@ -1368,41 +1368,29 @@ const RHYTHM_DATA = {
 };
 
 
-/* ═══════════════════════════════════════════════
-   SCORING
-═══════════════════════════════════════════════ */
-const BASE_WEIGHTS = {
-  Orange: { Action:10, Strategy:8,  Discipline:8, Social:6, Creativity:6,  Risk:10 },
-  Blue:   { Action:5,  Strategy:10, Discipline:4, Social:6, Creativity:8,  Risk:6  },
-  Red:    { Action:9,  Strategy:5,  Discipline:3, Social:5, Creativity:4,  Risk:9  },
-  Green:  { Action:6,  Strategy:6,  Discipline:9, Social:6, Creativity:5,  Risk:4  },
-  Yellow: { Action:5,  Strategy:6,  Discipline:6, Social:9, Creativity:6,  Risk:5  },
-  Purple: { Action:3,  Strategy:7,  Discipline:6, Social:4, Creativity:10, Risk:3  },
-  Pink:   { Action:8,  Strategy:6,  Discipline:3, Social:7, Creativity:10, Risk:8  },
-  Brown:  { Action:2,  Strategy:4,  Discipline:4, Social:3, Creativity:4,  Risk:2  },
-};
-const MULT = { Orange:2.57, Blue:2.04, Red:2.25, Green:1.70, Yellow:0.75, Purple:0.50, Pink:1.50, Brown:1.00 };
+/* SCORING ENGINE — see TWO-LAYER SCORING MODEL below */
 
 /* ── PIP BAR BUILDER ─────────────────────────────
    score 0-3  → off  (dim red)
    score 4-6  → mid  (zone color at 50%)
    score 7-10 → on   (full zone color + glow)
 ─────────────────────────────────────────────── */
-function buildPips(score, acc, total, cls) {
-  const filled = Math.round(score);  // score is 0-10
+// fillPct: 0-1 zone-relative fill  |  state: 'on'|'mid'|'off'
+function buildPips(fillPct, state, acc, total, cls) {
+  const filled = Math.round(fillPct * total);
   let html = '';
   for (let i = 0; i < total; i++) {
     let bg, shadow;
     if (i < filled) {
-      if (score <= 3) {
+      if (state === 'off') {
         bg = 'var(--off-dim)';
-        shadow = '0 0 4px var(--off-color)';
-      } else if (score <= 6) {
-        bg = acc + '99';
+        shadow = '0 0 3px var(--off-color)66';
+      } else if (state === 'mid') {
+        bg = acc + 'AA';
         shadow = 'none';
       } else {
         bg = acc;
-        shadow = `0 0 6px ${acc}BB`;
+        shadow = `0 0 5px ${acc}99`;
       }
     } else {
       bg = 'var(--surface2)';
@@ -1413,12 +1401,60 @@ function buildPips(score, acc, total, cls) {
   return html;
 }
 
+/* ═══════════════════════════════════════════════
+   TWO-LAYER SCORING MODEL
+   Layer 1 — Rhythm Power: empirical (Sharpe-calibrated UFC data)
+   Layer 2 — Rhythm Allocation: theoretical (rhythm framework docs)
+   Formula: Category Score = Power × Allocation%, normalized globally
+═══════════════════════════════════════════════ */
+
+// Layer 1: How strong is the day overall (Sharpe-derived, normalized to Orange=10)
+const RHYTHM_POWER = {
+  Orange: 10.0,  // n=487, strongest validated
+  Blue:    8.4,  // n=529, strong tactical
+  Green:   5.0,  // n=336, reliable stabilizer
+  Red:     4.5,  // n=114, positive but lower confidence
+  Yellow:  3.8,  // baseline
+  Pink:    3.8,  // PROVISIONAL — n=37, too small
+  Brown:   3.8,  // PROVISIONAL — theory only
+  Purple:  3.3,  // floor — negative empirical, non-UFC value preserved
+};
+
+// Layer 2: Where does the day express (from rhythm framework docs, sums to 1.00 per zone)
+const RHYTHM_ALLOC = {
+  Orange: { Action:.26, Strategy:.20, Discipline:.20, Social:.12, Creativity:.10, Risk:.12 },
+  Blue:   { Action:.10, Strategy:.30, Discipline:.10, Social:.12, Creativity:.23, Risk:.15 },
+  Green:  { Action:.16, Strategy:.16, Discipline:.30, Social:.16, Creativity:.12, Risk:.10 },
+  Red:    { Action:.30, Strategy:.12, Discipline:.08, Social:.12, Creativity:.08, Risk:.30 },
+  Yellow: { Action:.14, Strategy:.16, Discipline:.16, Social:.28, Creativity:.14, Risk:.12 },
+  Purple: { Action:.08, Strategy:.22, Discipline:.18, Social:.10, Creativity:.30, Risk:.12 },
+  Pink:   { Action:.20, Strategy:.15, Discipline:.08, Social:.18, Creativity:.25, Risk:.14 }, // PROVISIONAL
+  Brown:  { Action:.10, Strategy:.20, Discipline:.25, Social:.20, Creativity:.15, Risk:.10 }, // PROVISIONAL
+};
+
+// Global ceiling: Orange Action = 10.0 × 0.26 = 2.60
+const GLOBAL_MAX = 10.0 * 0.26;
+
 function getZoneScores(zone) {
-  const w = BASE_WEIGHTS[zone]; const m = MULT[zone];
-  if (!w || !m) return [];
-  const raw = Object.entries(w).map(([cat,wt]) => ({ cat, raw: wt*m })).sort((a,b)=>b.raw-a.raw);
-  const zMax = raw[0].raw;
-  return raw.map(r => ({ cat: r.cat, normalized: Math.round((r.raw/zMax)*100)/10 }));
+  const p = RHYTHM_POWER[zone];
+  const alloc = RHYTHM_ALLOC[zone];
+  if (!p || !alloc) return [];
+  if (zone === 'Brown') return [];
+
+  const raw = Object.entries(alloc)
+    .map(([cat, a]) => ({ cat, rawScore: p * a }))
+    .sort((a,b) => b.rawScore - a.rawScore);
+
+  const zoneMax = raw[0].rawScore;
+  const onThresh  = zoneMax * 0.75;
+  const midThresh = zoneMax * 0.40;
+
+  return raw.map(r => ({
+    cat: r.cat,
+    normalized: Math.round((r.rawScore / GLOBAL_MAX) * 100) / 10,  // globally comparable display number
+    fillPct: r.rawScore / zoneMax,                                   // zone-relative visual fill
+    state: r.rawScore >= onThresh ? 'on' : r.rawScore >= midThresh ? 'mid' : 'off',
+  }));
 }
 
 /* ═══════════════════════════════════════════════
@@ -1805,42 +1841,57 @@ function openDaySheet(day, zone, month, year) {
   // Scores
   const scores = getZoneScores(zone);
   const rows = document.getElementById('scoreRows');
-  rows.innerHTML = '';
-  scores.forEach(({ cat, normalized }) => {
-    const row = document.createElement('div');
-    row.className = 'score-row';
-    const pipHtml = buildPips(normalized, z.acc, 10, 'score-pip');
-    const scoreState = normalized >= 7 ? 'on' : normalized >= 4 ? 'mid' : 'off';
-    const stateColor = scoreState === 'on' ? z.acc : scoreState === 'mid' ? 'var(--dim)' : 'var(--off-color)';
-    row.innerHTML = `
-      <div class="score-emoji">${CAT_EMOJI[cat]||'·'}</div>
-      <div class="score-cat" style="color:var(--text)">${cat}</div>
-      <div class="score-bar-wrap">${pipHtml}</div>
-      <div class="score-val" style="color:${stateColor};text-shadow:0 0 8px ${stateColor}">${normalized.toFixed(1)}</div>
-      <div class="tap-hint" style="color:var(--muted);pointer-events:none">TAP ›</div>
-    `;
-    row.onclick = () => openDeepSheet(cat, zone);
-    rows.appendChild(row);
-  });
-
-  // Top category ON/OFF preview
   const gb = document.getElementById('guidanceBlocks');
+  rows.innerHTML = '';
   gb.innerHTML = '';
-  const cats = rd ? rd.categories : null;
-  if (cats) {
-    const topCat = scores[0]?.cat;
-    const catData = topCat ? cats[topCat] : null;
-    if (catData) {
-      gb.innerHTML = `
-        <div class="guidance-card" style="border-color:var(--ph-dark);background:var(--ph-faint)">
-          <div class="guidance-card-label" style="color:${z.acc};text-shadow:0 0 8px ${z.acc}">▲ ON  ·  ${topCat.toUpperCase()}</div>
-          <div class="guidance-card-text" style="color:var(--text)">${catData.on}</div>
-        </div>
-        <div class="guidance-card" style="border-color:var(--off-border);background:var(--off-bg)">
-          <div class="guidance-card-label" style="color:var(--off-color);text-shadow:0 0 8px var(--off-color)">▼ OFF  ·  ${topCat.toUpperCase()}</div>
-          <div class="guidance-card-text" style="color:var(--off-dim)">${catData.off}</div>
-        </div>
+
+  if (zone === 'Brown') {
+    // Brown: no category scoring — show decision rule only
+    const brownRd = RHYTHM_DATA['Brown'];
+    rows.style.display = 'none';
+    document.querySelector('.scores-label').style.display = 'none';
+    gb.innerHTML = `
+      <div class="guidance-card" style="border-color:${z.acc}55;background:${z.acc}08;grid-column:span 2">
+        <div class="guidance-card-label" style="color:${z.acc};letter-spacing:0.18em">THE STANDARD</div>
+        <div class="guidance-card-text" style="color:var(--text);font-size:13px;line-height:1.7">${brownRd?.decisionRule || 'Undeniable edge only. If you are evaluating whether it qualifies, it does not.'}</div>
+      </div>
+    `;
+  } else {
+    rows.style.display = 'flex';
+    document.querySelector('.scores-label').style.display = 'block';
+    scores.forEach(({ cat, normalized }) => {
+      const row = document.createElement('div');
+      row.className = 'score-row';
+      const pipHtml = buildPips(normalized, z.acc, 10, 'score-pip');
+      const stateColor = state === 'on' ? z.acc : state === 'mid' ? 'var(--dim)' : 'var(--off-color)';
+      row.innerHTML = `
+        <div class="score-emoji">${CAT_EMOJI[cat]||'·'}</div>
+        <div class="score-cat" style="color:var(--text)">${cat}</div>
+        <div class="score-bar-wrap">${pipHtml}</div>
+        <div class="score-val" style="color:${stateColor};text-shadow:0 0 8px ${stateColor}">${normalized.toFixed(1)}</div>
+        <div class="tap-hint" style="color:var(--muted);pointer-events:none">TAP ›</div>
       `;
+      row.onclick = () => openDeepSheet(cat, zone);
+      rows.appendChild(row);
+    });
+
+    // Top category ON/OFF preview
+    const cats = rd ? rd.categories : null;
+    if (cats) {
+      const topCat = scores[0]?.cat;
+      const catData = topCat ? cats[topCat] : null;
+      if (catData) {
+        gb.innerHTML = `
+          <div class="guidance-card" style="border-color:var(--ph-dark);background:var(--ph-faint)">
+            <div class="guidance-card-label" style="color:${z.acc}">▲ ON  ·  ${topCat.toUpperCase()}</div>
+            <div class="guidance-card-text" style="color:var(--text)">${catData.on}</div>
+          </div>
+          <div class="guidance-card" style="border-color:var(--off-border);background:var(--off-bg)">
+            <div class="guidance-card-label" style="color:var(--off-color);text-shadow:0 0 8px var(--off-color)">▼ OFF  ·  ${topCat.toUpperCase()}</div>
+            <div class="guidance-card-text" style="color:var(--off-dim)">${catData.off}</div>
+          </div>
+        `;
+      }
     }
   }
 
@@ -1869,10 +1920,11 @@ function openDeepSheet(cat, zone) {
 
   const scoreNum = document.getElementById('deepScoreNum');
   const scoreVal = scoreObj ? scoreObj.normalized : 0;
+  const scoreState = scoreObj?.state || 'off';
   scoreNum.textContent = scoreObj ? scoreVal.toFixed(1) : '—';
-  const scoreColor = scoreVal >= 7 ? z.acc : scoreVal >= 4 ? 'var(--dim)' : 'var(--off-color)';
+  const scoreColor = scoreState === 'on' ? z.acc : scoreState === 'mid' ? 'var(--dim)' : 'var(--off-color)';
   scoreNum.style.color = scoreColor;
-  scoreNum.style.textShadow = `0 0 12px ${scoreColor}, 0 0 24px ${scoreColor}88`;
+  scoreNum.style.textShadow = `0 0 10px ${scoreColor}88`;
 
   const barEl = document.getElementById('deepScoreBar');
   if (barEl) barEl.innerHTML = '';
@@ -1928,7 +1980,7 @@ function openDeepSheet(cat, zone) {
 
   requestAnimationFrame(() => requestAnimationFrame(() => {
     const barEl = document.getElementById('deepScoreBar');
-    if (barEl && scoreObj) barEl.innerHTML = buildPips(scoreObj.normalized, z.acc, 10, 'deep-score-pip');
+    if (barEl && scoreObj) barEl.innerHTML = buildPips(scoreObj.fillPct, scoreObj.state, z.acc, 10, 'deep-score-pip');
   }));
 }
 
