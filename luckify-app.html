@@ -1859,16 +1859,16 @@ function openDaySheet(day, zone, month, year) {
   } else {
     rows.style.display = 'flex';
     document.querySelector('.scores-label').style.display = 'block';
-    scores.forEach(({ cat, normalized }) => {
+    scores.forEach(({ cat, normalized, fillPct, state }) => {
       const row = document.createElement('div');
       row.className = 'score-row';
-      const pipHtml = buildPips(normalized, z.acc, 10, 'score-pip');
+      const pipHtml = buildPips(fillPct, state, z.acc, 10, 'score-pip');
       const stateColor = state === 'on' ? z.acc : state === 'mid' ? 'var(--dim)' : 'var(--off-color)';
       row.innerHTML = `
         <div class="score-emoji">${CAT_EMOJI[cat]||'·'}</div>
         <div class="score-cat" style="color:var(--text)">${cat}</div>
         <div class="score-bar-wrap">${pipHtml}</div>
-        <div class="score-val" style="color:${stateColor};text-shadow:0 0 8px ${stateColor}">${normalized.toFixed(1)}</div>
+        <div class="score-val" style="color:${stateColor};text-shadow:0 0 6px ${stateColor}88">${normalized.toFixed(1)}</div>
         <div class="tap-hint" style="color:var(--muted);pointer-events:none">TAP ›</div>
       `;
       row.onclick = () => openDeepSheet(cat, zone);
