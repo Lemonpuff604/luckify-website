@@ -4,170 +4,55 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Lucky Window</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=IBM+Plex+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:        #080808;
-    --surface:   #0f0f0f;
-    --border:    #1c1c1c;
-    --muted:     #3a3a3a;
-    --subtle:    #555;
-    --text:      #e8e8e8;
-    --text-dim:  #888;
-    --mono:      'Space Mono', monospace;
-    --sans:      'DM Sans', sans-serif;
+    --bg:       #080808;
+    --surface:  #0f0f0f;
+    --surface2: #141414;
+    --border:   #1c1c1c;
+    --muted:    #3a3a3a;
+    --subtle:   #555;
+    --text:     #e8e8e8;
+    --dim:      #888;
+    --mono:     'IBM Plex Mono', monospace;
+    --sans:     'DM Sans', sans-serif;
+    --serif:    'DM Serif Display', serif;
 
-    --pink-bg:   #4a1040; --pink-text:   #f9c8ee;
-    --orange-bg: #3d1a00; --orange-text: #ffd6a0;
-    --blue-bg:   #0a1e35; --blue-text:   #a8d4f5;
-    --yellow-bg: #2a2200; --yellow-text: #fff1a0;
-    --green-bg:  #0e1f10; --green-text:  #b8f0c0;
-    --purple-bg: #1a0a2e; --purple-text: #d4b8f5;
-    --red-bg:    #2e0a08; --red-text:    #ffc0bc;
-    --brown-bg:  #1a0f08; --brown-text:  #d4b898;
+    --pink-bg:   #4a1040; --pink-text:   #f9c8ee; --pink-acc: #D030A0;
+    --orange-bg: #3d1a00; --orange-text: #ffd6a0; --orange-acc: #E87020;
+    --blue-bg:   #0a1e35; --blue-text:   #a8d4f5; --blue-acc: #4080E0;
+    --yellow-bg: #2a2200; --yellow-text: #fff1a0; --yellow-acc: #F0C020;
+    --green-bg:  #0e1f10; --green-text:  #b8f0c0; --green-acc: #6EC25A;
+    --purple-bg: #1a0a2e; --purple-text: #d4b8f5; --purple-acc: #8A2BE2;
+    --red-bg:    #2e0a08; --red-text:    #ffc0bc; --red-acc: #E04030;
+    --brown-bg:  #1a0f08; --brown-text:  #d4b898; --brown-acc: #A97040;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; -webkit-font-smoothing: antialiased; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  /* ── VIEWS ── */
   .view { display: none; min-height: 100vh; }
   .view.active { display: block; }
 
   /* ── ADMIN ── */
-  #admin {
-    max-width: 680px;
-    margin: 0 auto;
-    padding: 40px 20px 80px;
-  }
-
-  .admin-header {
-    margin-bottom: 40px;
-  }
-
-  .wordmark {
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.2em;
-    color: var(--subtle);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-
-  .admin-title {
-    font-family: var(--mono);
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: -0.02em;
-  }
-
-  .field-group {
-    margin-bottom: 28px;
-  }
-
-  label {
-    display: block;
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.18em;
-    color: var(--subtle);
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-
-  input[type="text"], select {
-    width: 100%;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: var(--sans);
-    font-size: 15px;
-    padding: 12px 14px;
-    border-radius: 6px;
-    outline: none;
-    transition: border-color 0.15s;
-    appearance: none;
-  }
-
-  input[type="text"]:focus, select:focus {
-    border-color: var(--muted);
-  }
-
-  .month-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-
-  /* ── DAY ZONE GRID ── */
-  .zone-grid-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.18em;
-    color: var(--subtle);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-
-  .zone-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
-  }
-
-  .dow-label {
-    font-family: var(--mono);
-    font-size: 8px;
-    color: var(--muted);
-    text-align: center;
-    padding: 4px 0;
-    letter-spacing: 0.1em;
-  }
-
-  .day-cell-admin {
-    position: relative;
-    aspect-ratio: 1;
-    border-radius: 4px;
-    cursor: pointer;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    transition: transform 0.1s;
-    user-select: none;
-  }
-
+  #admin { max-width: 680px; margin: 0 auto; padding: 40px 20px 80px; }
+  .wordmark { font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; color: var(--subtle); text-transform: uppercase; margin-bottom: 12px; }
+  .admin-title { font-family: var(--mono); font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -0.02em; margin-bottom: 40px; }
+  .field-group { margin-bottom: 28px; }
+  label { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; color: var(--subtle); text-transform: uppercase; margin-bottom: 8px; }
+  input[type="text"], select { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text); font-family: var(--sans); font-size: 15px; padding: 12px 14px; border-radius: 6px; outline: none; transition: border-color 0.15s; appearance: none; }
+  input[type="text"]:focus, select:focus { border-color: var(--muted); }
+  .month-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .zone-grid-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; color: var(--subtle); text-transform: uppercase; margin-bottom: 12px; }
+  .zone-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .dow-label { font-family: var(--mono); font-size: 8px; color: var(--muted); text-align: center; padding: 4px 0; letter-spacing: 0.1em; }
+  .day-cell-admin { position: relative; aspect-ratio: 1; border-radius: 4px; cursor: pointer; background: var(--surface); border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; transition: transform 0.1s; user-select: none; }
   .day-cell-admin:hover { transform: scale(1.05); }
   .day-cell-admin.empty { background: transparent; border-color: transparent; cursor: default; }
   .day-cell-admin.empty:hover { transform: none; }
-
-  .day-cell-admin .dn {
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 700;
-    line-height: 1;
-  }
-
-  .day-cell-admin .zl {
-    font-family: var(--mono);
-    font-size: 6px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    opacity: 0.8;
-  }
-
-  /* zone colors on admin cells */
+  .day-cell-admin .dn { font-family: var(--mono); font-size: 11px; font-weight: 700; line-height: 1; }
+  .day-cell-admin .zl { font-family: var(--mono); font-size: 6px; font-weight: 700; letter-spacing: 0.05em; opacity: 0.8; }
   .zc-pink   { background: var(--pink-bg)   !important; border-color: var(--pink-bg)   !important; }
   .zc-orange { background: var(--orange-bg) !important; border-color: var(--orange-bg) !important; }
   .zc-blue   { background: var(--blue-bg)   !important; border-color: var(--blue-bg)   !important; }
@@ -176,248 +61,52 @@
   .zc-purple { background: var(--purple-bg) !important; border-color: var(--purple-bg) !important; }
   .zc-red    { background: var(--red-bg)    !important; border-color: var(--red-bg)    !important; }
   .zc-brown  { background: var(--brown-bg)  !important; border-color: var(--brown-bg)  !important; }
-
-  .zc-pink   .dn, .zc-pink   .zl { color: var(--pink-text);   }
+  .zc-pink   .dn, .zc-pink   .zl { color: var(--pink-text); }
   .zc-orange .dn, .zc-orange .zl { color: var(--orange-text); }
-  .zc-blue   .dn, .zc-blue   .zl { color: var(--blue-text);   }
+  .zc-blue   .dn, .zc-blue   .zl { color: var(--blue-text); }
   .zc-yellow .dn, .zc-yellow .zl { color: var(--yellow-text); }
-  .zc-green  .dn, .zc-green  .zl { color: var(--green-text);  }
+  .zc-green  .dn, .zc-green  .zl { color: var(--green-text); }
   .zc-purple .dn, .zc-purple .zl { color: var(--purple-text); }
-  .zc-red    .dn, .zc-red    .zl { color: var(--red-text);    }
-  .zc-brown  .dn, .zc-brown  .zl { color: var(--brown-text);  }
+  .zc-red    .dn, .zc-red    .zl { color: var(--red-text); }
+  .zc-brown  .dn, .zc-brown  .zl { color: var(--brown-text); }
 
-  /* ── ZONE PICKER POPUP ── */
-  .zone-picker-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    z-index: 100;
-    align-items: center;
-    justify-content: center;
-  }
+  /* ── ZONE PICKER ── */
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.72); z-index: 100; align-items: center; justify-content: center; }
+  .overlay.open { display: flex; }
+  .zone-picker { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; width: 280px; }
+  .picker-title { font-family: var(--mono); font-size: 11px; color: var(--subtle); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 14px; text-align: center; }
+  .picker-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .zone-opt { padding: 10px 8px; border-radius: 6px; cursor: pointer; font-family: var(--mono); font-size: 11px; font-weight: 700; text-align: center; letter-spacing: 0.05em; transition: opacity 0.1s, transform 0.1s; border: none; }
+  .zone-opt:hover { opacity: 0.85; transform: scale(1.02); }
+  .zone-opt-clear { grid-column: span 2; background: var(--surface); border: 1px solid var(--border) !important; color: var(--muted); padding: 8px; border-radius: 6px; cursor: pointer; font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-align: center; transition: border-color 0.1s; }
+  .zone-opt-clear:hover { border-color: var(--subtle) !important; color: var(--dim); }
 
-  .zone-picker-overlay.open {
-    display: flex;
-  }
-
-  .zone-picker {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-    width: 280px;
-  }
-
-  .zone-picker-title {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--subtle);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    margin-bottom: 14px;
-    text-align: center;
-  }
-
-  .zone-picker-options {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-
-  .zone-option {
-    padding: 10px 8px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 700;
-    text-align: center;
-    letter-spacing: 0.05em;
-    transition: opacity 0.1s, transform 0.1s;
-    border: none;
-  }
-
-  .zone-option:hover { opacity: 0.85; transform: scale(1.02); }
-
-  .zone-option-clear {
-    grid-column: span 2;
-    background: var(--surface);
-    border: 1px solid var(--border) !important;
-    color: var(--muted);
-    padding: 8px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-align: center;
-    transition: border-color 0.1s;
-  }
-
-  .zone-option-clear:hover { border-color: var(--subtle) !important; color: var(--text-dim); }
-
-  /* ── GENERATE BTN ── */
-  .generate-btn {
-    width: 100%;
-    background: var(--text);
-    color: var(--bg);
-    border: none;
-    border-radius: 6px;
-    padding: 14px;
-    font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    cursor: pointer;
-    margin-top: 32px;
-    transition: opacity 0.15s;
-  }
-
+  /* ── GENERATE ── */
+  .generate-btn { width: 100%; background: var(--text); color: var(--bg); border: none; border-radius: 6px; padding: 14px; font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; margin-top: 32px; transition: opacity 0.15s; }
   .generate-btn:hover { opacity: 0.88; }
-
-  .share-box {
-    display: none;
-    margin-top: 20px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px;
-  }
-
+  .share-box { display: none; margin-top: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
   .share-box.visible { display: block; }
-
-  .share-label {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--subtle);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-
-  .share-url {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--text);
-    word-break: break-all;
-    margin-bottom: 12px;
-    line-height: 1.6;
-  }
-
-  .copy-btn {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    padding: 8px 14px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: border-color 0.15s, color 0.15s;
-  }
-
+  .share-label { font-family: var(--mono); font-size: 10px; color: var(--subtle); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px; }
+  .share-url { font-family: var(--mono); font-size: 12px; color: var(--text); word-break: break-all; margin-bottom: 12px; line-height: 1.6; }
+  .copy-btn { background: transparent; border: 1px solid var(--border); color: var(--dim); font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; padding: 8px 14px; border-radius: 4px; cursor: pointer; transition: border-color 0.15s, color 0.15s; }
   .copy-btn:hover { border-color: var(--muted); color: var(--text); }
-  .copy-btn.copied { border-color: var(--green-text); color: var(--green-text); }
+  .copy-btn.copied { border-color: var(--green-acc); color: var(--green-acc); }
 
-  /* ── CLIENT CALENDAR ── */
-  #client {
-    max-width: 500px;
-    margin: 0 auto;
-    padding: 24px 16px 80px;
-  }
-
-  .client-header {
-    margin-bottom: 24px;
-  }
-
-  .client-wordmark {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.22em;
-    color: var(--subtle);
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-
-  .client-name {
-    font-family: var(--mono);
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    color: var(--text);
-  }
-
-  .client-month {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text-dim);
-    margin-top: 2px;
-    letter-spacing: 0.08em;
-  }
-
-  /* ── CLIENT CALENDAR GRID ── */
-  .cal-dow-row {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 3px;
-    margin-bottom: 3px;
-  }
-
-  .cal-dow {
-    font-family: var(--mono);
-    font-size: 8px;
-    color: var(--muted);
-    text-align: center;
-    padding: 4px 0;
-    letter-spacing: 0.1em;
-  }
-
-  .cal-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 3px;
-  }
-
-  .cal-day {
-    aspect-ratio: 1;
-    border-radius: 6px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-    cursor: pointer;
-    transition: transform 0.12s, box-shadow 0.12s;
-    position: relative;
-    overflow: hidden;
-  }
-
+  /* ── CLIENT ── */
+  #client { max-width: 500px; margin: 0 auto; padding: 24px 16px 80px; }
+  .client-wordmark { font-family: var(--mono); font-size: 9px; letter-spacing: 0.22em; color: var(--subtle); text-transform: uppercase; margin-bottom: 6px; }
+  .client-name { font-family: var(--mono); font-size: 20px; font-weight: 700; letter-spacing: -0.01em; color: var(--text); }
+  .client-month { font-family: var(--mono); font-size: 11px; color: var(--dim); margin-top: 2px; letter-spacing: 0.08em; margin-bottom: 24px; }
+  .cal-dow-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-bottom: 3px; }
+  .cal-dow { font-family: var(--mono); font-size: 8px; color: var(--muted); text-align: center; padding: 4px 0; letter-spacing: 0.1em; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+  .cal-day { aspect-ratio: 1; border-radius: 6px; background: var(--surface); border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; transition: transform 0.12s, box-shadow 0.12s; position: relative; }
   .cal-day:hover { transform: scale(1.06); z-index: 2; }
   .cal-day.today { box-shadow: 0 0 0 2px white; }
   .cal-day.empty { background: transparent; border-color: transparent; cursor: default; }
   .cal-day.empty:hover { transform: none; }
-
-  .cal-day .day-num {
-    font-family: var(--mono);
-    font-size: 13px;
-    font-weight: 700;
-    line-height: 1;
-  }
-
-  .cal-day .day-zone {
-    font-family: var(--mono);
-    font-size: 5px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    opacity: 0.85;
-  }
-
-  /* zone coloring on client cells */
+  .cal-day .day-num { font-family: var(--mono); font-size: 13px; font-weight: 700; line-height: 1; }
+  .cal-day .day-zone { font-family: var(--mono); font-size: 5px; font-weight: 700; letter-spacing: 0.06em; opacity: 0.85; }
   .cal-day.zc-pink   { background: var(--pink-bg);   border-color: var(--pink-bg);   }
   .cal-day.zc-orange { background: var(--orange-bg); border-color: var(--orange-bg); }
   .cal-day.zc-blue   { background: var(--blue-bg);   border-color: var(--blue-bg);   }
@@ -426,327 +115,790 @@
   .cal-day.zc-purple { background: var(--purple-bg); border-color: var(--purple-bg); }
   .cal-day.zc-red    { background: var(--red-bg);    border-color: var(--red-bg);    }
   .cal-day.zc-brown  { background: var(--brown-bg);  border-color: var(--brown-bg);  }
-
-  .cal-day.zc-pink   .day-num, .cal-day.zc-pink   .day-zone { color: var(--pink-text);   }
+  .cal-day.zc-pink   .day-num, .cal-day.zc-pink   .day-zone { color: var(--pink-text); }
   .cal-day.zc-orange .day-num, .cal-day.zc-orange .day-zone { color: var(--orange-text); }
-  .cal-day.zc-blue   .day-num, .cal-day.zc-blue   .day-zone { color: var(--blue-text);   }
+  .cal-day.zc-blue   .day-num, .cal-day.zc-blue   .day-zone { color: var(--blue-text); }
   .cal-day.zc-yellow .day-num, .cal-day.zc-yellow .day-zone { color: var(--yellow-text); }
-  .cal-day.zc-green  .day-num, .cal-day.zc-green  .day-zone { color: var(--green-text);  }
+  .cal-day.zc-green  .day-num, .cal-day.zc-green  .day-zone { color: var(--green-text); }
   .cal-day.zc-purple .day-num, .cal-day.zc-purple .day-zone { color: var(--purple-text); }
-  .cal-day.zc-red    .day-num, .cal-day.zc-red    .day-zone { color: var(--red-text);    }
-  .cal-day.zc-brown  .day-num, .cal-day.zc-brown  .day-zone { color: var(--brown-text);  }
-
-  /* ── DAY DETAIL SHEET ── */
-  .detail-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.75);
-    z-index: 200;
-    align-items: flex-end;
-    justify-content: center;
-  }
-
-  .detail-overlay.open {
-    display: flex;
-  }
-
-  .detail-sheet {
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    border-radius: 16px 16px 0 0;
-    padding: 20px 20px 40px;
-    width: 100%;
-    max-width: 500px;
-    animation: slideUp 0.22s ease-out;
-  }
-
-  @keyframes slideUp {
-    from { transform: translateY(30px); opacity: 0; }
-    to   { transform: translateY(0);    opacity: 1; }
-  }
-
-  .detail-handle {
-    width: 36px;
-    height: 4px;
-    background: var(--muted);
-    border-radius: 2px;
-    margin: 0 auto 20px;
-  }
-
-  .detail-top {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
-
-  .detail-date {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-dim);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-
-  .detail-zone-name {
-    font-family: var(--mono);
-    font-size: 26px;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-  }
-
-  .detail-tagline {
-    font-family: var(--sans);
-    font-size: 14px;
-    font-weight: 300;
-    margin-top: 4px;
-    opacity: 0.7;
-  }
-
-  .detail-close {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--muted);
-    font-family: var(--mono);
-    font-size: 16px;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    margin-left: 12px;
-    transition: color 0.15s;
-  }
-
-  .detail-close:hover { color: var(--text); }
-
-  .score-rows {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .score-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .score-emoji {
-    font-size: 16px;
-    width: 22px;
-    flex-shrink: 0;
-    text-align: center;
-  }
-
-  .score-cat {
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    width: 80px;
-    flex-shrink: 0;
-  }
-
-  .score-bar-wrap {
-    flex: 1;
-    height: 6px;
-    background: var(--bg);
-    border-radius: 3px;
-    overflow: hidden;
-  }
-
-  .score-bar {
-    height: 100%;
-    border-radius: 3px;
-    transition: width 0.4s ease-out;
-  }
-
-  .score-val {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text-dim);
-    width: 28px;
-    text-align: right;
-    flex-shrink: 0;
-  }
-
-  .score-guide {
-    font-family: var(--sans);
-    font-size: 11px;
-    font-weight: 300;
-    color: var(--text-dim);
-    width: 110px;
-    flex-shrink: 0;
-    text-align: right;
-  }
+  .cal-day.zc-red    .day-num, .cal-day.zc-red    .day-zone { color: var(--red-text); }
+  .cal-day.zc-brown  .day-num, .cal-day.zc-brown  .day-zone { color: var(--brown-text); }
 
   /* ── LEGEND ── */
-  .legend {
-    margin-top: 28px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
+  .legend { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .legend-chip { font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: 0.06em; padding: 4px 8px; border-radius: 3px; }
+  .client-footer { margin-top: 28px; font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.12em; text-align: center; }
 
-  .legend-chip {
-    font-family: var(--mono);
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    padding: 4px 8px;
-    border-radius: 3px;
-  }
+  /* ── DAY SHEET (Level 1) ── */
+  .bottom-sheet { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; align-items: flex-end; justify-content: center; }
+  .bottom-sheet.open { display: flex; }
+  .sheet-inner { background: var(--surface); border-top: 1px solid var(--border); border-radius: 16px 16px 0 0; padding: 20px 20px 40px; width: 100%; max-width: 500px; animation: slideUp 0.22s ease-out; max-height: 90vh; overflow-y: auto; }
+  @keyframes slideUp { from { transform: translateY(30px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+  .sheet-handle { width: 36px; height: 4px; background: var(--muted); border-radius: 2px; margin: 0 auto 20px; }
+  .sheet-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 6px; }
+  .sheet-date { font-family: var(--mono); font-size: 10px; color: var(--dim); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 4px; }
+  .sheet-zone-name { font-family: var(--serif); font-size: 28px; font-weight: 700; }
+  .sheet-archetype { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; opacity: 0.6; margin-top: 2px; text-transform: uppercase; }
+  .sheet-tagline { font-family: var(--sans); font-size: 14px; font-weight: 300; margin-top: 4px; opacity: 0.65; margin-bottom: 6px; }
+  .sheet-identity { font-family: var(--sans); font-size: 13px; line-height: 1.65; opacity: 0.75; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .sheet-close { background: var(--bg); border: 1px solid var(--border); color: var(--muted); font-size: 16px; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-left: 12px; transition: color 0.15s; }
+  .sheet-close:hover { color: var(--text); }
 
-  /* ── FOOTER ── */
-  .client-footer {
-    margin-top: 28px;
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--muted);
-    letter-spacing: 0.12em;
-    text-align: center;
-  }
+  /* ── WINDOW DIRECTIVE ── */
+  .window-block { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 14px 16px; margin-bottom: 20px; }
+  .window-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.4; margin-bottom: 6px; }
+  .window-name-display { font-family: var(--mono); font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+  .window-directive { font-family: var(--sans); font-size: 13px; line-height: 1.6; opacity: 0.75; }
 
-  /* ── MOBILE TWEAKS ── */
+  /* ── SCORE ROWS ── */
+  .scores-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.4; margin-bottom: 12px; }
+  .score-rows { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .score-row { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 8px 10px; border-radius: 6px; border: 1px solid transparent; transition: border-color 0.15s, background 0.15s; }
+  .score-row:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08); }
+  .score-row .tap-hint { font-family: var(--mono); font-size: 8px; letter-spacing: 0.1em; opacity: 0.35; margin-left: auto; flex-shrink: 0; white-space: nowrap; }
+  .score-emoji { font-size: 16px; width: 22px; flex-shrink: 0; text-align: center; }
+  .score-cat { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 0.05em; width: 80px; flex-shrink: 0; }
+  .score-bar-wrap { flex: 1; height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; }
+  .score-bar { height: 100%; border-radius: 3px; transition: width 0.4s ease-out; }
+  .score-val { font-family: var(--mono); font-size: 11px; color: var(--dim); width: 28px; text-align: right; flex-shrink: 0; }
+
+  /* ── POKER / LIFE GUIDANCE ── */
+  .guidance-blocks { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 4px; }
+  .guidance-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 14px; }
+  .guidance-card-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.4; margin-bottom: 8px; }
+  .guidance-card-text { font-family: var(--sans); font-size: 12px; line-height: 1.65; opacity: 0.8; }
+
+  /* ── CATEGORY DEEP DIVE (Level 2) ── */
+  .deep-sheet { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 300; align-items: flex-end; justify-content: center; }
+  .deep-sheet.open { display: flex; }
+  .deep-inner { background: var(--surface2); border-top: 1px solid var(--border); border-radius: 16px 16px 0 0; padding: 20px 20px 50px; width: 100%; max-width: 500px; animation: slideUp 0.2s ease-out; max-height: 88vh; overflow-y: auto; }
+  .deep-back { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; color: var(--dim); cursor: pointer; margin-bottom: 20px; padding: 6px 0; transition: color 0.15s; }
+  .deep-back:hover { color: var(--text); }
+  .deep-back svg { width: 14px; height: 14px; }
+  .deep-header { margin-bottom: 24px; }
+  .deep-cat-emoji { font-size: 24px; margin-bottom: 8px; }
+  .deep-cat-name { font-family: var(--serif); font-size: 26px; margin-bottom: 4px; }
+  .deep-cat-zone { font-family: var(--mono); font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.45; margin-bottom: 12px; }
+  .deep-score-display { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .deep-score-num { font-family: var(--mono); font-size: 36px; font-weight: 700; line-height: 1; }
+  .deep-score-bar-wrap { flex: 1; height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+  .deep-score-bar { height: 100%; border-radius: 4px; transition: width 0.5s ease-out; }
+  .deep-section { margin-bottom: 24px; }
+  .deep-section-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.35; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .deep-section-label::after { content:''; flex:1; height:1px; background: rgba(255,255,255,0.05); }
+  .deep-guidance-text { font-family: var(--sans); font-size: 14px; line-height: 1.72; color: var(--text); opacity: 0.82; margin-bottom: 12px; }
+  .deep-insight-text { font-family: var(--sans); font-size: 13px; line-height: 1.68; opacity: 0.6; }
+  .deep-traits { display: flex; flex-direction: column; gap: 8px; }
+  .deep-trait { background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.05); border-radius: 6px; padding: 12px 14px; }
+  .deep-trait-name { font-family: var(--serif); font-size: 15px; margin-bottom: 4px; }
+  .deep-trait-sub { font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; opacity: 0.4; text-transform: uppercase; margin-bottom: 8px; }
+  .deep-trait-desc { font-family: var(--sans); font-size: 12px; line-height: 1.6; opacity: 0.7; }
+  .deep-polarity { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+  .deep-pole { background: rgba(255,255,255,0.02); border-radius: 4px; padding: 8px 10px; }
+  .deep-pole-label { font-family: var(--mono); font-size: 8px; letter-spacing: 0.14em; opacity: 0.35; margin-bottom: 4px; }
+  .deep-pole-items { font-family: var(--sans); font-size: 11px; line-height: 1.55; opacity: 0.65; }
+  .deep-window-note { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-left-width: 3px; border-radius: 4px; padding: 12px 14px; margin-top: 12px; }
+  .deep-window-note p { font-family: var(--sans); font-size: 12px; line-height: 1.65; opacity: 0.7; }
+
   @media (max-width: 380px) {
     .cal-day .day-num { font-size: 11px; }
-    .cal-day .day-zone { font-size: 5px; }
-    .score-guide { display: none; }
+    .guidance-blocks { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════════ -->
-<!--  ADMIN VIEW                                        -->
-<!-- ══════════════════════════════════════════════════ -->
+<!-- ADMIN -->
 <div id="admin" class="view active">
-  <div class="admin-header">
+  <div style="max-width:680px;margin:0 auto;padding:40px 20px 80px">
     <div class="wordmark">luckify.me</div>
     <div class="admin-title">// CALENDAR GENERATOR</div>
-  </div>
-
-  <div class="field-group">
-    <label>Client Handle</label>
-    <input type="text" id="clientName" placeholder="e.g. mkcrusher" autocomplete="off" autocapitalize="off">
-  </div>
-
-  <div class="field-group">
-    <div class="month-row">
-      <div>
-        <label>Month</label>
-        <select id="selMonth">
-          <option value="0">January</option><option value="1">February</option>
-          <option value="2">March</option><option value="3">April</option>
-          <option value="4">May</option><option value="5">June</option>
-          <option value="6">July</option><option value="7">August</option>
-          <option value="8">September</option><option value="9">October</option>
-          <option value="10">November</option><option value="11">December</option>
-        </select>
-      </div>
-      <div>
-        <label>Year</label>
-        <select id="selYear"></select>
+    <div class="field-group">
+      <label>Client Handle</label>
+      <input type="text" id="clientName" placeholder="e.g. mkcrusher" autocomplete="off" autocapitalize="off">
+    </div>
+    <div class="field-group">
+      <div class="month-row">
+        <div><label>Month</label>
+          <select id="selMonth">
+            <option value="0">January</option><option value="1">February</option>
+            <option value="2">March</option><option value="3">April</option>
+            <option value="4">May</option><option value="5">June</option>
+            <option value="6">July</option><option value="7">August</option>
+            <option value="8">September</option><option value="9">October</option>
+            <option value="10">November</option><option value="11">December</option>
+          </select>
+        </div>
+        <div><label>Year</label><select id="selYear"></select></div>
       </div>
     </div>
-  </div>
-
-  <div class="field-group">
-    <div class="zone-grid-label">Tap each day to assign zone</div>
-    <div class="zone-grid" id="adminGrid"></div>
-  </div>
-
-  <button class="generate-btn" onclick="generateLink()">GENERATE LINK →</button>
-
-  <div class="share-box" id="shareBox">
-    <div class="share-label">Share with client</div>
-    <div class="share-url" id="shareUrl"></div>
-    <button class="copy-btn" id="copyBtn" onclick="copyLink()">COPY LINK</button>
+    <div class="field-group">
+      <div class="zone-grid-label">Tap each day to assign zone</div>
+      <div class="zone-grid" id="adminGrid"></div>
+    </div>
+    <button class="generate-btn" onclick="generateLink()">GENERATE LINK →</button>
+    <div class="share-box" id="shareBox">
+      <div class="share-label">Share with client</div>
+      <div class="share-url" id="shareUrl"></div>
+      <button class="copy-btn" id="copyBtn" onclick="copyLink()">COPY LINK</button>
+    </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════ -->
-<!--  ZONE PICKER POPUP (admin)                         -->
-<!-- ══════════════════════════════════════════════════ -->
-<div class="zone-picker-overlay" id="pickerOverlay" onclick="closePicker(event)">
+<!-- ZONE PICKER -->
+<div class="overlay" id="pickerOverlay" onclick="closePicker(event)">
   <div class="zone-picker">
-    <div class="zone-picker-title">SELECT ZONE</div>
-    <div class="zone-picker-options" id="pickerOptions"></div>
+    <div class="picker-title">SELECT ZONE</div>
+    <div class="picker-options" id="pickerOptions"></div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════ -->
-<!--  CLIENT VIEW                                       -->
-<!-- ══════════════════════════════════════════════════ -->
+<!-- CLIENT -->
 <div id="client" class="view">
-  <div class="client-header">
+  <div style="max-width:500px;margin:0 auto;padding:24px 16px 80px">
     <div class="client-wordmark">Lucky Window // luckify.me</div>
     <div class="client-name" id="clientNameDisplay"></div>
     <div class="client-month" id="clientMonthDisplay"></div>
+    <div class="cal-dow-row">
+      <div class="cal-dow">SUN</div><div class="cal-dow">MON</div>
+      <div class="cal-dow">TUE</div><div class="cal-dow">WED</div>
+      <div class="cal-dow">THU</div><div class="cal-dow">FRI</div>
+      <div class="cal-dow">SAT</div>
+    </div>
+    <div class="cal-grid" id="clientGrid"></div>
+    <div class="legend" id="clientLegend"></div>
+    <div class="client-footer">COLOR ZONE = DAILY ENVIRONMENTAL ALIGNMENT // AM READING</div>
   </div>
-
-  <div class="cal-dow-row">
-    <div class="cal-dow">SUN</div><div class="cal-dow">MON</div>
-    <div class="cal-dow">TUE</div><div class="cal-dow">WED</div>
-    <div class="cal-dow">THU</div><div class="cal-dow">FRI</div>
-    <div class="cal-dow">SAT</div>
-  </div>
-  <div class="cal-grid" id="clientGrid"></div>
-
-  <div class="legend" id="clientLegend"></div>
-
-  <div class="client-footer">COLOR ZONE = DAILY ENVIRONMENTAL ALIGNMENT // AM READING</div>
 </div>
 
-<!-- ══════════════════════════════════════════════════ -->
-<!--  DAY DETAIL BOTTOM SHEET (client)                  -->
-<!-- ══════════════════════════════════════════════════ -->
-<div class="detail-overlay" id="detailOverlay" onclick="closeDetail(event)">
-  <div class="detail-sheet" id="detailSheet">
-    <div class="detail-handle"></div>
-    <div class="detail-top">
+<!-- DAY SHEET (Level 1) -->
+<div class="bottom-sheet" id="daySheet" onclick="closeDaySheet(event)">
+  <div class="sheet-inner" id="daySheetInner">
+    <div class="sheet-handle"></div>
+    <div class="sheet-top">
       <div>
-        <div class="detail-date" id="detailDate"></div>
-        <div class="detail-zone-name" id="detailZoneName"></div>
-        <div class="detail-tagline" id="detailTagline"></div>
+        <div class="sheet-date" id="sheetDate"></div>
+        <div class="sheet-zone-name" id="sheetZoneName"></div>
+        <div class="sheet-archetype" id="sheetArchetype"></div>
+        <div class="sheet-tagline" id="sheetTagline"></div>
       </div>
-      <button class="detail-close" onclick="closeDetailBtn()">✕</button>
+      <button class="sheet-close" onclick="document.getElementById('daySheet').classList.remove('open')">✕</button>
     </div>
+    <div class="sheet-identity" id="sheetIdentity"></div>
+    <div class="window-block" id="windowBlock">
+      <div class="window-label">Window Directive</div>
+      <div class="window-name-display" id="windowNameDisplay"></div>
+      <div class="window-directive" id="windowDirective"></div>
+    </div>
+    <div class="scores-label">TODAY'S FOCUS — TAP TO GO DEEPER</div>
     <div class="score-rows" id="scoreRows"></div>
+    <div class="guidance-blocks" id="guidanceBlocks"></div>
+  </div>
+</div>
+
+<!-- CATEGORY DEEP DIVE (Level 2) -->
+<div class="deep-sheet" id="deepSheet" onclick="closeDeepSheet(event)">
+  <div class="deep-inner" id="deepInner">
+    <div class="deep-back" onclick="closeDeepSheetBtn()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      BACK TO DAY
+    </div>
+    <div class="deep-header">
+      <div class="deep-cat-emoji" id="deepEmoji"></div>
+      <div class="deep-cat-name" id="deepCatName"></div>
+      <div class="deep-cat-zone" id="deepCatZone"></div>
+    </div>
+    <div class="deep-score-display">
+      <div class="deep-score-num" id="deepScoreNum"></div>
+      <div class="deep-score-bar-wrap">
+        <div class="deep-score-bar" id="deepScoreBar" style="width:0%"></div>
+      </div>
+    </div>
+    <div id="deepContent"></div>
   </div>
 </div>
 
 <script>
-/* ════════════════════════════════════════════════════
-   ZONE DATA
-════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   ZONE CONFIG
+═══════════════════════════════════════════════ */
 const ZONES = {
-  Pink:   { bg:'#4a1040', text:'#f9c8ee', cls:'zc-pink'   },
-  Orange: { bg:'#3d1a00', text:'#ffd6a0', cls:'zc-orange' },
-  Blue:   { bg:'#0a1e35', text:'#a8d4f5', cls:'zc-blue'   },
-  Yellow: { bg:'#2a2200', text:'#fff1a0', cls:'zc-yellow' },
-  Green:  { bg:'#0e1f10', text:'#b8f0c0', cls:'zc-green'  },
-  Purple: { bg:'#1a0a2e', text:'#d4b8f5', cls:'zc-purple' },
-  Red:    { bg:'#2e0a08', text:'#ffc0bc', cls:'zc-red'    },
-  Brown:  { bg:'#1a0f08', text:'#d4b898', cls:'zc-brown'  },
+  Pink:   { bg:'#4a1040', text:'#f9c8ee', acc:'#D030A0', cls:'zc-pink'   },
+  Orange: { bg:'#3d1a00', text:'#ffd6a0', acc:'#E87020', cls:'zc-orange' },
+  Blue:   { bg:'#0a1e35', text:'#a8d4f5', acc:'#4080E0', cls:'zc-blue'   },
+  Yellow: { bg:'#2a2200', text:'#fff1a0', acc:'#F0C020', cls:'zc-yellow' },
+  Green:  { bg:'#0e1f10', text:'#b8f0c0', acc:'#6EC25A', cls:'zc-green'  },
+  Purple: { bg:'#1a0a2e', text:'#d4b8f5', acc:'#8A2BE2', cls:'zc-purple' },
+  Red:    { bg:'#2e0a08', text:'#ffc0bc', acc:'#E04030', cls:'zc-red'    },
+  Brown:  { bg:'#1a0f08', text:'#d4b898', acc:'#A97040', cls:'zc-brown'  },
 };
-
 const ZONE_NAMES = ['Pink','Orange','Blue','Yellow','Green','Purple','Red','Brown'];
-
-const CELL_LINE = {
-  Orange:'Make your move', Blue:'Think it through',   Red:'Careful aggression',
-  Green:'Build the habit', Yellow:'Show up present',  Purple:'Go inward',
-  Pink:'Full expression',  Brown:'Rest and reset',
-};
-
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const CAT_EMOJI = { Action:'⚡', Strategy:'🧠', Discipline:'🔒', Social:'🤝', Creativity:'✨', Risk:'🎯' };
 
+/* ═══════════════════════════════════════════════
+   RHYTHM DATA — pulled directly from your frameworks
+═══════════════════════════════════════════════ */
+const RHYTHM_DATA = {
+  Orange: {
+    archetype: 'The Metaphysical Shield',
+    identity: 'Protective creative energy — steady, body-level, and safe. The floor is higher here. Even when things don\'t go as planned, Orange softens the blow and keeps structure intact. The best-case window for building without risk of collapse.',
+    source: 'Sacral → Naval · Andromedian Database',
+    waveNote: 'Continuous upward climb. No peak, no fall. Orange builds without breaking.',
+    categories: {
+      Action: {
+        headline: 'Build with full commitment.',
+        guidance: 'Orange is the safest window for sustained effort. The safety floor is active — worst case is stagnant, not collapse. Take on work that requires staying power and engage fully.',
+        insight: 'Orange does not break under pressure — it absorbs, adjusts, and continues building. The shield is always active here.',
+        pokerNote: 'Run full sessions. Play creatively and engage pots you\'d normally avoid. Even if the session underperforms, Orange prevents structural damage.',
+        lifeNote: 'Protective energy is active. Take on projects that require staying power, engage with people who matter, and build something that lasts.',
+        traits: [
+          { name: 'Survivability', sub: 'Resilience Master', desc: 'Adapts and perseveres in challenging situations — adversity, danger, uncertainty. Orange absorbs, adjusts, and continues building. Does not break under pressure.', upside: 'Calm under pressure · Sound decisions · Physical survivability', downside: null },
+          { name: 'Strong Foundations', sub: 'Long Term Strategist · Legacy Forger', desc: 'Building through hard work, education, experience, and personal development. The foundation is both internal and relational — solid basis for physical and mental well-being.', upside: 'Solid physical and mental foundation · Community and family structure', downside: null },
+          { name: 'Fixer', sub: 'Groundkeeper', desc: 'Constant drive to fix or make things better. Physical repairman tendency — loves to solve what\'s broken in the environment or structure.', upside: null, downside: null },
+        ]
+      },
+      Strategy: {
+        headline: 'Plan while moving — structure is your edge.',
+        guidance: 'Orange rewards sustained strategic effort. The creative floor is on, meaning your planning has a safety net today. Build systems and structures without fear of collapse.',
+        insight: 'Strong Foundations talent is active. Build through hard work, education, and personal development — this window supports legacy-level thinking.',
+        pokerNote: 'Engaged play is supported. Structure your session with clear targets. Orange prevents the collapse that rushed strategy produces in other windows.',
+        lifeNote: 'Lay the groundwork for something lasting. Document your thinking, build your plan. The environment is stable enough to hold what you create today.',
+        traits: [
+          { name: 'Strong Foundations', sub: 'Long Term Strategist', desc: 'Long-arc strategic thinking. Building through hard work, experience, and personal development. Includes the social environment — positive relationships, community, family.', upside: 'Legacy forging · Sustained strategy · Mental clarity', downside: null },
+          { name: 'Low Visibility Booster', sub: 'Storyteller', desc: 'The ability to make things noticeable and easy for others to understand. Orange doesn\'t need the spotlight — it makes complexity accessible.', upside: 'Translates invisible into visible · Makes complexity clear', downside: null },
+        ]
+      },
+      Discipline: {
+        headline: 'Stay in structure. The floor is active.',
+        guidance: 'Orange is the rhythm of sustained effort. Discipline here is not restraint — it\'s the ability to keep building when motivation fluctuates. The safety floor means your structure holds even on off days.',
+        insight: 'The Fixer talent is active in this window — constant drive to improve and maintain. Use it to reinforce your routines rather than disrupt them.',
+        pokerNote: 'Play your fundamentals. No adjustments to core strategy needed — Orange protects against structural damage, so disciplined play compounds.',
+        lifeNote: 'Keep the routine. This is a build window, and consistent discipline here produces lasting results. The environment rewards the person who shows up regardless of how they feel.',
+        traits: [
+          { name: 'Fixer', sub: 'Groundkeeper', desc: 'Physical and mental drive to fix, maintain, and improve. This isn\'t compulsion — it\'s the natural expression of Orange in a structured environment.', upside: 'Sustained discipline · System maintenance', downside: null },
+        ]
+      },
+      Social: {
+        headline: 'Leverage your network. People energize Orange.',
+        guidance: 'Orange draws strength from connection. People, emotional energy, and relational contact are active energy draws in this window. The Protector talent is engaged — look out for others today.',
+        insight: 'Orange energy sources include People (emotional energy, connection), Activities (experiences, stimulation), and Nature. Today the social field is a resource, not a drain.',
+        pokerNote: 'Table dynamics are a tool today. Read the social field and leverage it — Orange gives you relational awareness that translates to reads and timing.',
+        lifeNote: 'Engage with the people who matter. Strengthen foundations through relationship. The Protector aspect of Orange is active — you may find yourself naturally looking out for others.',
+        traits: [
+          { name: 'Protector', sub: 'Caregiver', desc: 'Keeping someone or something safe from harm. The Protector actively defends — as parent, guardian, caregiver, or simply the person who shows up when it matters. Looks beyond surfaces to underlying essence.', upside: 'Deep understanding · Determined active defense', downside: null },
+          { name: 'Emotional Flexibility', sub: 'Filler · Emotional Resilience', desc: 'Emotional resilience that fills and adapts to the social environment. Orange doesn\'t rigidly hold one emotional state — it reads and responds.', upside: 'Adaptable emotional intelligence', downside: null },
+        ]
+      },
+      Creativity: {
+        headline: 'Channel output. Orange creativity is body-level.',
+        guidance: 'Orange creativity operates from the body\'s core (Sacral → Naval) — not from the upper-register imagination. This means creative output today should be grounded, practical, and expressed through doing rather than conceiving.',
+        insight: 'Low Visibility Booster talent: the ability to make complex things understandable. Today\'s creativity is best expressed in translating, explaining, and making ideas accessible.',
+        pokerNote: 'Creative play is supported. Use pattern recognition and instinct — Orange creativity is fast and body-level, not analytical.',
+        lifeNote: 'Create through doing. Don\'t wait for inspiration — the Sacral center generates energy through action. Start building and let the creative direction reveal itself.',
+        traits: [
+          { name: 'Low Visibility Booster', sub: 'Storyteller', desc: 'Making things noticeable and easy to understand. Orange creativity is fundamentally about accessibility — taking what\'s complex or invisible and bringing it into clear view.', upside: 'Translates complexity · Makes invisible visible', downside: null },
+        ]
+      },
+      Risk: {
+        headline: 'Calculated bet. The floor is on.',
+        guidance: 'Orange is the best-case window for risk. The safety floor is active — even when things don\'t go as planned, Orange prevents structural collapse. This doesn\'t mean reckless risk; it means the downside is bounded.',
+        insight: 'Survivability talent: adapts and perseveres regardless of outcome. Orange risk isn\'t gambling — it\'s operating from a position where the worst case is already absorbed.',
+        pokerNote: 'Run full volume. The safety floor means even a losing session doesn\'t produce structural damage. Size up on premium spots and engage pots you\'d normally avoid.',
+        lifeNote: 'Take the calculated bet today. The environment is protected. If there\'s a move you\'ve been holding back on because of downside risk, Orange is the window to make it.',
+        traits: [
+          { name: 'Survivability', sub: 'Resilience Master · Survivalist', desc: 'The ability to adapt and persevere in challenging situations. Orange does not break under pressure — it absorbs, adjusts, and continues. The risk floor is built into the rhythm itself.', upside: 'Calm under pressure · Sound decisions under adversity', downside: null },
+        ]
+      }
+    }
+  },
+
+  Blue: {
+    archetype: 'The Pursuer',
+    identity: 'Curiosity-driven motion energy — always rising toward something. Blue cycles through phases: rising, landing, resetting. It questions, pursues, and locks in with intensity. The window rewards going deeper, not wider.',
+    source: 'Throat → Third Eye · Zeta Collective',
+    waveNote: 'Steep rise → cup/catch at peak → fork: Stable Swing (rises again) or Crash (drops, can self-catch).',
+    categories: {
+      Action: {
+        headline: 'One thing. Full depth.',
+        guidance: 'Blue is in motion — rising or resetting. The edge today comes from depth, not spread. Pick one game, one format, one target and pursue it with full attention. Diluted focus dilutes the window.',
+        insight: 'The Pursuer trait: environmental projection — reads and enters environments. Short-term, this means locking into one context completely and extracting maximum value from it.',
+        pokerNote: 'Pick one game, one format, one target. Blue rewards the player willing to stay in the seat longer than feels comfortable. The edge compounds with depth.',
+        lifeNote: 'One project, one conversation, one thread. Blue rewards the person willing to pursue past the surface. Follow what pulls you and go deeper than usual.',
+        traits: [
+          { name: 'Pursuer', sub: 'Environmental Projection', desc: 'Reads and enters environments with full commitment. Short-term: locking into a context and extracting maximum value. Long-term: Goal Achiever operating on a 12-year Zodiac cycle.', upside: 'Fast entry · Full commitment · Environmental reading', downside: null },
+          { name: 'Consumed', sub: 'Adventure Seeker', desc: 'Daily consumed motion — Hyper-Focused via T-Dopamine, activating Lake Energy. Blue action is driven by the desire to be fully in it, not just adjacent to it.', upside: 'Hyper-focus · Complete immersion · Adventure drive', downside: 'Motion for its own sake without clear target' },
+        ]
+      },
+      Strategy: {
+        headline: 'Deep work. One thread all the way down.',
+        guidance: 'Blue\'s strategic edge is the Quantum Puzzle Solver trait — T-Dopamine-driven breakthrough cognition. Strategy today is not about breadth of planning; it\'s about going deep on one problem until the pattern breaks open.',
+        insight: 'Curiosity is the fuel. Blue strategy works by pursuing the question further than feels comfortable. The breakthrough comes after the point where most people would stop.',
+        pokerNote: 'Study mode is active. Review hands from the week, drill a specific leak, go deep on one concept. Blue rewards the player who goes past the surface understanding.',
+        lifeNote: 'Follow one thread all the way down. The Pursuer in this window has access to breakthrough cognition — but only when focused on a single problem, not scattered across many.',
+        traits: [
+          { name: 'Quantum Puzzle Solver', sub: 'Mental · T-Dopamine', desc: 'Breakthrough cognition activated by dopaminergic focus. Blue solves puzzles by going deeper than surface-level analysis allows — the answer is in the depth, not the breadth.', upside: 'Breakthrough cognition · Pattern recognition · Deep problem solving', downside: null },
+          { name: 'Directness', sub: 'Provoke Until Tipping Point', desc: 'Wisdom to find the shortest path to the goal. Power to stay on the direct route when things get tough. Cuts through complexity without unnecessary steps.', upside: 'Shortest path to goal · Cuts complexity', downside: 'Directness perceived as lacking elegance · Provocation accumulates' },
+        ]
+      },
+      Discipline: {
+        headline: 'Follow the process. Don\'t over-adjust.',
+        guidance: 'Blue\'s window phases can create the urge to over-correct when results feel uncertain. Discipline today is staying in the process without reacting to short-term noise. The cycle is doing its job even when it doesn\'t feel that way.',
+        insight: 'Blue cycles through rise, cup/catch, and reset. Discipline is recognizing which phase you\'re in and playing the right game for that phase — not fighting the cycle.',
+        pokerNote: 'Stay in the hand. Variance is the operating condition in the landing zone, not a malfunction. Don\'t over-adjust to short-term outcomes.',
+        lifeNote: 'Follow the process you\'ve already set. Blue discipline is not about adding new structure — it\'s about trusting what you\'ve built while the cycle completes.',
+        traits: [
+          { name: 'Directness', sub: 'Path Commitment', desc: 'Power to stay on the direct route when things get tough. Blue discipline is about not abandoning the path when resistance appears — the direct route is the edge.', upside: 'Commitment under pressure · Stays the course', downside: 'May provoke environment through bluntness' },
+        ]
+      },
+      Social: {
+        headline: 'Build key alliances. Quality over volume.',
+        guidance: 'Blue social energy is alliance-building, not broad networking. The Negotiator / Diplomacy Master trait is active — feeling the room, building bridges, strategic connection. One meaningful conversation beats five superficial ones.',
+        insight: 'Blue is in its depth-seeking phase. Social connection here should mirror that — go deeper with one person rather than spreading attention across many.',
+        pokerNote: 'Read the table dynamics. Blue gives you strong relational read capacity today — use it to identify the key players and adjust your game accordingly.',
+        lifeNote: 'Build key alliances. This is a day for meaningful conversation, not broad outreach. Blue social energy is strategic and focused — it reads both sides of any exchange.',
+        traits: [
+          { name: 'Negotiator', sub: 'Diplomacy Master', desc: 'Strategic bridge-building. Mental diplomacy: connecting people, feeling the room, attuning to both sides. Emotional diplomacy: sensing both sides of any exchange simultaneously.', upside: 'Strategic connection · People connector · Bridge-building', downside: null },
+        ]
+      },
+      Creativity: {
+        headline: 'Explore freely. Curiosity is the fuel.',
+        guidance: 'Blue creativity is curiosity-driven — it follows what\'s interesting without needing to know where it leads. In this window, creative exploration should go deeper, not broader. One thread, fully pursued.',
+        insight: 'The Consumed trait activates Lyran channel through hyper-focus, opening Lake Energy (Gates 38 and 28 — Aliveness and The Game Player). Creative breakthroughs come from full immersion.',
+        pokerNote: 'Try the line you\'ve been curious about. Blue creativity in poker is experimental and exploratory — test one new approach with full attention.',
+        lifeNote: 'Follow what you\'re genuinely curious about. Blue creative energy is not performance — it\'s authentic exploration. The deeper you go, the more energy you generate.',
+        traits: [
+          { name: 'Consumed', sub: 'Hyper-Focused · Lake Energy', desc: 'Activates Lyran channel through hyper-focus. Opens Gate 38 (Aliveness) and Gate 28 (The Game Player). Creative depth is powered by complete immersion, not breadth.', upside: 'Hyper-focus · Access to Lake Energy · Deep creative states', downside: 'Consumed motion without clear creative target' },
+        ]
+      },
+      Risk: {
+        headline: 'Calculated exposure. Know the cycle phase.',
+        guidance: 'Blue risk is phase-dependent. In the rise (Sub-Prime): take the calculated bet. In the landing (Variance): stay in the hand but don\'t over-bet. In reset (Stable Swing): consolidate, don\'t force.',
+        insight: 'Blue\'s three window positions (Sub-Prime, Variance, Stable Swing) each have a different risk posture. The key is identifying which phase you\'re in before sizing.',
+        pokerNote: 'Blue is either rising or landing. Rising: pursue with intensity, size up on premium spots. Landing: variance is the condition, not a malfunction — stay in the hand at normal size.',
+        lifeNote: 'Risk today is phase-dependent. If you feel Blue\'s rising energy, take the bet. If you feel the landing uncertainty, don\'t force — let the cycle complete before committing.',
+        traits: [
+          { name: 'Pursuer', sub: 'Goal Achiever · 12-year Cycle', desc: 'Long-term goal orientation over the 12-year Zodiac cycle. Risk in Blue is not short-term gambling — it\'s calculated moves in service of a longer arc.', upside: 'Sustained risk capacity · Long-arc calculation', downside: null },
+        ]
+      }
+    }
+  },
+
+  Green: {
+    archetype: 'Cosmic',
+    identity: 'The system\'s stabilizer — operates through balance, attunement, and quiet influence. Green energy works on environments and other people more than on the self. The window rewards presence, objectivity, and letting things self-correct.',
+    source: 'Heart Chakra · Arcturian Collective',
+    waveNote: 'Near-flat baseline. Micro-variations appear and resolve quickly. Self-correcting by nature.',
+    categories: {
+      Action: {
+        headline: 'Steady progress. Composure is the edge.',
+        guidance: 'Green windows are high-coherence, not high-energy. Action today should be patient, consistent, and present. The environment rewards the person who doesn\'t add noise to a quiet room.',
+        insight: 'Green operates through Action Alignment — doing what the moment calls for, not what momentum or habit would produce. Presence over performance.',
+        pokerNote: 'Patient, conservative play. Composure is the edge today — outlasting the table matters more than outplaying it. Green stabilizes; use that.',
+        lifeNote: 'Show up with presence and let things self-regulate. Green action is about attunement — reading the environment and responding to what\'s actually needed, not what you planned.',
+        traits: [
+          { name: 'Rebalance / Healing', sub: 'Cosmic Healer', desc: 'Full-spectrum healer — emotional, physical, energetic. In action terms: naturally corrects imbalances in the environment through presence and attunement. Action Alignment category.', upside: 'Environmental correction · Presence as action · Natural attunement', downside: null },
+        ]
+      },
+      Strategy: {
+        headline: 'Long game thinking. Process over performance.',
+        guidance: 'Green strategy operates through objectivity and impartiality — the Clear Mirror trait. Strategy today is less about planning new moves and more about reviewing current ones with clear eyes, free of bias.',
+        insight: 'Mindset Sync category is active: Mental Adjustment Matching. Green can synchronize with the actual state of a situation, not the story about it. This is a powerful strategic read day.',
+        pokerNote: 'Study and review. The Growth window (if active) is specifically designed for integration and learning. Review hands, identify patterns, let insight settle.',
+        lifeNote: 'Objective review is the strategic edge today. The Clear Mirror trait removes bias from your thinking. Use it to look at your current situation without the filter of what you want to see.',
+        traits: [
+          { name: 'Objective / Unbias', sub: 'Clear Mirror', desc: 'Decisions free of bias. Mental Adjustment Matching and Emotional Objectivity — reads the situation without projection. Sees what is, not what is hoped for.', upside: 'Unbiased analysis · Clear decision-making · Objective emotional read', downside: null },
+        ]
+      },
+      Discipline: {
+        headline: 'This is your edge. Anchor to routine.',
+        guidance: 'Green\'s stabilizing energy makes discipline feel natural today. The near-flat baseline means there\'s no energetic volatility pushing against your structure. Keep the routine — this window rewards consistency.',
+        insight: 'Green\'s wave pattern shows fast self-resolution of micro-variations. In discipline terms: any disruption you encounter today will resolve quickly if you don\'t amplify it.',
+        pokerNote: 'Follow your session structure exactly. Green rewards the disciplined player who doesn\'t add noise. Tight adherence to your game plan outperforms improvisation today.',
+        lifeNote: 'Anchor to your routine. Green energy supports sustained discipline — the environment is stable, which means your structure can run without resistance.',
+        traits: [
+          { name: 'Harmony', sub: 'Mental Intelligence', desc: 'Full-spectrum cognitive harmony. Mental discipline here is not about forcing focus — it\'s about allowing the natural clarity of Green\'s equilibrium to organize your thinking.', upside: 'Sustained clarity · Routine adherence · Mental balance', downside: null },
+        ]
+      },
+      Social: {
+        headline: 'Connection is the edge. Strengthen foundations.',
+        guidance: 'Green energy works on other people and environments more than on the self. Social interaction today is a direct channel for Green\'s stabilizing power — you can create genuine equilibrium in your relationships today.',
+        insight: 'Hospitality and Mediation traits active. Green is the system\'s natural connector — it feels both sides simultaneously and creates balance without imposing it.',
+        pokerNote: 'Read the table as an ecosystem. Green gives you the ability to feel both sides of any exchange — use it to identify the dynamics at work before acting.',
+        lifeNote: 'Strengthen foundations through relationship. The Hospitable and Harmony Architect traits are active — you can create genuine connection and resolve tensions today without effort.',
+        traits: [
+          { name: 'Hospitable', sub: 'Host', desc: 'Creates comfort through presence. Touch Manifestation — physical presence as de-escalation. Emotion Sync — reading and matching what others need.', upside: 'Natural hospitality · De-escalation · Emotional attunement', downside: null },
+          { name: 'Negotiator / Mediator', sub: 'Harmony Architect', desc: 'Physical presence as de-escalation. Feeling both sides simultaneously. Green mediation doesn\'t take sides — it holds the space for both perspectives.', upside: 'Conflict resolution · Both-sides awareness · Natural mediation', downside: null },
+        ]
+      },
+      Creativity: {
+        headline: 'Practice, not perform.',
+        guidance: 'Green creativity is about process, not output. This window rewards the creative act of practice — doing the work in private, refining the skill, building the craft without audience pressure.',
+        insight: 'Aura Influence category is active: Emotional Resonance projected through presence. Green creative energy changes the field around you — you may influence the creative state of others simply by being present.',
+        pokerNote: 'Experiment with mechanics, not results. Use this window to practice reads, timing, and new lines without pressure on the outcome.',
+        lifeNote: 'Practice your craft. Green creativity is not about breakthrough — it\'s about the consistent, patient development of skill. Do the work without measuring the output today.',
+        traits: [
+          { name: 'Rebalance / Healing', sub: 'Cosmic Healer · Aura Influence', desc: 'Emotional Resonance projected through presence. Green creativity influences the environment through aura — the creative work changes the field around you.', upside: 'Ambient creative influence · Environmental calibration', downside: null },
+        ]
+      },
+      Risk: {
+        headline: 'Minimal today. Preserve the baseline.',
+        guidance: 'Green windows are stabilizing, not expansive. Risk-taking today works against the natural energy of the window. The environment rewards composure and conservation over bold moves.',
+        insight: 'Green\'s wave pattern is near-flat — micro-variations that self-resolve. Introducing large risk creates waves that the window will eventually flatten, but the process is inefficient.',
+        pokerNote: 'Conservative sizing. Play patient poker. The edge today comes from outlasting, not outplaying. Don\'t push volume in a Green window.',
+        lifeNote: 'Don\'t force big moves today. Preserve your baseline. Green is a recovery and integration window — it\'s building something quietly. Don\'t interrupt the process.',
+        traits: [
+          { name: 'Objective / Unbias', sub: 'Clear Mirror', desc: 'Unbiased read of risk levels. Green\'s objectivity is its best risk tool — it sees the actual risk, not the story about it. Today that means seeing clearly that the risk reward isn\'t there.', upside: 'Clear-eyed risk assessment', downside: null },
+        ]
+      }
+    }
+  },
+
+  Yellow: {
+    archetype: 'The Phoenix',
+    identity: 'Extreme energy with no middle register — spikes up or spikes down from a flat baseline. Yellow is the system\'s true neutral and its most volatile zone. The window is either high-output or a dead zone. There is no coasting in Yellow.',
+    source: 'Naval → Solar Plexus · Trinity Collective',
+    waveNote: 'Richter scale. Spikes from zero in both directions. Magnitude from zero, not a directional climb.',
+    categories: {
+      Action: {
+        headline: 'Show up fully. Polarity is live.',
+        guidance: 'Yellow activates reduced filtering — what you bring in expresses without dampening. Action today is amplified in whatever direction you\'re already moving. Show up intentional.',
+        insight: 'Power Surge trait is active — drawing attention, speaking loudly when it matters, catharsis through action. Yellow action has no middle register — commit or don\'t.',
+        pokerNote: 'Play with intention. Yellow rewards sharpness over volume. One clean session beats three scattered ones. Show up fully or don\'t show up.',
+        lifeNote: 'Show up present and intentional. What you put in is close to what you get out today. Yellow is the system\'s honest mirror — it amplifies without distortion.',
+        traits: [
+          { name: 'Power Surge', sub: 'ME Dual', desc: 'Action under Yellow is amplified in both directions. The upside: drawing attention intentionally, speaking loudly when it matters, catharsis. The downside: physical aggression, regrettable quick actions.', upside: 'Intentional impact · Cathartic action · Boundary setting', downside: 'Physical aggression · Quick energy release · Regrettable actions' },
+          { name: 'Relentless Achiever', sub: 'MMe Dual', desc: 'Relentless pursuit of objectives. Sustained focus beyond normal threshold. In Yellow, this activates either as unstoppable momentum or compulsive fixation.', upside: 'Relentless pursuit · Sustained focus', downside: 'Compulsive behavior · Inability to disengage' },
+        ]
+      },
+      Strategy: {
+        headline: 'Build your plan. Yellow sharpens at zero.',
+        guidance: 'Yellow\'s neutrality is a strategic asset. The Insight Seeker trait (Gate 43 — Breakthrough) fires in this window. Strategy that requires seeing through established patterns is particularly supported today.',
+        insight: 'Gate 43 (Breakthrough, Individual Knowing) is associated with Yellow. This is a window where strategic insight arrives as sudden knowing — trust it, but verify before committing.',
+        pokerNote: 'Plan your session structure before sitting down. Yellow strategy is pre-action, not mid-stream. Your clearest thinking happens before the heat of the moment.',
+        lifeNote: 'Build your plan today. Yellow sharpness is available, but it requires intention to access. Polarity is live — a focused strategic session produces real insight; an unfocused one produces noise.',
+        traits: [
+          { name: 'Insight Seeker', sub: 'Gate 43 · Breakthrough', desc: 'I Ching Gate 43 — Breakthrough, Individual knowing. Yellow strategy carries the potential for sudden insight that bypasses conventional analysis. Trust what arrives, then verify.', upside: 'Breakthrough insight · Individual knowing · Sees through complexity', downside: null },
+        ]
+      },
+      Discipline: {
+        headline: 'Keep the routine. Don\'t add noise.',
+        guidance: 'Yellow\'s near-zero baseline is its most stable state. Discipline today means not disrupting a neutral environment with excessive force. Keep the routine precisely because the window doesn\'t require you to.',
+        insight: 'Stonewall Guardian trait is active — reliability, predictability, emotionally unshakeable. Yellow discipline is its own quiet strength: the person who holds steady when the energy is neither pushing nor pulling.',
+        pokerNote: 'Keep session length normal. Yellow at neutral doesn\'t call for adjustments — it calls for executing your standard game without forcing anything.',
+        lifeNote: 'Maintain your baseline. This is a clean day to be precise and deliberate. What you choose today is what it is — no distortion in either direction.',
+        traits: [
+          { name: 'Stonewall Guardian', sub: 'ME Dual', desc: 'Natural protector — uses rigidity to defend. Emotionally unshakeable under pressure. Consistent, reliable, predictable. The downside is resistance to necessary change.', upside: 'Unshakeable stability · Reliable · Excellent boundaries', downside: 'Rigid · Stability becomes obstruction' },
+        ]
+      },
+      Social: {
+        headline: 'Connection is the focus. Show up present.',
+        guidance: 'Yellow is the system\'s genuine neutral — honest relational contact without amplification or suppression. Social interactions today land without distortion. This makes it a good day for honest conversations.',
+        insight: 'Reduced energetic filtering means relational exchanges are more direct today. What you communicate is close to what is received. Genuine presence is the edge.',
+        pokerNote: 'Read table dynamics clearly. Yellow gives you an unfiltered read of the social field — use it to calibrate your table image and assess opponents accurately.',
+        lifeNote: 'Show up present. Connection made in Yellow lands cleanly — there\'s no amplification or suppression. Honest conversations, clear decisions, and direct engagement all flow without drag.',
+        traits: [
+          { name: 'Wild', sub: 'Rebel Heart · MMeE Dual', desc: 'Free Thinker and Firebrand. Yellow social energy is authentic and unfiltered — intense, passionate, and willing to challenge the established order when something matters.', upside: 'Authentic expression · Passionate connection · Challenges what doesn\'t serve', downside: 'Disruption for its own sake' },
+        ]
+      },
+      Creativity: {
+        headline: 'Express naturally. Polarity is the fuel.',
+        guidance: 'Yellow creativity is either fully alive or a dead zone — there is no coasting. If creative energy is present, express it without restraint. If it\'s absent, don\'t force it. The window is honest about what\'s available.',
+        insight: 'Wild trait (Rebel Heart): Free Thinker and Firebrand. Yellow creativity challenges established belief and innovates through disruption. The best creative work in this window breaks something open.',
+        pokerNote: 'Express your read through your betting — let your natural game come through without over-filtering. Yellow creativity in poker is instinctual and unfiltered.',
+        lifeNote: 'Create what you actually want to create. Yellow amplifies without distortion — your natural creative impulse expresses cleanly today. Don\'t try to manage or shape it.',
+        traits: [
+          { name: 'Wild', sub: 'Free Thinker · Firebrand', desc: 'Disruptor, innovator, challenges established belief. Intense and passionate. Yellow creativity doesn\'t build on what exists — it finds the edge and pushes past it.', upside: 'Innovative · Disruptive creativity · Firebrand expression', downside: 'Disruption without purpose' },
+        ]
+      },
+      Risk: {
+        headline: 'Read the room. Sub-window determines sizing.',
+        guidance: 'Yellow risk is highly sub-window dependent. Edge (+3/+2): slight advantage available, play with intention. No Tax (+1/-1): clean execution without forcing. Null Edge (-2): more input required for same output — play tighter.',
+        insight: 'Exploiter trait is active in Yellow risk contexts — Exploit Engineer capacity (Manifestation, Mental, Emotional). The upside is leveraging talent to create value. The downside is manipulation.',
+        pokerNote: 'Sub-window determines your risk posture. Edge: play sharp and deliberate. No Tax: standard execution. Null Edge: tighten up, reduce session length if results aren\'t flowing.',
+        lifeNote: 'Know your sub-window score before committing to risk. Yellow is the system\'s most honest zone — what you put in is close to what you get out. No false floors, no hidden ceilings.',
+        traits: [
+          { name: 'Exploiter', sub: 'Exploit Engineer · MMeE Dual', desc: 'Using access, talent, and leverage to create value. In risk contexts: the Exploiter sees gaps and moves through them. The downside is exploitation — using leverage against others rather than for value creation.', upside: 'White hat leverage · Creating value through access · Mentalist reads', downside: 'Deception · Coercion · Exploiting vulnerabilities' },
+        ]
+      }
+    }
+  },
+
+  Purple: {
+    archetype: 'The Cautious',
+    identity: 'Purpose-driven but momentum-dependent — Purple needs a running start and resists disruption once moving. The window sits in identity territory: things feel more significant, more personal, more charged. That charge is data, not direction.',
+    source: 'Third Eye → Crown · Andromedian Database',
+    waveNote: 'Slow build, peak at fork — discernment holds or breaks here. Gradual release (Empowered) or mirror drop (Unempowered). Requires ramp-up — does not fire from zero like Pink.',
+    categories: {
+      Action: {
+        headline: 'Build momentum first. Don\'t cold-start.',
+        guidance: 'Purple requires a running start — it does not fire from zero like Pink. Action today must be initiated through small, clear moves that build momentum before committing to large action.',
+        insight: 'Needs Momentum to Start trait is active across all three categories. The design is not a weakness — Purple builds correctly or not at all. Risk is slow starts in time-sensitive environments.',
+        pokerNote: 'Play only when you have clear structural edge and enough momentum to stay grounded. Slower decisions aren\'t weakness today — they\'re the skill.',
+        lifeNote: 'Build momentum first through small, clear actions. Once moving, Purple holds the line. Don\'t expect to cold-start into big work — the ramp-up is part of the process.',
+        traits: [
+          { name: 'Needs Momentum to Start', sub: 'Dual · All Categories', desc: 'Requires ramp-up across manifestation, mental, and emotional. Not a weakness — a design. Purple builds correctly or not at all. The slow start is intentional.', upside: 'Deep sustainable momentum · Mastery through consistency', downside: 'Slow starts in time-sensitive environments · Hard to initiate from zero' },
+        ]
+      },
+      Strategy: {
+        headline: 'Reflect first. Vision is available — verify the structure.',
+        guidance: 'Purple mental strategy operates within known parameters — highly effective inside its map, but susceptible to limited world view when the map isn\'t updated. Today: use discernment before trusting your reads as edge.',
+        insight: 'Vision Cloud vs Hyper Focus: Purple\'s mental narrowing can either be intentional (Hyper Focus) or unconscious (Limited World View / Vision Cloud). The key variable is whether the map is being updated.',
+        pokerNote: 'Play only your clearest spots. Vision may feel sharp — verify the structure before trusting it as edge. Purple clarity of vision is not the same as certainty of outcome.',
+        lifeNote: 'Insight is available but needs verification. Don\'t mistake clarity of vision for certainty of outcome. Move with intention and check your reads against the facts.',
+        traits: [
+          { name: 'Knows Their Limits', sub: 'Self-Aware · Resourceful', desc: 'Self-awareness across physical, mental, and emotional dimensions. Purple\'s strategic edge is knowing exactly what it can and cannot do — and operating only within that known range.', upside: 'Precise self-awareness · Resourceful within capacity · Strategic clarity', downside: null },
+          { name: 'Limited World View', sub: 'Vision Cloud / Hyper Focus', desc: 'When the map isn\'t updated, Purple operates within a narrowed field without knowing it (Vision Cloud). When regulated, the same narrowing becomes intentional Hyper Focus — directed and purposeful.', upside: 'Hyper Focus — directed, powerful', downside: 'Vision Cloud — mistaking map for territory' },
+        ]
+      },
+      Discipline: {
+        headline: 'Once rhythmic — hold the structure.',
+        guidance: 'Purple is resistant to new things once it establishes a rhythm. In a discipline context, this is the asset: once Purple commits to a structure, it holds. The key is that the commitment must be made during the slow ramp-up, not improvised mid-session.',
+        insight: 'Once Rhythmic — Resistant to New Things trait: Hard to break established patterns once accustomed. Asset for consistency and mastery. Liability only when adaptation is required.',
+        pokerNote: 'Play your pre-set structure exactly. Purple discipline is not about flexibility — it\'s about locked-in execution of what you\'ve already decided. Don\'t adjust mid-session.',
+        lifeNote: 'Hold the structure you\'ve already built. Purple discipline is most effective when the routine is already established — this window reinforces patterns, not creates them.',
+        traits: [
+          { name: 'Once Rhythmic — Resistant', sub: 'Dual · All Categories', desc: 'Hard to break established patterns once accustomed. Asset for consistency and mastery. The window rewards those who arrive with structure already in place.', upside: 'Deep consistency · Pattern mastery · Reliable routine', downside: 'Rigid when adaptation is required · World view may need updating' },
+        ]
+      },
+      Social: {
+        headline: 'Limit exposure. Charge is data, not direction.',
+        guidance: 'Purple windows sit in identity territory — things feel more personal and significant than they are. Social interactions carry more charge today. Slow down before reacting. The charge is real but it\'s energy, not direction.',
+        insight: 'Empathetic trait is active: Can Perceive Breaking Points — knows when enough is enough. Purple social awareness is acute but can be overwhelmed. Limit exposure and choose your interactions carefully.',
+        pokerNote: 'The table will feel more significant than it is. Things may start to feel personal. Name it before it runs. Separate the social charge from the structural read.',
+        lifeNote: 'Decisions and interactions may carry more emotional charge than usual today. Slow down before reacting. Limit exposure to high-friction social environments.',
+        traits: [
+          { name: 'Can Perceive Breaking Points', sub: 'Asset · All Categories', desc: 'Attentive physically, discerning mentally (Gate 39.5 in progress), empathetic emotionally. Purple knows when enough is enough — use this to know when to disengage socially.', upside: 'Acute awareness of tipping points · Empathetic precision', downside: null },
+          { name: 'May Move Too Fast After Loyalty', sub: 'Liability · All Categories', desc: 'After attachment or loyalty builds, Purple can move too fast when disillusionment hits. In social contexts: beware of overreacting to social signals in identity-charged windows.', upside: null, downside: 'Overreaction after attachment · Quick breaks from loyalty' },
+        ]
+      },
+      Creativity: {
+        headline: 'Inner work pays off. Vision is available.',
+        guidance: 'Purple operates through a future-oriented vision that functions largely below conscious awareness. Creative work today should be inward-facing — developing the vision, not broadcasting it. The momentum builds quietly.',
+        insight: 'Purple runs as a shadow parallel for Pink birth holders — pulling toward what Pink is unconsciously moving toward. Creative vision today may be accessing something that hasn\'t landed yet. Trust the direction without forcing the timeline.',
+        pokerNote: 'Don\'t try to perform creativity today — let the vision inform your reads. Purple creativity works below the surface. Trust your unconscious pattern recognition.',
+        lifeNote: 'Go inward. Purple creative work is about the vision — developing what you\'re moving toward, even if you can\'t fully articulate it yet. Inner work pays off in this window.',
+        traits: [
+          { name: 'Knows Their Limits', sub: 'Discerning · Self-Aware', desc: 'Precise self-awareness about creative capacity. Purple creativity knows what it\'s actually capable of, which prevents overextension and allows for deep, sustained creative work within the known range.', upside: 'Precise creative self-knowledge · Sustainable creative output', downside: null },
+        ]
+      },
+      Risk: {
+        headline: 'Move deliberately. Verify before acting.',
+        guidance: 'Purple risk is identity-adjacent — meaning the charge you feel around risk today may be partly about ego, not edge. Separate the structural read from the story around it before committing.',
+        insight: 'Can Perceive Breaking Points: knows when enough is enough. Purple risk intelligence is acute — use it to recognize when to disengage, not just when to engage.',
+        pokerNote: 'Half-committed action in Purple drains instead of builds. Play only when you have clear structural edge. If you feel the identity activation, reduce size or delay.',
+        lifeNote: 'Verify structure before acting on vision. Purple risk feels significant today — some of that significance is real, some is the identity charge of the window. Separate them before committing.',
+        traits: [
+          { name: 'Can Perceive Breaking Points', sub: 'Attentive · Discerning · Empathetic', desc: 'Knows when enough is enough across all dimensions. The risk intelligence in Purple is about timing — knowing when to commit and when to recognize the tipping point approaching.', upside: 'Precise timing · Knows when to disengage', downside: null },
+        ]
+      }
+    }
+  },
+
+  Pink: {
+    archetype: 'The Sparkplug',
+    identity: 'Fast ignition energy — the kind that starts things, reads the room before others do, and burns bright in short bursts. Dopamine is high. Momentum is available. The window rewards action over analysis.',
+    source: 'Crown → Stellar Gateway · Trinity Collective',
+    waveNote: 'Fires from any state — near-zero ramp time. Fork at peak. Empowered: long taper, can re-ignite. Unempowered: mirrors the ignition on the way down.',
+    categories: {
+      Action: {
+        headline: 'Seize the moment. Near-zero ramp time.',
+        guidance: 'Pink fires from any state with near-zero ramp time. This is your highest-energy window. Move fast, trust first reads, and size up. The energy itself is the edge — don\'t overthink it.',
+        insight: 'Manifestor / Quick Starter trait: first to move, good at initiating. Pink action doesn\'t require deliberation — it requires trust in the ignition. The fork at peak comes faster than Purple; catch it while it\'s available.',
+        pokerNote: 'Play your full sessions. Size up on premium spots. Trust your reads without second-guessing. The one risk: Pink burns fast — watch for the moment the edge shifts.',
+        lifeNote: 'Start the hard thing. Make the call you\'ve been putting off. Show up with full presence. Energy is available before you have to earn it today. Use it early.',
+        traits: [
+          { name: 'Manifestor / Quick Starter', sub: 'Asset · Short + Long Term', desc: 'First to move, good at initiating. Pink is the fastest-igniting rhythm in the system — near-zero ramp time. The action impulse is accurate and should be trusted.', upside: 'Fast ignition · First mover · Accurate initial reads', downside: null },
+          { name: 'Good Anticipator', sub: 'Asset · Body Cycle + Dopamine', desc: 'Reads what\'s coming before it arrives. Pink\'s dopamine-driven anticipation means action today is often ahead of the visible signal — trust it.', upside: 'Accurate anticipation · Pre-emptive positioning', downside: null },
+        ]
+      },
+      Strategy: {
+        headline: 'Bold moves work. Dopamine is the fuel.',
+        guidance: 'Pink strategy is fast, intuitive, and ignition-based. Dopamine is the primary fuel — not a byproduct. The rhythm is ignited by dopaminergic triggers and the cycle feeds back on itself. Strategy today should match the energy: decisive, not deliberative.',
+        insight: 'Crown Typology: Wisdom Crown expression (if active) tends toward strategic ignition — using the burst quality to initiate and drive toward defined outcomes. Strategy is most effective when it captures momentum rather than creates it from scratch.',
+        pokerNote: 'Plan and execute quickly. Pink strategy is not about session-long deliberation — it\'s about identifying the edge at the start and executing on it before the window shifts.',
+        lifeNote: 'Make the decision you\'ve been circling. Pink strategy works best when you capture what\'s already obvious and act on it before overthinking creates false complexity.',
+        traits: [
+          { name: 'Good Anticipator', sub: 'Dopamine · Body Cycle', desc: 'Reads the environment before the visible signal arrives. Strategic anticipation is a Pink specialty — first to see the opportunity, first to move on it.', upside: 'Strategic first-mover · Reads opportunities early', downside: null },
+          { name: 'Constantly Changing Opinions', sub: 'Dual · Short Term + Dopamine', desc: 'Pink strategy updates quickly — sometimes too quickly. The upside is rapid integration of new information. The liability is abandoning valid strategy before it has time to work.', upside: 'Rapid strategy updates · Integrates new information fast', downside: 'Abandons valid strategy prematurely' },
+        ]
+      },
+      Discipline: {
+        headline: 'Channel the energy. Structure holds the ignition.',
+        guidance: 'Pink without discipline can burn through its window before extracting full value. The Exhausting / Overextending liability is real — the burst nature can run past its peak if structure isn\'t in place to catch it.',
+        insight: 'Body Energy Adaptation category: Pink requires physical consistency to regulate its rhythm. Without body-cycle anchoring, the burst pattern overextends and exhausts. Discipline is the stabilizer — not restraint.',
+        pokerNote: 'Set session boundaries before you sit down. Pink energy runs hot — discipline is knowing when the edge has shifted and leaving before the burn becomes a drain.',
+        lifeNote: 'Channel the energy through structure, not against it. Pink discipline is about using the ignition within a container — the energy is the asset, the structure is what keeps it productive.',
+        traits: [
+          { name: 'Exhausting / Overextending', sub: 'Liability · Short + Long + Dopamine', desc: 'The cost of Pink\'s ignition without body-cycle anchoring. Overextension happens when the burst runs past its natural peak. Discipline is the circuit breaker.', upside: null, downside: 'Burns through window before extracting full value · Physical exhaustion · Overcommitment' },
+          { name: 'Habitual', sub: 'Dual · Short + Long + Dopamine', desc: 'Pink can establish strong habits quickly — useful for channeling the burst energy into consistent patterns. The dual nature means the habit can run in either direction.', upside: 'Fast habit formation · Consistent rhythm through structure', downside: 'Habits form in unproductive directions if undirected' },
+        ]
+      },
+      Social: {
+        headline: 'Radiate and connect. Dominance is available.',
+        guidance: 'Pink is the highest-dominance window in the system. Social influence today is natural and effortless — you read the room before others do, and the room responds. Use this to create genuine connection, not just performance.',
+        insight: 'Short Relationships / Quick to Finish trait is a Pink reality — fast connection arcs. Today\'s social energy is intense and real, but Pink doesn\'t sustain long relationship arcs without body-cycle discipline.',
+        pokerNote: 'Table presence is at maximum today. Pink reads the room before others do. Use social dominance to set the tone, manage table dynamics, and position yourself as the aggressor.',
+        lifeNote: 'Radiate and connect. Pink social energy is magnetic and dominance-driven — people feel your presence today. Use it for genuine connection rather than performance.',
+        traits: [
+          { name: 'Short Relationships / Quick to Finish', sub: 'Dual · Short + Long Term', desc: 'Pink moves fast through connection arcs — initiates quickly, can also close quickly. In social contexts: intense short-burst connection is authentic. Don\'t mistake the speed for superficiality.', upside: 'Rapid genuine connection · Intense relational presence', downside: 'Exits before the depth builds · Quick to finish' },
+        ]
+      },
+      Creativity: {
+        headline: 'Full expression. Now.',
+        guidance: 'Pink is expression by nature — not performance of expression, but the authentic energetic thing itself. Creative output today should be immediate, instinctual, and unfiltered. Don\'t manage the burst; express it.',
+        insight: 'Boosted State: if Pink is your birth rhythm AND you\'re in a Pink window — both layers are active simultaneously. All traits intensify, dominance is amplified, and the full Sparkplug expression is available. Highest-output state in the system.',
+        pokerNote: 'Express your reads fully through your play. Pink creativity is not about clever lines — it\'s about authentic pressure and instinctual expression of what you see at the table.',
+        lifeNote: 'Create now, filter later (or never). Pink creative energy is at its peak. The burst is the nature — don\'t wait for the right moment. This is the right moment.',
+        traits: [
+          { name: 'Manifestor / Quick Starter', sub: 'Asset · Initiator', desc: 'Pink is the system\'s initiator — creates momentum from nothing. Creative output in this window doesn\'t require buildup. The ignition fires from rest.', upside: 'Instant creative ignition · First mover advantage', downside: null },
+        ]
+      },
+      Risk: {
+        headline: 'Size up when the window is clear.',
+        guidance: 'Pink is the highest-energy risk window in the system. The energy itself is the edge — trust it. The key risk variable is recognizing when Pink has peaked and not chasing the edge past that moment.',
+        insight: 'Fork at peak: less time to catch it than Purple. Pink\'s peak is sharp and the descent can be fast. Risk sizing should front-load to the rise, not the fall.',
+        pokerNote: 'Size up on premium spots. Trust your reads. The one caution: Pink burns fast — watch for the moment the edge shifts and don\'t chase it past its peak.',
+        lifeNote: 'Take the bet. Pink is the window where the energy IS the edge. If you\'re in clean expansion — body open, no urgency, quiet certainty — go full size. If you feel the charge shifting, step back.',
+        traits: [
+          { name: 'Good Anticipator', sub: 'Dopamine · Risk Timing', desc: 'Reads what\'s coming before it arrives. In risk contexts: Pink anticipates the opportunity window and moves before the crowd catches it. The anticipation is accurate — trust it.', upside: 'Early risk identification · Accurate timing · First mover', downside: null },
+        ]
+      }
+    }
+  },
+
+  Red: {
+    archetype: 'The Catalyst',
+    identity: 'Weapon energy — forceful, accumulating, and catalytic. Red fires in impacts, not arcs. Each strike adds residue. The window builds pressure over time toward a threshold. The direction of the detonation is not guaranteed by the direction of the firing.',
+    source: 'Palm · Feet · Root Chakras · Andromedian Database',
+    waveNote: 'Vertical impacts. No arc, no curve. Residue accumulates with each firing. Threshold detonation — the bomb is the accumulation, not the individual strike.',
+    categories: {
+      Action: {
+        headline: 'Controlled aggression. Authority required.',
+        guidance: 'Red accumulates pressure with every action. Controlled engagement only — half-committed action in Red drains instead of builds. One clear target, full commitment. The detonation point is coming; choose where it lands.',
+        insight: 'Red fires in impacts, not arcs. Each action leaves residue that shifts the ambient baseline. The individual action may look small — the accumulation is what matters.',
+        pokerNote: 'Play with authority or don\'t play. Red is accumulating pressure — the table will feel catalytic and charged. Half-committed action drains. Know your trigger and watch for it.',
+        lifeNote: 'Channel it deliberately. Red without direction becomes disruption. One clear target, full commitment. The detonation point is coming — choose where it lands.',
+        traits: [
+          { name: 'Provocateur', sub: 'Barrier Breaker · 235 Dual', desc: 'Instinctual assault on obstacles — direct, relentless, adaptive. Three Gate expressions govern how this trait fires: Gate 39.2 (T-Emotion), Gate 39.1 (T-Confusion), Gate 39.6 (T-Dopamine). The pause before the impact is where authority lives.', upside: 'Barrier breaking · Relentless adaptability · Transformative triumph', downside: 'Provocation without direction · Breaking things that shouldn\'t be broken' },
+          { name: 'Opportunist', sub: 'Adaptive to Environment · 1 Dual', desc: 'T-Dopamine driven environmental scanning. Red action is reward-seeking — the Opportunist reads the environment for what\'s available and moves toward it.', upside: 'Environmental adaptation · Reward recognition', downside: 'Opportunism without ethics' },
+        ]
+      },
+      Strategy: {
+        headline: 'Adapt in real time. Tactician mode.',
+        guidance: 'Red strategy is tactical, not architectural. It adapts in real time through the Tactician trait (Gate 39.4 — T-Confusion, Gate 39.3 — T-Emotion). Persistence and measured steps over rushed assault.',
+        insight: 'Red accumulates. Strategic thinking in this window should account for the compound effect — each decision is not just its immediate outcome but its contribution to the threshold.',
+        pokerNote: 'Adapt your strategy to what\'s actually happening, not to the plan you brought in. Red tactical adaptation is a real-time skill — stay present to the current state of the table.',
+        lifeNote: 'Real-time tactical adaptation. Red strategy doesn\'t plan twenty moves ahead — it responds to what\'s in front of it with full force and adjusts as it goes.',
+        traits: [
+          { name: 'Tactician', sub: 'Asset · Confusion + Emotion', desc: 'Gate 39.5 (T-Confusion): Persistence and unwavering determination. Gate 39.4 (T-Confusion): Measured steps over rushed assault. Gate 39.3 (T-Emotion): Tactical adjustment through emotional intelligence.', upside: 'Persistent tactical adaptation · Measured execution under pressure', downside: null },
+        ]
+      },
+      Discipline: {
+        headline: 'Hold your ground. Authority is the key variable.',
+        guidance: 'Red without discipline becomes accumulation without direction — pressure building toward an uncontrolled threshold. Discipline is the authority variable. With it, Red is catalytic. Without it, Red drains.',
+        insight: 'The key Red principle: authority required. Not aggression, not force, not willpower — authority. The kind that comes from genuine clarity about what you\'re doing and why.',
+        pokerNote: 'Don\'t play tilted. Red responds to authority — if you\'ve lost it, step away. Half-committed discipline in Red produces worse outcomes than no discipline at all.',
+        lifeNote: 'Hold your ground with authority, not force. Red discipline is knowing what you stand for and refusing to be moved from it. The threshold is coming — arrive there with clarity.',
+        traits: [
+          { name: 'Vitality', sub: 'Heartfire · Asset · Dopamine', desc: 'Gate 58.1 (Joyousness) — the love of life as foundation. T-Dopamine: pleasure of existence itself. Red discipline anchored in vitality is sustainable. Red discipline anchored in willpower isn\'t.', upside: 'Sustainable discipline · Joy as foundation · Life-force as anchor', downside: null },
+        ]
+      },
+      Social: {
+        headline: 'Keep your own counsel. Selective engagement.',
+        guidance: 'Red is accumulating in the social field today. The Jester / Bait Master trait is active — Red can provoke reactions without intending to. Social engagement should be selective and deliberate.',
+        insight: 'Red fires in all directions — a negative provocation can produce a positive field shift, and a positive firing can destabilize. Social interactions leave residue. Choose your engagements carefully.',
+        pokerNote: 'Table talk is Red territory. Be deliberate with what you transmit — the social field is accumulating today. Provocation is easy; authority is harder and more valuable.',
+        lifeNote: 'Engage selectively. The Jester and Provocateur traits are active — social interactions may spark unexpectedly. Keep your own counsel on what matters most today.',
+        traits: [
+          { name: 'Jester', sub: 'Bait Master · The Joker · Dual', desc: 'Triggers: Dopamine (pleasure of reaction), Confusion (chaos as comedy), Emotion (annoyance redirected). Red social energy can be magnetic and destabilizing simultaneously.', upside: 'Magnetic social presence · Disarming through humor', downside: 'Destabilizes without intending to · Bait and provoke' },
+          { name: 'Advocacy', sub: 'Truth Shaker · T-Adrenaline', desc: 'Gate 23.1 (Splitting Apart) — insight that dismantles what no longer serves. Red doesn\'t persuade gently. It disrupts. Provokes reconsideration by making the old framing untenable.', upside: 'Truth-telling · Dismantles false structures · Disrupts for good reason', downside: 'Disruption without precision · Truth-telling that lands as attack' },
+        ]
+      },
+      Creativity: {
+        headline: 'Improvise. Red creativity is impact-based.',
+        guidance: 'Red creativity is not developmental — it fires in impacts. Creative output today is instinctual, immediate, and accumulative. Each creative act adds residue to the field. The direction of the creative detonation follows the accumulation.',
+        insight: 'Free Spirit / Faithful Explorer trait: manifestation idealism in motion. Pursues goals with endurance and dreamchaser\'s willingness to be gullible toward their own vision — not naivety, but deliberate openness.',
+        pokerNote: 'Creative play in Red is about the unexpected move — the line that disrupts the other player\'s read. Red creativity is disruptive, not elegant.',
+        lifeNote: 'Create with impact. Red creative energy doesn\'t build quietly — it fires, leaves residue, and accumulates toward something. Trust the process even when individual actions feel small.',
+        traits: [
+          { name: 'Free Spirit', sub: 'Faithful Explorer · 134 Dual', desc: 'Gate 16.6 (Enthusiasm) — endurance through idealism. T-Dopamine, Adrenaline, and Emotion. Pursues goals with unwavering openness to possibility. Red creativity keeps going when logic would quit.', upside: 'Enduring idealism · Dreamchaser · Multi-path activation', downside: 'Gullibility toward own vision · Ignores structural obstacles' },
+        ]
+      },
+      Risk: {
+        headline: 'Know your exit first. Red accumulates.',
+        guidance: 'Red risk is about the accumulation, not the individual bet. Each risk compounds — up or down. Know your exit point before you enter. The direction of the detonation is not guaranteed by the direction of the firing.',
+        insight: 'Red fires in both directions regardless of intention. A negative provocation can produce positive residue. A positive action can destabilize. Risk in Red requires full awareness of the accumulation dynamic.',
+        pokerNote: 'Know your stop-loss before you sit down. Red is accumulating — if the session turns, the accumulation can compound quickly. Authority over your risk posture is the only variable you control.',
+        lifeNote: 'Define your risk parameters before engaging. Red pressure is building beneath the surface today — the question is what direction the eventual release takes. Authority in risk means choosing that direction deliberately.',
+        traits: [
+          { name: 'Opportunist', sub: 'Adaptive · T-Dopamine', desc: 'Reward-seeking environmental scanning. In risk contexts: Red Opportunist sees the gap and moves through it. The risk is that reward-seeking without authority becomes reckless exposure.', upside: 'Fast gap recognition · Reward identification · Adaptive entry', downside: 'Reward-seeking without authority becomes reckless' },
+        ]
+      }
+    }
+  },
+
+  Brown: {
+    archetype: 'The Earth · Environmental Overlay',
+    identity: 'Not a human rhythm — the elemental environment itself. Brown is the Earth moving. When this window is active, elemental forces are dominant and human control is reduced. Things happen because the Earth decided.',
+    source: 'Earth Star Chakra · Elemental',
+    waveNote: 'Elemental forces are dominant. Human control is reduced. Outcomes can be extraordinary or disruptive — the mechanism is the same.',
+    categories: {
+      Action: {
+        headline: 'One task only. Minimize.',
+        guidance: 'Brown is the Earth moving — human control is reduced. Action today should be minimal and single-pointed. Don\'t try to do many things. The one task that must happen: do it, then stop.',
+        insight: 'Brown is not a rhythm — it\'s an environmental overlay. Outcomes today land outside execution in ways that don\'t make logical sense. Earth energy, not skill, is dominant.',
+        pokerNote: 'Outcomes may exceed or miss your execution in ways that don\'t map to your play. Stay light, stay agile. Don\'t over-invest in a narrative about your performance today.',
+        lifeNote: 'One task. Minimal footprint. Brown days are where things happen to you as much as through you. Stay open to what arrives unexpectedly.',
+        traits: []
+      },
+      Strategy: {
+        headline: 'Simplify. Don\'t optimize.',
+        guidance: 'Brown is not something to optimize — only to navigate. Strategy today should be simple, minimal, and oriented toward agility rather than control.',
+        insight: 'The Earth is moving. Complex strategy assumes a stable environment. Brown destabilizes that assumption. Keep your strategic footprint small and your options open.',
+        pokerNote: 'Review, consolidate. Don\'t build complex game plans today. Brown windows are where unexpected outcomes occur — simple strategy survives this better than elaborate plans.',
+        lifeNote: 'Don\'t try to plan the Brown away. Stay simple. The environment is larger than your hand today — work with elemental forces rather than against them.',
+        traits: []
+      },
+      Discipline: {
+        headline: 'Maintain baseline. Don\'t force structure.',
+        guidance: 'Brown is an overlay — it doesn\'t break your discipline, but it does make forcing structure inefficient. Maintain your baseline routine without demanding more from the day than it\'s designed to give.',
+        insight: 'Earth energy is dominant. Discipline today means not adding personal pressure to an already-charged environment. Show up, do the minimum required, stay agile.',
+        pokerNote: 'Maintain your fundamentals. Don\'t add volume. Brown doesn\'t require special adjustment — just the absence of forcing.',
+        lifeNote: 'Maintain baseline. This is a day to preserve what\'s working, not to build new structures. The Earth is moving — don\'t add your own weight to the shift.',
+        traits: []
+      },
+      Social: {
+        headline: 'Low bandwidth today. Stay grounded.',
+        guidance: 'Brown windows reduce predictability in social fields. Interactions may land unexpectedly. Limit bandwidth and keep social commitments simple.',
+        insight: 'Outcomes in Brown are governed by Earth energy, not execution. Social dynamics today may be influenced by forces outside individual control — stay light and don\'t over-invest in outcome.',
+        pokerNote: 'Table dynamics may feel strange or unpredictable today. Don\'t try to manage what you can\'t control. Play your game and let the Earth do what it does.',
+        lifeNote: 'Low bandwidth today. Keep social interactions simple and expectations light. What happens today is partly yours, partly the table\'s, partly something larger.',
+        traits: []
+      },
+      Creativity: {
+        headline: 'Rest the mind. Receive, don\'t force.',
+        guidance: 'Brown creativity is receptive, not generative. Don\'t try to produce today. If something arrives unexpectedly — an idea, an impulse, an image — note it. But don\'t force the creative process.',
+        insight: 'Brown is where things happen to you as much as through you. Creative receives in Brown windows can be extraordinary — but they require the hands to be open, not grasping.',
+        pokerNote: 'Trust the unexpected read. Brown windows can produce inexplicable insight alongside inexplicable confusion. Don\'t try to manufacture it — let it land.',
+        lifeNote: 'Receive what arrives. Rest the generative mind. Brown creativity is the Earth offering something — stay open and don\'t force the direction.',
+        traits: []
+      },
+      Risk: {
+        headline: 'Preserve capital. Earth energy is running.',
+        guidance: 'Brown is not a risk window. Elemental forces are dominant and human control is reduced — meaning execution does not reliably translate to outcome. Preserve what you have.',
+        insight: 'Luck window: outcomes are governed by Earth energy, not execution. Don\'t over-invest in a narrative about your play. Stay agile. Let what arrives, arrive.',
+        pokerNote: 'Reduce exposure. Outcomes may exceed or miss your execution in ways that don\'t make logical sense. Earth energy is running the table today. Stay light.',
+        lifeNote: 'Don\'t press. This is the day to hold what you have, not reach for more. The Earth is moving — take your hands off the wheel where possible.',
+        traits: []
+      }
+    }
+  }
+};
+
+/* ═══════════════════════════════════════════════
+   SCORING
+═══════════════════════════════════════════════ */
 const BASE_WEIGHTS = {
   Orange: { Action:10, Strategy:8,  Discipline:8, Social:6, Creativity:6,  Risk:10 },
   Blue:   { Action:5,  Strategy:10, Discipline:4, Social:6, Creativity:8,  Risk:6  },
@@ -757,200 +909,114 @@ const BASE_WEIGHTS = {
   Pink:   { Action:8,  Strategy:6,  Discipline:3, Social:7, Creativity:10, Risk:8  },
   Brown:  { Action:2,  Strategy:4,  Discipline:4, Social:3, Creativity:4,  Risk:2  },
 };
-
 const MULT = { Orange:2.57, Blue:2.04, Red:2.25, Green:1.70, Yellow:0.75, Purple:0.50, Pink:1.50, Brown:1.00 };
 
-const GUIDANCE = {
-  Orange: { Action:'Move on it now',       Strategy:'Plan while moving',  Discipline:'Stay in structure',   Social:'Leverage your network',  Creativity:'Channel into output', Risk:'Take the calculated bet' },
-  Blue:   { Action:'Only what matters',    Strategy:'Deep work pays off', Discipline:'Follow the process',  Social:'Build key alliances',    Creativity:'Explore freely',      Risk:'Calculated exposure' },
-  Red:    { Action:'Controlled aggression',Strategy:'Adapt in real time', Discipline:'Hold your ground',   Social:'Keep your own counsel',  Creativity:'Improvise',           Risk:'Know your exit first' },
-  Green:  { Action:'Steady progress',      Strategy:'Long game thinking', Discipline:'This is your edge',  Social:'Strengthen foundations', Creativity:'Practice, not perform',Risk:'Minimal today' },
-  Yellow: { Action:'Show up fully',        Strategy:'Build your plan',    Discipline:'Keep the routine',   Social:'Connection is the edge', Creativity:'Express naturally',   Risk:'Read the room' },
-  Purple: { Action:'Minimal action',       Strategy:'Reflect first',      Discipline:'Anchor to routine',  Social:'Limit exposure',         Creativity:'Inner work pays off', Risk:'Not today' },
-  Pink:   { Action:'Seize the moment',     Strategy:'Bold moves work',    Discipline:'Channel the energy', Social:'Radiate, connect',       Creativity:'Full expression now', Risk:'Size up when clear' },
-  Brown:  { Action:'One task only',        Strategy:'Simplify',           Discipline:'Maintain baseline',  Social:'Low bandwidth today',    Creativity:'Rest the mind',       Risk:'Preserve capital' },
-};
-
-const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-
-/* ════════════════════════════════════════════════════
-   SCORING ENGINE
-════════════════════════════════════════════════════ */
 function getZoneScores(zone) {
-  const w = BASE_WEIGHTS[zone];
-  const m = MULT[zone];
+  const w = BASE_WEIGHTS[zone]; const m = MULT[zone];
   if (!w || !m) return [];
-
-  const raw = Object.entries(w)
-    .map(([cat, wt]) => ({ cat, raw: wt * m }))
-    .sort((a, b) => b.raw - a.raw);
-
+  const raw = Object.entries(w).map(([cat,wt]) => ({ cat, raw: wt*m })).sort((a,b)=>b.raw-a.raw);
   const zMax = raw[0].raw;
-  return raw.map(r => ({
-    cat: r.cat,
-    normalized: Math.round((r.raw / zMax) * 100) / 10
-  }));
+  return raw.map(r => ({ cat: r.cat, normalized: Math.round((r.raw/zMax)*100)/10 }));
 }
 
-/* ════════════════════════════════════════════════════
-   ADMIN — SETUP
-════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   WINDOW DIRECTIVES
+═══════════════════════════════════════════════ */
+const WINDOW_DIRECTIVES = {
+  Pink:   { name: 'Noise',          score: '+14 to +20', text: 'Full ignition. Highest-energy window in the system. Move fast, trust first reads, size up. The energy itself is the edge — don\'t overthink it.' },
+  Orange: { name: 'Prime',          score: '+7 to +13',  text: 'Engaged and protected. Safest window for sustained effort. Build, create, engage fully. The safety floor is active — worst case is stagnant, not collapse.' },
+  Blue:   { name: 'Sub-Prime',      score: '+4 to +6',   text: 'Rising or descending — motion is active. Pursue one thing with intensity. Not the window for spreading attention; go deeper on a single target.' },
+  Yellow: { name: 'Edge / Neutral', score: '+3 to −2',   text: 'Reduced energetic filtering. What you put in is close to what you get out. The sub-window (Edge, Neutral, No Tax, Null Edge) determines exact posture.' },
+  Green:  { name: 'Survivor',       score: '−3 / −4',    text: 'Stable pocket just below neutral — Green is stabilizing. Stay present, don\'t force moves. The environment rewards composure over ambition.' },
+  Purple: { name: 'Identity',       score: '−5 to −9',   text: 'Full identity window — activation is the norm. Slower decision-making is not weakness, it\'s calibration. Momentum exists but requires a running start.' },
+  Red:    { name: 'Unstable Swing', score: '−16 to −29', text: 'Red is accumulating pressure — the table will feel catalytic, charged, and potentially personal. Play with authority or don\'t play. Half-committed action in Red drains instead of builds.' },
+  Brown:  { name: 'Luck',           score: '−30 to −40', text: 'Elemental forces are dominant. Outcomes are governed by Earth energy, not execution. Reduce personal pressure — what happens today is larger than your hand. Stay agile, stay open, don\'t force.' },
+};
+
+const CELL_LINE = {
+  Orange:'Make your move', Blue:'Think it through',   Red:'Careful aggression',
+  Green:'Build the habit', Yellow:'Show up present',  Purple:'Go inward',
+  Pink:'Full expression',  Brown:'Rest and reset',
+};
+
+/* ═══════════════════════════════════════════════
+   ADMIN SETUP
+═══════════════════════════════════════════════ */
 const adminDayZones = {};
 let pickerTargetDay = null;
 
 function initAdmin() {
   const now = new Date();
-  // populate year select
   const ys = document.getElementById('selYear');
-  for (let y = now.getFullYear(); y <= now.getFullYear() + 2; y++) {
-    const o = document.createElement('option');
-    o.value = y; o.textContent = y;
-    ys.appendChild(o);
+  for (let y = now.getFullYear(); y <= now.getFullYear()+2; y++) {
+    const o = document.createElement('option'); o.value=y; o.textContent=y; ys.appendChild(o);
   }
   document.getElementById('selMonth').value = now.getMonth();
-
   document.getElementById('selMonth').addEventListener('change', renderAdminGrid);
   document.getElementById('selYear').addEventListener('change', renderAdminGrid);
 
-  // zone picker options
   const po = document.getElementById('pickerOptions');
   ZONE_NAMES.forEach(z => {
     const btn = document.createElement('button');
-    btn.className = 'zone-option';
-    btn.style.background = ZONES[z].bg;
-    btn.style.color = ZONES[z].text;
-    btn.textContent = z.toUpperCase();
-    btn.onclick = () => assignZone(z);
+    btn.className = 'zone-opt';
+    btn.style.background = ZONES[z].bg; btn.style.color = ZONES[z].text;
+    btn.textContent = z.toUpperCase(); btn.onclick = () => assignZone(z);
     po.appendChild(btn);
   });
   const clr = document.createElement('div');
-  clr.className = 'zone-option-clear';
-  clr.textContent = '— CLEAR —';
-  clr.onclick = () => assignZone(null);
+  clr.className = 'zone-opt-clear'; clr.textContent = '— CLEAR —'; clr.onclick = () => assignZone(null);
   po.appendChild(clr);
-
   renderAdminGrid();
 }
 
-function getAdminMonthYear() {
-  return {
-    month: parseInt(document.getElementById('selMonth').value),
-    year:  parseInt(document.getElementById('selYear').value),
-  };
-}
+function getAdminMY() { return { month: parseInt(document.getElementById('selMonth').value), year: parseInt(document.getElementById('selYear').value) }; }
 
 function renderAdminGrid() {
-  const { month, year } = getAdminMonthYear();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const firstDow    = new Date(year, month, 1).getDay();
+  const { month, year } = getAdminMY();
+  const dim = new Date(year, month+1, 0).getDate();
+  const fdow = new Date(year, month, 1).getDay();
   const grid = document.getElementById('adminGrid');
   grid.innerHTML = '';
-
-  // DOW headers
-  ['S','M','T','W','T','F','S'].forEach(d => {
-    const el = document.createElement('div');
-    el.className = 'dow-label';
-    el.textContent = d;
-    grid.appendChild(el);
-  });
-
-  // Empty cells before day 1
-  for (let i = 0; i < firstDow; i++) {
-    const el = document.createElement('div');
-    el.className = 'day-cell-admin empty';
-    grid.appendChild(el);
-  }
-
-  // Day cells
-  for (let d = 1; d <= daysInMonth; d++) {
-    const el = document.createElement('div');
-    el.className = 'day-cell-admin';
-    el.dataset.day = d;
-
+  ['S','M','T','W','T','F','S'].forEach(d => { const el=document.createElement('div'); el.className='dow-label'; el.textContent=d; grid.appendChild(el); });
+  for (let i=0; i<fdow; i++) { const el=document.createElement('div'); el.className='day-cell-admin empty'; grid.appendChild(el); }
+  for (let d=1; d<=dim; d++) {
+    const el = document.createElement('div'); el.className='day-cell-admin'; el.dataset.day=d;
     const zone = adminDayZones[`${year}-${month}-${d}`] || null;
-    applyZoneToAdminCell(el, d, zone);
-
-    el.onclick = () => openPicker(d);
-    grid.appendChild(el);
+    applyZoneToAdmin(el, d, zone); el.onclick = () => openPicker(d); grid.appendChild(el);
   }
 }
 
-function applyZoneToAdminCell(el, day, zone) {
-  el.className = 'day-cell-admin';
-  el.innerHTML = '';
-
+function applyZoneToAdmin(el, day, zone) {
+  el.className = 'day-cell-admin'; el.innerHTML = '';
   if (zone) {
     el.classList.add(ZONES[zone].cls);
-    const dn = document.createElement('div');
-    dn.className = 'dn';
-    dn.textContent = day;
-    const zl = document.createElement('div');
-    zl.className = 'zl';
-    zl.textContent = zone.substring(0,3).toUpperCase();
-    el.appendChild(dn);
-    el.appendChild(zl);
+    const dn=document.createElement('div'); dn.className='dn'; dn.textContent=day;
+    const zl=document.createElement('div'); zl.className='zl'; zl.textContent=zone.substring(0,3).toUpperCase();
+    el.appendChild(dn); el.appendChild(zl);
   } else {
-    const dn = document.createElement('div');
-    dn.className = 'dn';
-    dn.style.color = '#333';
-    dn.textContent = day;
-    el.appendChild(dn);
+    const dn=document.createElement('div'); dn.className='dn'; dn.style.color='#333'; dn.textContent=day; el.appendChild(dn);
   }
 }
 
-function openPicker(day) {
-  pickerTargetDay = day;
-  document.getElementById('pickerOverlay').classList.add('open');
-}
-
-function closePicker(e) {
-  if (e.target === document.getElementById('pickerOverlay')) {
-    document.getElementById('pickerOverlay').classList.remove('open');
-  }
-}
+function openPicker(day) { pickerTargetDay=day; document.getElementById('pickerOverlay').classList.add('open'); }
+function closePicker(e) { if (e.target===document.getElementById('pickerOverlay')) document.getElementById('pickerOverlay').classList.remove('open'); }
 
 function assignZone(zone) {
-  const { month, year } = getAdminMonthYear();
+  const { month, year } = getAdminMY();
   const key = `${year}-${month}-${pickerTargetDay}`;
-
-  if (zone) adminDayZones[key] = zone;
-  else delete adminDayZones[key];
-
-  // update the cell in the grid
-  const cells = document.querySelectorAll('#adminGrid .day-cell-admin');
-  cells.forEach(c => {
-    if (parseInt(c.dataset.day) === pickerTargetDay) {
-      applyZoneToAdminCell(c, pickerTargetDay, zone || null);
-    }
-  });
-
+  if (zone) adminDayZones[key]=zone; else delete adminDayZones[key];
+  document.querySelectorAll('#adminGrid .day-cell-admin').forEach(c => { if (parseInt(c.dataset.day)===pickerTargetDay) applyZoneToAdmin(c, pickerTargetDay, zone||null); });
   document.getElementById('pickerOverlay').classList.remove('open');
 }
 
-/* ════════════════════════════════════════════════════
-   LINK GENERATION
-════════════════════════════════════════════════════ */
 function generateLink() {
   const name = document.getElementById('clientName').value.trim();
   if (!name) { document.getElementById('clientName').focus(); return; }
-
-  const { month, year } = getAdminMonthYear();
-
-  // Encode day zones compactly: comma-sep "day:zone" pairs
+  const { month, year } = getAdminMY();
   const entries = Object.entries(adminDayZones)
-    .filter(([k]) => {
-      const parts = k.split('-');
-      return parseInt(parts[1]) === month && parseInt(parts[0]) === year;
-    })
-    .map(([k, z]) => `${k.split('-')[2]}:${z}`);
-
-  const params = new URLSearchParams({
-    n: name,
-    m: month,
-    y: year,
-    d: entries.join(',')
-  });
-
+    .filter(([k]) => { const p=k.split('-'); return parseInt(p[1])===month && parseInt(p[0])===year; })
+    .map(([k,z]) => `${k.split('-')[2]}:${z}`);
+  const params = new URLSearchParams({ n:name, m:month, y:year, d:entries.join(',') });
   const url = `${location.origin}${location.pathname}?${params.toString()}`;
   document.getElementById('shareUrl').textContent = url;
   document.getElementById('shareBox').classList.add('visible');
@@ -959,164 +1025,272 @@ function generateLink() {
 }
 
 function copyLink() {
-  const url = document.getElementById('shareUrl').textContent;
-  navigator.clipboard.writeText(url).then(() => {
-    const btn = document.getElementById('copyBtn');
-    btn.textContent = 'COPIED ✓';
-    btn.classList.add('copied');
+  navigator.clipboard.writeText(document.getElementById('shareUrl').textContent).then(() => {
+    const btn = document.getElementById('copyBtn'); btn.textContent='COPIED ✓'; btn.classList.add('copied');
   });
 }
 
-/* ════════════════════════════════════════════════════
-   CLIENT VIEW — RENDER FROM URL PARAMS
-════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   CLIENT VIEW
+═══════════════════════════════════════════════ */
 function initClient(params) {
   const name  = params.get('n') || 'OPERATOR';
   const month = parseInt(params.get('m'));
   const year  = parseInt(params.get('y'));
   const raw   = params.get('d') || '';
-
-  // parse day:zone pairs
   const dayZones = {};
-  raw.split(',').forEach(pair => {
-    const [day, zone] = pair.split(':');
-    if (day && zone) dayZones[parseInt(day)] = zone;
-  });
+  raw.split(',').forEach(pair => { const [d,z]=pair.split(':'); if(d&&z) dayZones[parseInt(d)]=z; });
 
   document.getElementById('clientNameDisplay').textContent = name.toUpperCase();
   document.getElementById('clientMonthDisplay').textContent = `${MONTHS[month]} ${year}`;
-
-  renderClientCalendar(year, month, dayZones);
+  renderClientCal(year, month, dayZones);
   renderLegend(dayZones);
-
   document.getElementById('admin').classList.remove('active');
   document.getElementById('client').classList.add('active');
 }
 
-function renderClientCalendar(year, month, dayZones) {
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const firstDow    = new Date(year, month, 1).getDay();
+function renderClientCal(year, month, dayZones) {
+  const dim = new Date(year, month+1, 0).getDate();
+  const fdow = new Date(year, month, 1).getDay();
   const now = new Date();
-  const todayNum = (now.getFullYear() === year && now.getMonth() === month) ? now.getDate() : -1;
-
+  const today = (now.getFullYear()===year && now.getMonth()===month) ? now.getDate() : -1;
   const grid = document.getElementById('clientGrid');
   grid.innerHTML = '';
-
-  // Empty padding
-  for (let i = 0; i < firstDow; i++) {
-    const el = document.createElement('div');
-    el.className = 'cal-day empty';
-    grid.appendChild(el);
-  }
-
-  for (let d = 1; d <= daysInMonth; d++) {
+  for (let i=0; i<fdow; i++) { const el=document.createElement('div'); el.className='cal-day empty'; grid.appendChild(el); }
+  for (let d=1; d<=dim; d++) {
     const zone = dayZones[d] || null;
-    const el   = document.createElement('div');
-    el.className = 'cal-day';
-
-    if (d === todayNum) el.classList.add('today');
+    const el = document.createElement('div'); el.className='cal-day';
+    if (d===today) el.classList.add('today');
     if (zone && ZONES[zone]) el.classList.add(ZONES[zone].cls);
-
-    const dn = document.createElement('div');
-    dn.className = 'day-num';
-    if (!zone) dn.style.color = '#333';
-    dn.textContent = d;
-    el.appendChild(dn);
-
+    const dn=document.createElement('div'); dn.className='day-num';
+    if (!zone) dn.style.color='#333';
+    dn.textContent=d; el.appendChild(dn);
     if (zone) {
-      const dz = document.createElement('div');
-      dz.className = 'day-zone';
-      dz.textContent = zone.substring(0,3).toUpperCase();
-      el.appendChild(dz);
-
-      el.onclick = () => openDetail(d, zone, month, year);
+      const dz=document.createElement('div'); dz.className='day-zone'; dz.textContent=zone.substring(0,3).toUpperCase(); el.appendChild(dz);
+      el.onclick = () => openDaySheet(d, zone, month, year);
     }
-
     grid.appendChild(el);
   }
 }
 
 function renderLegend(dayZones) {
   const present = [...new Set(Object.values(dayZones))];
-  const sorted  = ZONE_NAMES.filter(z => present.includes(z));
-  const wrap = document.getElementById('clientLegend');
-  wrap.innerHTML = '';
+  const sorted = ZONE_NAMES.filter(z=>present.includes(z));
+  const wrap = document.getElementById('clientLegend'); wrap.innerHTML='';
   sorted.forEach(z => {
-    const chip = document.createElement('div');
-    chip.className = 'legend-chip';
-    chip.style.background = ZONES[z].bg;
-    chip.style.color = ZONES[z].text;
-    chip.textContent = z.toUpperCase();
-    wrap.appendChild(chip);
+    const chip=document.createElement('div'); chip.className='legend-chip';
+    chip.style.background=ZONES[z].bg; chip.style.color=ZONES[z].text; chip.textContent=z.toUpperCase(); wrap.appendChild(chip);
   });
 }
 
-/* ════════════════════════════════════════════════════
-   DAY DETAIL SHEET
-════════════════════════════════════════════════════ */
-function openDetail(day, zone, month, year) {
+/* ═══════════════════════════════════════════════
+   DAY SHEET
+═══════════════════════════════════════════════ */
+let currentZone = null;
+
+function openDaySheet(day, zone, month, year) {
+  currentZone = zone;
   const z = ZONES[zone];
-  const dateStr = `${MONTHS[month].substring(0,3).toUpperCase()} ${day}, ${year}`;
+  const rd = RHYTHM_DATA[zone];
+  const wd = WINDOW_DIRECTIVES[zone];
 
-  document.getElementById('detailDate').textContent = dateStr;
+  document.getElementById('sheetDate').textContent = `${MONTHS[month].substring(0,3).toUpperCase()} ${day}, ${year}`;
 
-  const zn = document.getElementById('detailZoneName');
-  zn.textContent = zone.toUpperCase();
-  zn.style.color = z.text;
+  const zn = document.getElementById('sheetZoneName');
+  zn.textContent = zone.toUpperCase(); zn.style.color = z.text;
 
-  document.getElementById('detailTagline').textContent = CELL_LINE[zone] || '';
-  document.getElementById('detailTagline').style.color = z.text;
-  document.getElementById('detailSheet').style.background = z.bg;
-  document.getElementById('detailSheet').style.borderColor = z.bg;
+  const arch = document.getElementById('sheetArchetype');
+  arch.textContent = rd ? rd.archetype : ''; arch.style.color = z.text;
 
+  document.getElementById('sheetTagline').textContent = CELL_LINE[zone] || '';
+  document.getElementById('sheetTagline').style.color = z.text;
+
+  document.getElementById('sheetIdentity').textContent = rd ? rd.identity : '';
+  document.getElementById('sheetIdentity').style.color = z.text;
+
+  document.getElementById('daySheetInner').style.background = z.bg;
+  document.getElementById('daySheetInner').style.borderColor = z.bg;
+
+  // Window directive
+  if (wd) {
+    document.getElementById('windowNameDisplay').textContent = `${wd.name}  ·  ${wd.score}`;
+    document.getElementById('windowNameDisplay').style.color = z.text;
+    document.getElementById('windowDirective').textContent = wd.text;
+    document.getElementById('windowDirective').style.color = z.text;
+    document.getElementById('windowBlock').style.borderColor = `${z.acc}33`;
+  }
+
+  // Scores
   const scores = getZoneScores(zone);
-  const guidance = GUIDANCE[zone] || {};
   const rows = document.getElementById('scoreRows');
   rows.innerHTML = '';
-
-  scores.forEach(({ cat, normalized }, i) => {
+  scores.forEach(({ cat, normalized }) => {
     const row = document.createElement('div');
     row.className = 'score-row';
-
-    const pct = normalized * 10; // 0–100
-
     row.innerHTML = `
-      <div class="score-emoji">${CAT_EMOJI[cat] || '·'}</div>
+      <div class="score-emoji">${CAT_EMOJI[cat]||'·'}</div>
       <div class="score-cat" style="color:${z.text}">${cat}</div>
-      <div class="score-bar-wrap">
-        <div class="score-bar" style="width:0%;background:${z.text}" data-pct="${pct}"></div>
-      </div>
-      <div class="score-val" style="color:${z.text}">${normalized.toFixed(1)}</div>
-      <div class="score-guide" style="color:${z.text};opacity:0.65">${guidance[cat] || ''}</div>
+      <div class="score-bar-wrap"><div class="score-bar" style="width:0%;background:${z.acc}" data-pct="${normalized*10}"></div></div>
+      <div class="score-val" style="color:${z.text};opacity:0.6">${normalized.toFixed(1)}</div>
+      <div class="tap-hint" style="color:${z.text}">TAP →</div>
     `;
+    row.onclick = () => openDeepSheet(cat, zone);
     rows.appendChild(row);
   });
 
-  document.getElementById('detailOverlay').classList.add('open');
-
-  // Animate bars after render
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      rows.querySelectorAll('.score-bar').forEach(bar => {
-        bar.style.width = bar.dataset.pct + '%';
-      });
-    });
-  });
-}
-
-function closeDetailBtn() {
-  document.getElementById('detailOverlay').classList.remove('open');
-}
-
-function closeDetail(e) {
-  if (e.target === document.getElementById('detailOverlay')) {
-    document.getElementById('detailOverlay').classList.remove('open');
+  // Poker / Life guidance
+  const gb = document.getElementById('guidanceBlocks');
+  gb.innerHTML = '';
+  const cats = rd ? rd.categories : null;
+  if (cats) {
+    const topCat = scores[0]?.cat;
+    const catData = topCat ? cats[topCat] : null;
+    if (catData) {
+      gb.innerHTML = `
+        <div class="guidance-card" style="border-color:${z.acc}22">
+          <div class="guidance-card-label" style="color:${z.text}">♠ POKER</div>
+          <div class="guidance-card-text" style="color:${z.text}">${catData.pokerNote}</div>
+        </div>
+        <div class="guidance-card" style="border-color:${z.acc}22">
+          <div class="guidance-card-label" style="color:${z.text}">◈ DAILY LIFE</div>
+          <div class="guidance-card-text" style="color:${z.text}">${catData.lifeNote}</div>
+        </div>
+      `;
+    }
   }
+
+  document.getElementById('daySheet').classList.add('open');
+
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    rows.querySelectorAll('.score-bar').forEach(bar => { bar.style.width = bar.dataset.pct + '%'; });
+  }));
 }
 
-/* ════════════════════════════════════════════════════
+function closeDaySheet(e) {
+  if (e.target===document.getElementById('daySheet')) document.getElementById('daySheet').classList.remove('open');
+}
+
+/* ═══════════════════════════════════════════════
+   DEEP SHEET (category drill-down)
+═══════════════════════════════════════════════ */
+function openDeepSheet(cat, zone) {
+  const z = ZONES[zone];
+  const rd = RHYTHM_DATA[zone];
+  const scores = getZoneScores(zone);
+  const scoreObj = scores.find(s=>s.cat===cat);
+  const catData = rd && rd.categories ? rd.categories[cat] : null;
+
+  document.getElementById('deepEmoji').textContent = CAT_EMOJI[cat]||'·';
+  const cn = document.getElementById('deepCatName'); cn.textContent = cat; cn.style.color = z.text;
+  document.getElementById('deepCatZone').textContent = `${zone.toUpperCase()}  ·  ${rd?.archetype||''}`;
+  document.getElementById('deepCatZone').style.color = z.text + '99';
+
+  const scoreNum = document.getElementById('deepScoreNum');
+  scoreNum.textContent = scoreObj ? scoreObj.normalized.toFixed(1) : '—';
+  scoreNum.style.color = z.acc;
+
+  const bar = document.getElementById('deepScoreBar');
+  bar.style.width = '0%'; bar.style.background = z.acc;
+
+  document.getElementById('deepInner').style.background = z.bg;
+  document.getElementById('deepInner').style.borderColor = z.bg;
+
+  const content = document.getElementById('deepContent');
+  content.innerHTML = '';
+
+  if (catData) {
+    // Headline + guidance
+    let html = `
+      <div class="deep-section">
+        <div class="deep-section-label" style="color:${z.text}">TODAY'S DIRECTION</div>
+        <div class="deep-guidance-text" style="color:${z.text}">${catData.headline}</div>
+        <div class="deep-guidance-text" style="color:${z.text};opacity:0.75;font-size:13px;line-height:1.68">${catData.guidance}</div>
+      </div>
+    `;
+
+    // Insight layer
+    if (catData.insight) {
+      html += `
+        <div class="deep-window-note" style="border-left-color:${z.acc}">
+          <p style="color:${z.text}">${catData.insight}</p>
+        </div>
+        <div style="margin-bottom:20px"></div>
+      `;
+    }
+
+    // Poker / Life
+    html += `
+      <div class="deep-section">
+        <div class="deep-section-label" style="color:${z.text}">BY CONTEXT</div>
+        <div class="guidance-blocks">
+          <div class="guidance-card" style="border-color:${z.acc}22">
+            <div class="guidance-card-label" style="color:${z.text}">♠ POKER</div>
+            <div class="guidance-card-text" style="color:${z.text}">${catData.pokerNote}</div>
+          </div>
+          <div class="guidance-card" style="border-color:${z.acc}22">
+            <div class="guidance-card-label" style="color:${z.text}">◈ DAILY LIFE</div>
+            <div class="guidance-card-text" style="color:${z.text}">${catData.lifeNote}</div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Traits
+    if (catData.traits && catData.traits.length > 0) {
+      html += `<div class="deep-section"><div class="deep-section-label" style="color:${z.text}">RHYTHM TRAITS ACTIVE</div><div class="deep-traits">`;
+      catData.traits.forEach(t => {
+        html += `
+          <div class="deep-trait" style="border-color:${z.acc}22">
+            <div class="deep-trait-name" style="color:${z.text}">${t.name}</div>
+            <div class="deep-trait-sub" style="color:${z.text}">${t.sub}</div>
+            <div class="deep-trait-desc" style="color:${z.text}">${t.desc}</div>
+        `;
+        if (t.upside || t.downside) {
+          html += `<div class="deep-polarity">`;
+          if (t.upside) html += `<div class="deep-pole"><div class="deep-pole-label" style="color:${z.acc}">↑ UPSIDE</div><div class="deep-pole-items" style="color:${z.text}">${t.upside}</div></div>`;
+          if (t.downside) html += `<div class="deep-pole"><div class="deep-pole-label" style="color:${z.acc}88">↓ WATCH</div><div class="deep-pole-items" style="color:${z.text};opacity:0.6">${t.downside}</div></div>`;
+          html += `</div>`;
+        }
+        html += `</div>`;
+      });
+      html += `</div></div>`;
+    }
+
+    // Wave note
+    if (rd.waveNote) {
+      html += `
+        <div class="deep-section">
+          <div class="deep-section-label" style="color:${z.text}">WAVE PATTERN</div>
+          <div class="deep-insight-text" style="color:${z.text}">${rd.waveNote}</div>
+          <div class="deep-insight-text" style="color:${z.text};margin-top:6px;opacity:0.5">Source: ${rd.source}</div>
+        </div>
+      `;
+    }
+
+  } else {
+    content.innerHTML = `<div class="deep-guidance-text" style="color:${z.text};opacity:0.5">No data available for this category.</div>`;
+  }
+
+  content.innerHTML = html;
+  document.getElementById('deepSheet').classList.add('open');
+
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    const pct = scoreObj ? scoreObj.normalized * 10 : 0;
+    document.getElementById('deepScoreBar').style.width = pct + '%';
+  }));
+}
+
+function closeDeepSheet(e) {
+  if (e.target===document.getElementById('deepSheet')) document.getElementById('deepSheet').classList.remove('open');
+}
+
+function closeDeepSheetBtn() {
+  document.getElementById('deepSheet').classList.remove('open');
+}
+
+/* ═══════════════════════════════════════════════
    BOOT
-════════════════════════════════════════════════════ */
+═══════════════════════════════════════════════ */
 const urlParams = new URLSearchParams(location.search);
 if (urlParams.has('n') && urlParams.has('m') && urlParams.has('y')) {
   initClient(urlParams);
