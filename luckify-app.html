@@ -272,7 +272,7 @@
 
 <!-- DAY SHEET (Level 1) -->
 <div class="bottom-sheet" id="daySheet" onclick="closeDaySheet(event)">
-  <div class="sheet-inner" id="daySheetInner">
+  <div class="sheet-inner" id="daySheetInner" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
     <div class="sheet-top">
       <div>
@@ -286,7 +286,7 @@
     <div class="sheet-identity" id="sheetIdentity"></div>
     <div class="window-block" id="windowBlock">
       <div class="window-label">Energy Pattern</div>
-      <div class="window-directive" id="windowDirective"></div>
+      <div id="waveGraph"></div>
     </div>
     <div class="scores-label">TODAY'S FOCUS — TAP TO GO DEEPER</div>
     <div class="score-rows" id="scoreRows"></div>
@@ -296,7 +296,7 @@
 
 <!-- CATEGORY DEEP DIVE (Level 2) -->
 <div class="deep-sheet" id="deepSheet" onclick="closeDeepSheet(event)">
-  <div class="deep-inner" id="deepInner">
+  <div class="deep-inner" id="deepInner" onclick="event.stopPropagation()">
     <div class="deep-back" onclick="closeDeepSheetBtn()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
       BACK TO DAY
@@ -931,7 +931,170 @@ const WINDOW_DIRECTIVES = {
   Brown:  { name: 'Luck',           score: '−30 to −40', text: 'Elemental forces are dominant. Outcomes are governed by Earth energy, not execution. Reduce personal pressure — what happens today is larger than your hand. Stay agile, stay open, don\'t force.' },
 };
 
-const CELL_LINE = {
+/* ═══════════════════════════════════════════════
+   WAVE SVGS — direct from rhythm framework documents
+═══════════════════════════════════════════════ */
+const WAVE_SVGS = {
+  Orange: `<svg viewBox="0 0 520 155" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+  <line x1="0" y1="125" x2="520" y2="125" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+  <line x1="0" y1="85" x2="520" y2="85" stroke="rgba(255,255,255,0.03)" stroke-width="1" stroke-dasharray="4,4"/>
+  <line x1="0" y1="45" x2="520" y2="45" stroke="rgba(255,255,255,0.03)" stroke-width="1" stroke-dasharray="4,4"/>
+  <line x1="20" y1="125" x2="500" y2="125" stroke="rgba(232,112,32,0.1)" stroke-width="1" stroke-dasharray="2,8"/>
+  <path d="M 20,123 C 120,118 220,105 320,82 C 390,65 450,44 500,18" fill="none" stroke="#E87020" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+  <polygon points="500,18 494,24 506,24" fill="#E87020" opacity="0.7" transform="rotate(-55, 500, 18)"/>
+  <text x="340" y="62" font-family="IBM Plex Mono,monospace" font-size="8" fill="#E87020" opacity="0.9" letter-spacing="0.08em">EMPOWERED</text>
+  <text x="340" y="73" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(232,112,32,0.5)" letter-spacing="0.06em">slow continuous climb · always building</text>
+  <path d="M 20,123 C 150,122 300,121 450,119 C 470,119 488,118 500,118" fill="none" stroke="#E87020" stroke-width="2" stroke-linecap="round" opacity="0.35" stroke-dasharray="5,4"/>
+  <text x="180" y="112" font-family="IBM Plex Mono,monospace" font-size="8" fill="rgba(232,112,32,0.45)" letter-spacing="0.08em">UNEMPOWERED</text>
+  <text x="180" y="123" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(232,112,32,0.3)" letter-spacing="0.06em">flat or near-flat · stagnant, not falling</text>
+  <circle cx="20" cy="123" r="3" fill="#E87020" opacity="0.5"/>
+  <text x="20" y="141" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(232,112,32,0.2)" letter-spacing="0.08em">STABLE FLOOR — no peak to fall from</text>
+  <text x="8" y="152" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.15)" letter-spacing="0.08em">START</text>
+  <text x="200" y="152" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.15)" letter-spacing="0.08em">SUSTAINED BUILD</text>
+  <text x="430" y="152" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.15)" letter-spacing="0.08em">ONGOING</text>
+</svg>`,
+
+  Blue: `<svg viewBox="0 -20 580 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+  <line x1="0" y1="170" x2="580" y2="170" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+  <line x1="0" y1="100" x2="580" y2="100" stroke="rgba(255,255,255,0.03)" stroke-width="1" stroke-dasharray="4,6"/>
+  <line x1="0" y1="40" x2="580" y2="40" stroke="rgba(255,255,255,0.03)" stroke-width="1" stroke-dasharray="4,6"/>
+  <path d="M 40,168 C 44,155 52,130 62,105 C 70,84 80,62 90,44 C 96,32 102,22 108,16" fill="none" stroke="#4080E0" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+  <text x="28" y="158" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(64,128,224,0.5)" letter-spacing="0.08em">RISE</text>
+  <path d="M 108,16 C 118,10 130,8 142,10 C 154,12 162,20 166,32 C 170,44 168,58 162,68 C 156,78 146,84 136,84 C 126,84 118,78 114,68 C 110,58 110,46 114,36 C 118,26 124,18 130,14 C 136,10 142,8 148,8" fill="none" stroke="#4080E0" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+  <text x="170" y="52" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(64,128,224,0.5)" letter-spacing="0.08em">CUP / CATCH</text>
+  <circle cx="148" cy="8" r="4" fill="#4080E0" opacity="0.9"/>
+  <text x="156" y="12" font-family="IBM Plex Mono,monospace" font-size="8" fill="rgba(64,128,224,0.8)" letter-spacing="0.1em">FORK</text>
+  <path d="M 148,8 C 160,6 178,4 200,2 C 222,0 248,-2 272,-4 C 296,-6 318,-8 336,-10" fill="none" stroke="#4080E0" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+  <polygon points="336,-10 330,-4 342,-4" fill="#4080E0" opacity="0.85"/>
+  <text x="250" y="14" font-family="IBM Plex Mono,monospace" font-size="8" fill="rgba(64,128,224,0.75)" letter-spacing="0.08em">STABLE SWING</text>
+  <text x="250" y="25" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(64,128,224,0.4)" letter-spacing="0.06em">rises again · mirrors the rise</text>
+  <path d="M 148,8 C 148,30 148,60 148,90 C 148,115 146,135 140,152 C 134,164 124,170 114,166 C 104,162 100,150 104,140 C 108,130 118,126 128,128" fill="none" stroke="#4080E0" stroke-width="2" stroke-linecap="round" opacity="0.35" stroke-dasharray="5,4"/>
+  <text x="154" y="95" font-family="IBM Plex Mono,monospace" font-size="8" fill="rgba(64,128,224,0.35)" letter-spacing="0.08em">CRASH</text>
+  <text x="154" y="106" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(64,128,224,0.22)" letter-spacing="0.06em">drops · can cup/catch itself</text>
+  <text x="26" y="186" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(64,128,224,0.4)" letter-spacing="0.06em">SUB-PRIME</text>
+  <text x="26" y="195" font-family="IBM Plex Mono,monospace" font-size="6.5" fill="rgba(255,255,255,0.12)" letter-spacing="0.06em">+4 to +6</text>
+  <text x="100" y="186" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(64,128,224,0.4)" letter-spacing="0.06em">VARIANCE</text>
+  <text x="100" y="195" font-family="IBM Plex Mono,monospace" font-size="6.5" fill="rgba(255,255,255,0.12)" letter-spacing="0.06em">−12/−13</text>
+  <text x="310" y="186" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(64,128,224,0.4)" letter-spacing="0.06em">STABLE SWING</text>
+  <text x="310" y="195" font-family="IBM Plex Mono,monospace" font-size="6.5" fill="rgba(255,255,255,0.12)" letter-spacing="0.06em">−14/−15 · reset</text>
+</svg>`,
+
+  Green: `<svg viewBox="0 0 520 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+  <line x1="0" y1="60" x2="520" y2="60" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+  <line x1="0" y1="30" x2="520" y2="30" stroke="rgba(255,255,255,0.02)" stroke-width="1" stroke-dasharray="4,6"/>
+  <line x1="0" y1="90" x2="520" y2="90" stroke="rgba(255,255,255,0.02)" stroke-width="1" stroke-dasharray="4,6"/>
+  <path d="M 20,60 C 50,60 70,60 90,58 C 105,56 115,50 125,48 C 135,46 145,48 155,54 C 165,59 175,61 195,60 C 220,60 240,60 260,62 C 272,64 280,68 290,70 C 300,72 310,70 322,66 C 334,62 344,60 370,60 C 395,60 410,60 430,59 C 442,58 450,55 460,54 C 470,53 478,55 488,58 C 496,60 504,61 520,60" fill="none" stroke="#6EC25A" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+  <text x="200" y="54" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(110,194,90,0.35)" letter-spacing="0.1em">EQUILIBRIUM BASELINE</text>
+  <line x1="125" y1="48" x2="125" y2="38" stroke="rgba(110,194,90,0.2)" stroke-width="1" stroke-dasharray="2,3"/>
+  <text x="100" y="36" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(110,194,90,0.3)" letter-spacing="0.06em">micro variation</text>
+  <line x1="290" y1="70" x2="290" y2="80" stroke="rgba(110,194,90,0.2)" stroke-width="1" stroke-dasharray="2,3"/>
+  <text x="268" y="92" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(110,194,90,0.3)" letter-spacing="0.06em">fast resolution</text>
+  <circle cx="20" cy="60" r="3" fill="#6EC25A" opacity="0.4"/>
+  <text x="8" y="112" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.15)" letter-spacing="0.08em">START</text>
+  <text x="200" y="112" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.15)" letter-spacing="0.08em">SUSTAINED BALANCE</text>
+  <text x="440" y="112" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.15)" letter-spacing="0.08em">ONGOING</text>
+</svg>`,
+
+  Red: `<svg viewBox="0 0 520 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+  <line x1="0" y1="110" x2="520" y2="110" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+  <text x="4" y="107" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(255,255,255,0.2)">BASE</text>
+  <path d="M 20,110 C 80,110 100,108 140,107 C 180,106 220,104 280,102 C 320,101 370,99 430,97 C 460,96 490,95 510,94" fill="none" stroke="rgba(224,64,48,0.25)" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="3,5"/>
+  <text x="330" y="91" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(224,64,48,0.3)" letter-spacing="0.08em">ACCUMULATING BASELINE SHIFT</text>
+  <line x1="80" y1="110" x2="80" y2="82" stroke="#E04030" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
+  <line x1="75" y1="82" x2="85" y2="82" stroke="#E04030" stroke-width="2" opacity="0.7"/>
+  <line x1="160" y1="108" x2="160" y2="74" stroke="#E04030" stroke-width="2.5" stroke-linecap="round" opacity="0.75"/>
+  <line x1="155" y1="74" x2="165" y2="74" stroke="#E04030" stroke-width="2" opacity="0.75"/>
+  <line x1="240" y1="106" x2="240" y2="64" stroke="#E04030" stroke-width="2.5" stroke-linecap="round" opacity="0.8"/>
+  <line x1="235" y1="64" x2="245" y2="64" stroke="#E04030" stroke-width="2" opacity="0.8"/>
+  <line x1="320" y1="103" x2="320" y2="52" stroke="#E04030" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+  <line x1="315" y1="52" x2="325" y2="52" stroke="#E04030" stroke-width="2" opacity="0.85"/>
+  <line x1="400" y1="100" x2="400" y2="36" stroke="#E04030" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+  <line x1="395" y1="36" x2="405" y2="36" stroke="#E04030" stroke-width="2" opacity="0.9"/>
+  <line x1="480" y1="96" x2="480" y2="8" stroke="#E04030" stroke-width="3.5" stroke-linecap="round" opacity="1"/>
+  <line x1="480" y1="8" x2="460" y2="18" stroke="#E04030" stroke-width="1.5" opacity="0.6"/>
+  <line x1="480" y1="8" x2="500" y2="18" stroke="#E04030" stroke-width="1.5" opacity="0.6"/>
+  <line x1="480" y1="8" x2="468" y2="4" stroke="#E04030" stroke-width="1.5" opacity="0.4"/>
+  <line x1="480" y1="8" x2="492" y2="4" stroke="#E04030" stroke-width="1.5" opacity="0.4"/>
+  <text x="440" y="28" font-family="IBM Plex Mono,monospace" font-size="8" fill="#E04030" letter-spacing="0.1em">THRESHOLD</text>
+  <text x="445" y="38" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(224,64,48,0.6)" letter-spacing="0.08em">DETONATION</text>
+  <text x="60" y="144" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(255,255,255,0.15)" letter-spacing="0.06em">IMPACT 1</text>
+  <text x="140" y="144" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(255,255,255,0.15)" letter-spacing="0.06em">IMPACT 2</text>
+  <text x="220" y="144" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(255,255,255,0.15)" letter-spacing="0.06em">IMPACT 3</text>
+  <text x="300" y="144" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(255,255,255,0.15)" letter-spacing="0.06em">IMPACT 4</text>
+  <text x="380" y="144" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(255,255,255,0.15)" letter-spacing="0.06em">IMPACT 5</text>
+  <text x="462" y="144" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(224,64,48,0.5)" letter-spacing="0.06em">DETONATE</text>
+  <text x="60" y="156" font-family="IBM Plex Mono,monospace" font-size="6.5" fill="rgba(224,64,48,0.25)" letter-spacing="0.06em">each impact leaves a residue bump · direction not determined by launch direction</text>
+</svg>`,
+
+  Yellow: `<svg viewBox="0 0 520 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+  <line x1="0" y1="90" x2="520" y2="90" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+  <line x1="0" y1="45" x2="520" y2="45" stroke="rgba(255,255,255,0.03)" stroke-width="1" stroke-dasharray="4,4"/>
+  <line x1="0" y1="135" x2="520" y2="135" stroke="rgba(255,255,255,0.03)" stroke-width="1" stroke-dasharray="4,4"/>
+  <text x="4" y="94" font-family="IBM Plex Mono,monospace" font-size="8" fill="rgba(255,255,255,0.25)" letter-spacing="0.08em">0</text>
+  <line x1="20" y1="90" x2="500" y2="90" stroke="rgba(240,192,32,0.2)" stroke-width="1.5" stroke-dasharray="3,6"/>
+  <text x="210" y="84" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(255,255,255,0.2)" letter-spacing="0.1em">NEUTRAL — TRUE ZERO</text>
+  <path d="M 20,90 L 80,90 C 100,90 110,88 120,78 C 130,65 138,40 148,18 C 155,4 160,2 165,4 C 170,8 175,22 185,45 C 195,68 205,84 220,89 L 500,90" fill="none" stroke="#F0C020" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+  <text x="170" y="14" font-family="IBM Plex Mono,monospace" font-size="8" fill="#F0C020" opacity="0.9" letter-spacing="0.08em">EMPOWERED</text>
+  <text x="170" y="25" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(240,192,32,0.5)" letter-spacing="0.06em">spike upward · sharp return to baseline</text>
+  <path d="M 20,90 L 260,90 C 280,90 290,92 300,102 C 310,115 318,140 328,162 C 335,176 340,178 345,176 C 350,172 355,158 365,135 C 375,112 385,96 400,91 L 500,90" fill="none" stroke="#F0C020" stroke-width="2" stroke-linecap="round" opacity="0.35" stroke-dasharray="5,4"/>
+  <text x="350" y="158" font-family="IBM Plex Mono,monospace" font-size="8" fill="rgba(240,192,32,0.45)" letter-spacing="0.08em">UNEMPOWERED</text>
+  <text x="350" y="169" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(240,192,32,0.3)" letter-spacing="0.06em">spike downward · same magnitude</text>
+  <line x1="8" y1="10" x2="8" y2="170" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+  <text x="12" y="14" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(255,255,255,0.15)">+</text>
+  <text x="12" y="170" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(255,255,255,0.15)">−</text>
+</svg>`,
+
+  Pink: `<svg viewBox="0 0 520 150" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+  <line x1="0" y1="125" x2="520" y2="125" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+  <line x1="0" y1="85" x2="520" y2="85" stroke="rgba(255,255,255,0.03)" stroke-width="1" stroke-dasharray="4,4"/>
+  <line x1="0" y1="45" x2="520" y2="45" stroke="rgba(255,255,255,0.03)" stroke-width="1" stroke-dasharray="4,4"/>
+  <path d="M 60,123 C 68,108 80,72 96,38 C 104,22 112,14 120,12" fill="none" stroke="#D030A0" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+  <circle cx="120" cy="12" r="4" fill="#D030A0" opacity="0.9"/>
+  <text x="128" y="10" font-family="IBM Plex Mono,monospace" font-size="8" fill="rgba(208,48,160,0.7)" letter-spacing="0.1em">PEAK · FORK</text>
+  <path d="M 120,12 C 150,13 200,28 260,58 C 320,88 390,112 480,123" fill="none" stroke="#D030A0" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+  <path d="M 300,72 C 310,58 320,28 332,16 C 340,8 348,8 356,10 C 368,14 376,38 386,62 C 394,80 402,100 418,118" fill="none" stroke="#D030A0" stroke-width="1.5" stroke-linecap="round" opacity="0.3" stroke-dasharray="3,4"/>
+  <text x="334" y="6" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(208,48,160,0.35)" letter-spacing="0.06em">RE-IGNITION</text>
+  <text x="230" y="50" font-family="IBM Plex Mono,monospace" font-size="8" fill="#D030A0" opacity="0.85" letter-spacing="0.08em">EMPOWERED</text>
+  <text x="230" y="61" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(208,48,160,0.5)" letter-spacing="0.06em">long taper · can re-ignite</text>
+  <path d="M 120,12 C 132,22 148,52 164,80 C 176,102 190,116 210,123" fill="none" stroke="#D030A0" stroke-width="2" stroke-linecap="round" opacity="0.35" stroke-dasharray="5,4"/>
+  <text x="168" y="72" font-family="IBM Plex Mono,monospace" font-size="8" fill="rgba(208,48,160,0.45)" letter-spacing="0.08em">UNEMPOWERED</text>
+  <text x="168" y="83" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(208,48,160,0.3)" letter-spacing="0.06em">mirrors the ignition</text>
+  <circle cx="60" cy="123" r="3" fill="#D030A0" opacity="0.4"/>
+  <text x="30" y="142" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.2)" letter-spacing="0.08em">IGNITION</text>
+  <text x="100" y="142" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.2)" letter-spacing="0.08em">PEAK</text>
+  <text x="340" y="142" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.2)" letter-spacing="0.08em">RELEASE</text>
+</svg>`,
+
+  Purple: `<svg viewBox="0 0 520 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+  <line x1="0" y1="120" x2="520" y2="120" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+  <line x1="0" y1="80" x2="520" y2="80" stroke="rgba(255,255,255,0.03)" stroke-width="1" stroke-dasharray="4,4"/>
+  <line x1="0" y1="40" x2="520" y2="40" stroke="rgba(255,255,255,0.03)" stroke-width="1" stroke-dasharray="4,4"/>
+  <path d="M 20,118 C 60,116 100,110 150,90 C 190,74 220,30 260,18" fill="none" stroke="#8A2BE2" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+  <circle cx="260" cy="18" r="4" fill="#8A2BE2" opacity="0.9"/>
+  <text x="268" y="14" font-family="IBM Plex Mono,monospace" font-size="8" fill="rgba(138,43,226,0.7)" letter-spacing="0.1em">PEAK · FORK</text>
+  <path d="M 260,18 C 310,20 360,50 420,90 C 450,108 480,116 510,119" fill="none" stroke="#8A2BE2" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+  <text x="370" y="62" font-family="IBM Plex Mono,monospace" font-size="8" fill="#8A2BE2" opacity="0.8" letter-spacing="0.08em">EMPOWERED</text>
+  <text x="370" y="73" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(138,43,226,0.5)" letter-spacing="0.06em">gradual release</text>
+  <path d="M 260,18 C 280,30 295,60 310,85 C 322,104 335,114 355,119" fill="none" stroke="#8A2BE2" stroke-width="2" stroke-linecap="round" opacity="0.4" stroke-dasharray="5,4"/>
+  <text x="310" y="55" font-family="IBM Plex Mono,monospace" font-size="8" fill="rgba(138,43,226,0.5)" letter-spacing="0.08em">UNEMPOWERED</text>
+  <text x="310" y="66" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(138,43,226,0.35)" letter-spacing="0.06em">mirrors the build</text>
+  <text x="20" y="134" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.2)" letter-spacing="0.08em">SLOW START</text>
+  <text x="140" y="134" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.2)" letter-spacing="0.08em">BUILD</text>
+  <text x="230" y="134" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.2)" letter-spacing="0.08em">PEAK</text>
+  <text x="370" y="134" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.2)" letter-spacing="0.08em">RELEASE</text>
+</svg>`,
+
+  Brown: `<svg viewBox="0 0 520 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+  <line x1="0" y1="60" x2="520" y2="60" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+  <path d="M 20,60 C 80,58 140,62 200,60 C 260,58 320,64 380,60 C 420,57 460,63 500,60" fill="none" stroke="#A97040" stroke-width="2" stroke-linecap="round" opacity="0.5" stroke-dasharray="6,4"/>
+  <text x="180" y="50" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(169,112,64,0.4)" letter-spacing="0.1em">ELEMENTAL — NOT HUMAN RHYTHM</text>
+  <text x="140" y="80" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(169,112,64,0.3)" letter-spacing="0.08em">outcomes governed by Earth energy · not execution</text>
+  <circle cx="20" cy="60" r="3" fill="#A97040" opacity="0.3"/>
+  <text x="8" y="112" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.1)" letter-spacing="0.08em">ENVIRONMENTAL OVERLAY</text>
+</svg>`,
+};
+
+
   Orange:'Make your move', Blue:'Think it through',   Red:'Careful aggression',
   Green:'Build the habit', Yellow:'Show up present',  Purple:'Go inward',
   Pink:'Full expression',  Brown:'Rest and reset',
@@ -1109,12 +1272,10 @@ function openDaySheet(day, zone, month, year) {
   document.getElementById('daySheetInner').style.background = z.bg;
   document.getElementById('daySheetInner').style.borderColor = z.bg;
 
-  // Wave pattern
-  if (rd && rd.waveNote) {
-    document.getElementById('windowDirective').textContent = rd.waveNote;
-    document.getElementById('windowDirective').style.color = z.text;
-    document.getElementById('windowBlock').style.borderColor = `${z.acc}33`;
-  }
+  // Wave graph
+  const waveEl = document.getElementById('waveGraph');
+  waveEl.innerHTML = WAVE_SVGS[zone] || '';
+  document.getElementById('windowBlock').style.borderColor = `${z.acc}33`;
 
   // Scores
   const scores = getZoneScores(zone);
