@@ -19,14 +19,14 @@
     --sans:     'DM Sans', sans-serif;
     --serif:    'DM Serif Display', serif;
 
-    --pink-bg:   #4a1040; --pink-text:   #f9c8ee; --pink-acc: #D030A0;
-    --orange-bg: #3d1a00; --orange-text: #ffd6a0; --orange-acc: #E87020;
-    --blue-bg:   #0a1e35; --blue-text:   #a8d4f5; --blue-acc: #4080E0;
-    --yellow-bg: #2a2200; --yellow-text: #fff1a0; --yellow-acc: #F0C020;
-    --green-bg:  #0e1f10; --green-text:  #b8f0c0; --green-acc: #6EC25A;
-    --purple-bg: #1a0a2e; --purple-text: #d4b8f5; --purple-acc: #8A2BE2;
-    --red-bg:    #2e0a08; --red-text:    #ffc0bc; --red-acc: #E04030;
-    --brown-bg:  #1a0f08; --brown-text:  #d4b898; --brown-acc: #A97040;
+    --pink-bg:   #6b1a5a; --pink-text:   #ffd6f5; --pink-acc: #D030A0;
+    --orange-bg: #5a2800; --orange-text: #ffe8b0; --orange-acc: #E87020;
+    --blue-bg:   #102848; --blue-text:   #c0e0ff; --blue-acc: #4080E0;
+    --yellow-bg: #3a3000; --yellow-text: #fff7b0; --yellow-acc: #F0C020;
+    --green-bg:  #163018; --green-text:  #c8ffcc; --green-acc: #6EC25A;
+    --purple-bg: #281040; --purple-text: #e8ccff; --purple-acc: #8A2BE2;
+    --red-bg:    #401008; --red-text:    #ffd0cc; --red-acc: #E04030;
+    --brown-bg:  #2a1a08; --brown-text:  #e8cca8; --brown-acc: #A97040;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -246,7 +246,7 @@
 
 <!-- ZONE PICKER -->
 <div class="overlay" id="pickerOverlay" onclick="closePicker(event)">
-  <div class="zone-picker">
+  <div class="zone-picker" onclick="event.stopPropagation()">
     <div class="picker-title">SELECT ZONE</div>
     <div class="picker-options" id="pickerOptions"></div>
   </div>
@@ -1095,6 +1095,7 @@ const WAVE_SVGS = {
 };
 
 
+const CELL_LINE = {
   Orange:'Make your move', Blue:'Think it through',   Red:'Careful aggression',
   Green:'Build the habit', Yellow:'Show up present',  Purple:'Go inward',
   Pink:'Full expression',  Brown:'Rest and reset',
@@ -1117,11 +1118,23 @@ function initAdmin() {
   document.getElementById('selYear').addEventListener('change', renderAdminGrid);
 
   const po = document.getElementById('pickerOptions');
+  const PICKER_COLORS = {
+    Pink:   { bg: '#D030A0', text: '#fff' },
+    Orange: { bg: '#E87020', text: '#fff' },
+    Blue:   { bg: '#4080E0', text: '#fff' },
+    Yellow: { bg: '#F0C020', text: '#1a1400' },
+    Green:  { bg: '#6EC25A', text: '#0a1a08' },
+    Purple: { bg: '#8A2BE2', text: '#fff' },
+    Red:    { bg: '#E04030', text: '#fff' },
+    Brown:  { bg: '#A97040', text: '#fff' },
+  };
   ZONE_NAMES.forEach(z => {
     const btn = document.createElement('button');
     btn.className = 'zone-opt';
-    btn.style.background = ZONES[z].bg; btn.style.color = ZONES[z].text;
-    btn.textContent = z.toUpperCase(); btn.onclick = () => assignZone(z);
+    btn.style.background = PICKER_COLORS[z].bg;
+    btn.style.color = PICKER_COLORS[z].text;
+    btn.textContent = z.toUpperCase();
+    btn.onclick = () => assignZone(z);
     po.appendChild(btn);
   });
   const clr = document.createElement('div');
