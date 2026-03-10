@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Lucky Window</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inconsolata:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   /* ═══════════════════════════════════════════════
      PIP-BOY FIELD TERMINAL — LUCKIFY.ME
@@ -15,31 +15,31 @@
 
   :root {
     /* Core Phosphor Palette */
-    --ph:        #FF6A00;   /* primary phosphor orange */
-    --ph-dim:    #CC4400;   /* dimmed orange */
-    --ph-dark:   #8B2E00;   /* dark orange for borders */
-    --ph-glow:   #FF6A0033; /* glow tint */
-    --ph-faint:  #FF6A0009; /* very faint tint */
+    --ph:        #FF8C00;   /* primary phosphor orange */
+    --ph-dim:    #CC6600;   /* dimmed orange */
+    --ph-dark:   #6A3800;   /* dark orange for borders */
+    --ph-glow:   #FF8C0020; /* glow tint */
+    --ph-faint:  #FF8C0006; /* very faint tint */
 
-    --bg:        #080400;   /* near-black with warm tint */
-    --surface:   #0E0800;
-    --surface2:  #150A00;
-    --border:    #FF6A0018;
-    --border2:   #FF6A002A;
+    --bg:        #0D0C0B;   /* near-black with warm tint */
+    --surface:   #141210;
+    --surface2:  #1A1714;
+    --border:    #FFFFFF0C;
+    --border2:   #FFFFFF16;
 
-    --text:      #FF6A00;
-    --dim:       #CC5500;
-    --muted:     #7A3200;
-    --subtle:    #4A1E00;
+    --text:      #E8E4DC;
+    --dim:       #9C9890;
+    --muted:     #524E48;
+    --subtle:    #2E2B28;
 
     /* OFF-state: amber-red danger tint */
-    --off-color:   #FF2200;
-    --off-dim:     #AA1A00;
-    --off-bg:      #FF220009;
-    --off-border:  #FF220033;
+    --off-color:   #FF3A1A;
+    --off-dim:     #CC3010;
+    --off-bg:      #FF3A1A0A;
+    --off-border:  #FF3A1A30;
 
-    --mono:  'Share Tech Mono', 'Courier New', monospace;
-    --vt:    'VT323', 'Courier New', monospace;
+    --mono:  'Inconsolata', 'Courier New', monospace;
+    --vt:    'Orbitron', sans-serif;
 
     /* Zone colors — filtered through phosphor as tints */
     --pink-bg:   #1A0515; --pink-text:   #FF80E0; --pink-acc: #FF40C0;
@@ -74,8 +74,8 @@
       0deg,
       transparent,
       transparent 2px,
-      rgba(0,0,0,0.18) 2px,
-      rgba(0,0,0,0.18) 4px
+      rgba(0,0,0,0.10) 2px,
+      rgba(0,0,0,0.10) 4px
     );
     pointer-events: none;
     z-index: 9999;
@@ -86,7 +86,7 @@
     content: '';
     position: fixed;
     inset: 0;
-    background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.55) 100%);
+    background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.40) 100%);
     pointer-events: none;
     z-index: 9998;
   }
@@ -125,7 +125,7 @@
   .wordmark {
     font-family: var(--mono);
     font-size: 10px;
-    letter-spacing: 0.28em;
+    letter-spacing: 0.2em;
     color: var(--dim);
     text-transform: uppercase;
     margin-bottom: 8px;
@@ -133,7 +133,9 @@
 
   .admin-title {
     font-family: var(--vt);
-    font-size: 32px;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
     color: var(--ph);
     text-shadow: 0 0 8px var(--ph), 0 0 20px var(--ph-dim);
     letter-spacing: 0.05em;
@@ -153,7 +155,7 @@
     display: block;
     font-family: var(--mono);
     font-size: 9px;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.14em;
     color: var(--dim);
     text-transform: uppercase;
     margin-bottom: 8px;
@@ -165,7 +167,7 @@
     width: 100%;
     background: var(--surface);
     border: 1px solid var(--border2);
-    color: var(--ph);
+    color: var(--text);
     font-family: var(--mono);
     font-size: 15px;
     padding: 12px 14px;
@@ -178,8 +180,8 @@
   }
 
   input[type="text"]:focus, select:focus {
-    border-color: var(--ph);
-    box-shadow: 0 0 0 1px var(--ph), 0 0 12px var(--ph-glow);
+    border-color: var(--dim);
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.15), 0 0 10px rgba(255,255,255,0.06);
   }
 
   .month-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -187,7 +189,7 @@
   .zone-grid-label {
     font-family: var(--mono);
     font-size: 9px;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.14em;
     color: var(--dim);
     text-transform: uppercase;
     margin-bottom: 12px;
@@ -232,7 +234,7 @@
   .day-cell-admin .zl { font-family: var(--mono); font-size: 5px; font-weight: 700; letter-spacing: 0.05em; opacity: 0.9; }
 
   /* ── ZONE PICKER ── */
-  .overlay { display: none; position: fixed; inset: 0; background: rgba(4,2,0,0.88); z-index: 100; align-items: center; justify-content: center; }
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 100; align-items: center; justify-content: center; }
   .overlay.open { display: flex; }
 
   .zone-picker {
@@ -292,14 +294,14 @@
   .generate-btn {
     width: 100%;
     background: transparent;
-    color: var(--ph);
-    border: 1px solid var(--ph);
+    color: var(--text);
+    border: 1px solid var(--muted);
     border-radius: 0;
     padding: 14px;
     font-family: var(--mono);
     font-size: 12px;
     font-weight: 700;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     cursor: pointer;
     margin-top: 32px;
@@ -308,8 +310,9 @@
   }
 
   .generate-btn:hover {
-    background: var(--ph-glow);
-    box-shadow: 0 0 16px var(--ph-glow), inset 0 0 16px var(--ph-faint);
+    background: rgba(255,255,255,0.04);
+    border-color: var(--dim);
+    box-shadow: none;
   }
 
   .share-box {
@@ -363,7 +366,7 @@
   .client-wordmark {
     font-family: var(--mono);
     font-size: 9px;
-    letter-spacing: 0.24em;
+    letter-spacing: 0.16em;
     color: var(--muted);
     text-transform: uppercase;
     margin-bottom: 4px;
@@ -371,7 +374,11 @@
 
   .client-name {
     font-family: var(--vt);
-    font-size: 36px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+    letter-spacing: 0.08em;
     color: var(--ph);
     text-shadow: 0 0 8px var(--ph), 0 0 20px var(--ph-dim);
     letter-spacing: 0.05em;
@@ -486,7 +493,7 @@
   .scores-label {
     font-family: var(--mono);
     font-size: 8px;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--dim);
     opacity: 0.7;
@@ -528,7 +535,8 @@
 
   .score-val {
     font-family: var(--vt);
-    font-size: 18px;
+    font-size: 13px;
+    font-weight: 600;
     line-height: 1;
     width: 28px;
     text-align: right;
@@ -540,7 +548,7 @@
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(4,2,0,0.90);
+    background: rgba(0,0,0,0.90);
     z-index: 200;
     align-items: flex-end;
     justify-content: center;
@@ -559,7 +567,7 @@
     animation: slideUp 0.2s ease-out;
     max-height: 90vh;
     overflow-y: auto;
-    box-shadow: 0 -4px 40px rgba(255,106,0,0.08);
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.6);
   }
 
   .sheet-handle {
@@ -582,8 +590,9 @@
 
   .sheet-zone-name {
     font-family: var(--vt);
-    font-size: 42px;
+    font-size: 28px;
     line-height: 1;
+    letter-spacing: 0.06em;
     text-shadow: 0 0 10px currentColor, 0 0 24px currentColor;
   }
 
@@ -598,7 +607,9 @@
 
   .sheet-tagline {
     font-family: var(--vt);
-    font-size: 22px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
     margin-top: 4px;
     line-height: 1.3;
     color: var(--ph-dim);
@@ -607,7 +618,7 @@
 
   .sheet-identity {
     font-family: var(--mono);
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.7;
     color: var(--dim);
     margin-bottom: 18px;
@@ -655,7 +666,7 @@
     font-family: var(--mono);
     font-size: 12px;
     line-height: 1.65;
-    color: var(--dim);
+    color: var(--text);
   }
 
   /* ── GUIDANCE CARDS (ON/OFF in day sheet) ── */
@@ -669,7 +680,7 @@
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(4,2,0,0.94);
+    background: rgba(0,0,0,0.94);
     z-index: 300;
     align-items: flex-end;
     justify-content: center;
@@ -688,7 +699,7 @@
     animation: slideUp 0.18s ease-out;
     max-height: 88vh;
     overflow-y: auto;
-    box-shadow: 0 -4px 40px rgba(255,106,0,0.10);
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.7);
   }
 
   .deep-back {
@@ -712,8 +723,9 @@
 
   .deep-cat-name {
     font-family: var(--vt);
-    font-size: 38px;
+    font-size: 26px;
     line-height: 1;
+    letter-spacing: 0.06em;
     text-shadow: 0 0 10px currentColor, 0 0 22px currentColor;
     margin-bottom: 3px;
   }
@@ -738,9 +750,10 @@
 
   .deep-score-num {
     font-family: var(--vt);
-    font-size: 52px;
-    font-weight: 400;
+    font-size: 40px;
+    font-weight: 700;
     line-height: 1;
+    letter-spacing: 0.04em;
     text-shadow: 0 0 10px currentColor, 0 0 24px currentColor;
   }
 
@@ -765,7 +778,7 @@
   .deep-section-label {
     font-family: var(--mono);
     font-size: 8px;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--muted);
     margin-bottom: 10px;
@@ -778,14 +791,14 @@
     content: '';
     flex: 1;
     height: 1px;
-    background: var(--border);
+    background: var(--subtle);
   }
 
   .deep-guidance-text {
     font-family: var(--mono);
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.72;
-    color: var(--dim);
+    color: var(--text);
     margin-bottom: 10px;
   }
 
@@ -822,7 +835,7 @@
 
   .on-off-text {
     font-family: var(--mono);
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.65;
   }
 
@@ -838,7 +851,7 @@
     font-family: var(--mono);
     font-size: 11px;
     line-height: 1.65;
-    color: var(--muted);
+    color: var(--dim);
   }
 
   /* ── WAVE GRAPH ── */
@@ -847,7 +860,7 @@
   .wave-tap-hint { font-family: var(--mono); font-size: 8px; color: var(--muted); letter-spacing: 0.1em; text-align: right; margin-top: 4px; opacity: 0.5; }
 
   /* ── WAVE LIGHTBOX ── */
-  #waveLightbox { display: none; position: fixed; inset: 0; background: rgba(4,2,0,0.97); z-index: 500; align-items: center; justify-content: center; padding: 20px; cursor: zoom-out; }
+  #waveLightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.96); z-index: 500; align-items: center; justify-content: center; padding: 20px; cursor: zoom-out; }
   #waveLightbox.open { display: flex; }
   #waveLightboxInner {
     width: 100%;
@@ -1798,10 +1811,10 @@ function openDaySheet(day, zone, month, year) {
     row.className = 'score-row';
     const pipHtml = buildPips(normalized, z.acc, 10, 'score-pip');
     const scoreState = normalized >= 7 ? 'on' : normalized >= 4 ? 'mid' : 'off';
-    const stateColor = scoreState === 'on' ? z.acc : scoreState === 'mid' ? z.acc + '88' : 'var(--off-color)';
+    const stateColor = scoreState === 'on' ? z.acc : scoreState === 'mid' ? 'var(--dim)' : 'var(--off-color)';
     row.innerHTML = `
       <div class="score-emoji">${CAT_EMOJI[cat]||'·'}</div>
-      <div class="score-cat" style="color:${stateColor};text-shadow:0 0 6px ${stateColor}66">${cat}</div>
+      <div class="score-cat" style="color:var(--text)">${cat}</div>
       <div class="score-bar-wrap">${pipHtml}</div>
       <div class="score-val" style="color:${stateColor};text-shadow:0 0 8px ${stateColor}">${normalized.toFixed(1)}</div>
       <div class="tap-hint" style="color:var(--muted);pointer-events:none">TAP ›</div>
@@ -1821,7 +1834,7 @@ function openDaySheet(day, zone, month, year) {
       gb.innerHTML = `
         <div class="guidance-card" style="border-color:var(--ph-dark);background:var(--ph-faint)">
           <div class="guidance-card-label" style="color:${z.acc};text-shadow:0 0 8px ${z.acc}">▲ ON  ·  ${topCat.toUpperCase()}</div>
-          <div class="guidance-card-text" style="color:var(--dim)">${catData.on}</div>
+          <div class="guidance-card-text" style="color:var(--text)">${catData.on}</div>
         </div>
         <div class="guidance-card" style="border-color:var(--off-border);background:var(--off-bg)">
           <div class="guidance-card-label" style="color:var(--off-color);text-shadow:0 0 8px var(--off-color)">▼ OFF  ·  ${topCat.toUpperCase()}</div>
@@ -1857,7 +1870,7 @@ function openDeepSheet(cat, zone) {
   const scoreNum = document.getElementById('deepScoreNum');
   const scoreVal = scoreObj ? scoreObj.normalized : 0;
   scoreNum.textContent = scoreObj ? scoreVal.toFixed(1) : '—';
-  const scoreColor = scoreVal >= 7 ? z.acc : scoreVal >= 4 ? z.acc + 'AA' : 'var(--off-color)';
+  const scoreColor = scoreVal >= 7 ? z.acc : scoreVal >= 4 ? 'var(--dim)' : 'var(--off-color)';
   scoreNum.style.color = scoreColor;
   scoreNum.style.textShadow = `0 0 12px ${scoreColor}, 0 0 24px ${scoreColor}88`;
 
@@ -1886,7 +1899,7 @@ function openDeepSheet(cat, zone) {
         <div class="on-off-block">
           <div class="on-card">
             <div class="on-off-label" style="color:${z.acc};text-shadow:0 0 8px ${z.acc}">▲ ON</div>
-            <div class="on-off-text" style="color:var(--dim)">${catData.on}</div>
+            <div class="on-off-text" style="color:var(--text)">${catData.on}</div>
           </div>
           <div class="off-card">
             <div class="on-off-label" style="color:var(--off-color);text-shadow:0 0 8px var(--off-color)">▼ OFF</div>
