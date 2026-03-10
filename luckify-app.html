@@ -199,6 +199,17 @@
   .deep-window-note { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-left-width: 3px; border-radius: 4px; padding: 12px 14px; margin-top: 12px; }
   .deep-window-note p { font-family: var(--sans); font-size: 12px; line-height: 1.65; opacity: 0.7; }
 
+  /* ── WAVE GRAPH ── */
+  #waveGraph svg { border-radius: 6px; cursor: zoom-in; transition: opacity 0.15s; }
+  #waveGraph svg:hover { opacity: 0.85; }
+  .wave-tap-hint { font-family: var(--mono); font-size: 9px; color: var(--subtle); letter-spacing: 0.1em; text-align: right; margin-top: 4px; }
+
+  /* ── WAVE LIGHTBOX ── */
+  #waveLightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 500; align-items: center; justify-content: center; padding: 20px; cursor: zoom-out; }
+  #waveLightbox.open { display: flex; }
+  #waveLightboxInner { width: 100%; max-width: 700px; background: #111; border-radius: 12px; padding: 20px; border: 1px solid #222; }
+  #waveLightboxInner svg { width: 100% !important; height: auto !important; }
+
   @media (max-width: 380px) {
     .cal-day .day-num { font-size: 11px; }
     .guidance-blocks { grid-template-columns: 1fr; }
@@ -316,19 +327,24 @@
   </div>
 </div>
 
+<!-- WAVE LIGHTBOX -->
+<div id="waveLightbox" onclick="document.getElementById('waveLightbox').classList.remove('open')">
+  <div id="waveLightboxInner"></div>
+</div>
+
 <script>
 /* ═══════════════════════════════════════════════
    ZONE CONFIG
 ═══════════════════════════════════════════════ */
 const ZONES = {
-  Pink:   { bg:'#4a1040', text:'#f9c8ee', acc:'#D030A0', cls:'zc-pink'   },
-  Orange: { bg:'#3d1a00', text:'#ffd6a0', acc:'#E87020', cls:'zc-orange' },
-  Blue:   { bg:'#0a1e35', text:'#a8d4f5', acc:'#4080E0', cls:'zc-blue'   },
-  Yellow: { bg:'#2a2200', text:'#fff1a0', acc:'#F0C020', cls:'zc-yellow' },
-  Green:  { bg:'#0e1f10', text:'#b8f0c0', acc:'#6EC25A', cls:'zc-green'  },
-  Purple: { bg:'#1a0a2e', text:'#d4b8f5', acc:'#8A2BE2', cls:'zc-purple' },
-  Red:    { bg:'#2e0a08', text:'#ffc0bc', acc:'#E04030', cls:'zc-red'    },
-  Brown:  { bg:'#1a0f08', text:'#d4b898', acc:'#A97040', cls:'zc-brown'  },
+  Pink:   { bg:'#6b1a5a', text:'#ffd6f5', acc:'#D030A0', cls:'zc-pink'   },
+  Orange: { bg:'#5a2800', text:'#ffe8b0', acc:'#E87020', cls:'zc-orange' },
+  Blue:   { bg:'#102848', text:'#c0e0ff', acc:'#4080E0', cls:'zc-blue'   },
+  Yellow: { bg:'#3a3000', text:'#fff7b0', acc:'#F0C020', cls:'zc-yellow' },
+  Green:  { bg:'#163018', text:'#c8ffcc', acc:'#6EC25A', cls:'zc-green'  },
+  Purple: { bg:'#281040', text:'#e8ccff', acc:'#8A2BE2', cls:'zc-purple' },
+  Red:    { bg:'#401008', text:'#ffd0cc', acc:'#E04030', cls:'zc-red'    },
+  Brown:  { bg:'#2a1a08', text:'#e8cca8', acc:'#A97040', cls:'zc-brown'  },
 };
 const ZONE_NAMES = ['Pink','Orange','Blue','Yellow','Green','Purple','Red','Brown'];
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -1287,7 +1303,16 @@ function openDaySheet(day, zone, month, year) {
 
   // Wave graph
   const waveEl = document.getElementById('waveGraph');
-  waveEl.innerHTML = WAVE_SVGS[zone] || '';
+  const svgMarkup = WAVE_SVGS[zone] || '';
+  waveEl.innerHTML = svgMarkup
+    ? svgMarkup + '<div class="wave-tap-hint">TAP TO EXPAND</div>'
+    : '';
+  if (svgMarkup) {
+    waveEl.querySelector('svg').onclick = () => {
+      document.getElementById('waveLightboxInner').innerHTML = svgMarkup;
+      document.getElementById('waveLightbox').classList.add('open');
+    };
+  }
   document.getElementById('windowBlock').style.borderColor = `${z.acc}33`;
 
   // Scores
@@ -1437,11 +1462,11 @@ function openDeepSheet(cat, zone) {
       `;
     }
 
+    content.innerHTML = html;
   } else {
     content.innerHTML = `<div class="deep-guidance-text" style="color:${z.text};opacity:0.5">No data available for this category.</div>`;
   }
 
-  content.innerHTML = html;
   document.getElementById('deepSheet').classList.add('open');
 
   requestAnimationFrame(() => requestAnimationFrame(() => {
