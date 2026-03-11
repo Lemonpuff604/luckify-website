@@ -1,2151 +1,399 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Lucky Window</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inconsolata:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>Luckify – Lucky Window Operator</title>
+
 <style>
-  /* ═══════════════════════════════════════════════
-     PIP-BOY FIELD TERMINAL — LUCKIFY.ME
-     Phosphor Orange · CRT Monochrome · Scan-Line UI
-  ═══════════════════════════════════════════════ */
 
-  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&family=Courier+Prime:wght@400;700&display=swap');
-
-  :root {
-    /* Core Phosphor Palette */
-    --ph:        #FF8C00;   /* primary phosphor orange */
-    --ph-dim:    #CC6600;   /* dimmed orange */
-    --ph-dark:   #6A3800;   /* dark orange for borders */
-    --ph-glow:   #FF8C0020; /* glow tint */
-    --ph-faint:  #FF8C0006; /* very faint tint */
-
-    --bg:        #0D0C0B;   /* near-black with warm tint */
-    --surface:   #141210;
-    --surface2:  #1A1714;
-    --border:    #FFFFFF0C;
-    --border2:   #FFFFFF16;
-
-    --text:      #E8E4DC;
-    --dim:       #9C9890;
-    --muted:     #524E48;
-    --subtle:    #2E2B28;
-
-    /* OFF-state: amber-red danger tint */
-    --off-color:   #FF3A1A;
-    --off-dim:     #CC3010;
-    --off-bg:      #FF3A1A0A;
-    --off-border:  #FF3A1A30;
-
-    --mono:  'Inconsolata', 'Courier New', monospace;
-    --vt:    'Orbitron', sans-serif;
-
-    /* Zone colors — filtered through phosphor as tints */
-    --pink-bg:   #1A0515; --pink-text:   #FF80E0; --pink-acc: #FF40C0;
-    --orange-bg: #150900; --orange-text: #FFB060; --orange-acc: #FF8020;
-    --blue-bg:   #020B18; --blue-text:   #60B0FF; --blue-acc:  #2080FF;
-    --yellow-bg: #141000; --yellow-text: #FFE040; --yellow-acc: #FFD000;
-    --green-bg:  #030A03; --green-text:  #80FF80; --green-acc:  #40FF40;
-    --purple-bg: #0C0318; --purple-text: #C080FF; --purple-acc: #A040FF;
-    --red-bg:    #150200; --red-text:    #FF8070; --red-acc:    #FF3020;
-    --brown-bg:  #0D0600; --brown-text:  #C09060; --brown-acc:  #A07040;
-  }
-
-  /* ── SCANLINE OVERLAY ── */
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--mono);
-    min-height: 100vh;
-    -webkit-font-smoothing: none;
-    image-rendering: pixelated;
-    position: relative;
-  }
-
-  /* CRT scanlines */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0,0,0,0.10) 2px,
-      rgba(0,0,0,0.10) 4px
-    );
-    pointer-events: none;
-    z-index: 9999;
-  }
-
-  /* CRT vignette */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.40) 100%);
-    pointer-events: none;
-    z-index: 9998;
-  }
-
-  /* Screen flicker — subtle, on load */
-  @keyframes crtOn {
-    0%   { opacity: 0; filter: brightness(3) blur(2px); }
-    15%  { opacity: 1; filter: brightness(1.4) blur(0); }
-    20%  { opacity: 0.85; }
-    25%  { opacity: 1; }
-    100% { opacity: 1; filter: brightness(1); }
-  }
-  .view.active { animation: crtOn 0.5s ease-out forwards; }
-
-  @keyframes slideUp {
-    from { transform: translateY(30px); opacity: 0; }
-    to   { transform: translateY(0);    opacity: 1; }
-  }
-
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0; }
-  }
-
-  /* Phosphor text glow */
-  .ph-glow {
-    text-shadow: 0 0 6px var(--ph), 0 0 14px var(--ph-dim);
-  }
-
-  .view { display: none; min-height: 100vh; }
-  .view.active { display: block; }
-
-  /* ── ADMIN ── */
-  #admin { max-width: 680px; margin: 0 auto; padding: 40px 20px 80px; }
-
-  .wordmark {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    color: var(--dim);
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-
-  .admin-title {
-    font-family: var(--vt);
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    color: var(--ph);
-    text-shadow: 0 0 8px var(--ph), 0 0 20px var(--ph-dim);
-    letter-spacing: 0.05em;
-    margin-bottom: 40px;
-    line-height: 1;
-  }
-
-  /* Terminal prompt blink */
-  .admin-title::after {
-    content: '█';
-    animation: blink 1.1s step-end infinite;
-    margin-left: 4px;
-    font-size: 28px;
-  }
-
-  label {
-    display: block;
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.14em;
-    color: var(--dim);
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-
-  .field-group { margin-bottom: 28px; }
-
-  input[type="text"], select {
-    width: 100%;
-    background: var(--surface);
-    border: 1px solid var(--border2);
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 15px;
-    padding: 12px 14px;
-    border-radius: 0;
-    outline: none;
-    transition: border-color 0.15s, box-shadow 0.15s;
-    appearance: none;
-    -webkit-appearance: none;
-    text-shadow: 0 0 4px var(--ph-dim);
-  }
-
-  input[type="text"]:focus, select:focus {
-    border-color: var(--dim);
-    box-shadow: 0 0 0 1px rgba(255,255,255,0.15), 0 0 10px rgba(255,255,255,0.06);
-  }
-
-  .month-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-  .zone-grid-label {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.14em;
-    color: var(--dim);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-
-  .zone-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
-
-  .dow-label {
-    font-family: var(--mono);
-    font-size: 7px;
-    color: var(--muted);
-    text-align: center;
-    padding: 4px 0;
-    letter-spacing: 0.1em;
-  }
-
-  .day-cell-admin {
-    position: relative;
-    aspect-ratio: 1;
-    border-radius: 0;
-    cursor: pointer;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    transition: border-color 0.1s, box-shadow 0.1s;
-    user-select: none;
-  }
-
-  .day-cell-admin:hover {
-    border-color: var(--ph);
-    box-shadow: 0 0 6px var(--ph-glow);
-  }
-
-  .day-cell-admin.empty { background: transparent; border-color: transparent; cursor: default; }
-  .day-cell-admin.empty:hover { border-color: transparent; box-shadow: none; }
-
-  .day-cell-admin .dn { font-family: var(--mono); font-size: 11px; font-weight: 700; line-height: 1; }
-  .day-cell-admin .zl { font-family: var(--mono); font-size: 5px; font-weight: 700; letter-spacing: 0.05em; opacity: 0.9; }
-
-  /* ── ZONE PICKER ── */
-  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 100; align-items: center; justify-content: center; }
-  .overlay.open { display: flex; }
-
-  .zone-picker {
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    border-radius: 0;
-    padding: 20px;
-    width: 280px;
-    box-shadow: 0 0 30px var(--ph-glow), inset 0 0 30px rgba(0,0,0,0.4);
-  }
-
-  .picker-title {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--dim);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    margin-bottom: 14px;
-    text-align: center;
-  }
-
-  .picker-options { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-
-  .zone-opt {
-    padding: 10px 8px;
-    border-radius: 0;
-    cursor: pointer;
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 700;
-    text-align: center;
-    letter-spacing: 0.08em;
-    transition: opacity 0.1s, box-shadow 0.1s;
-    border: none;
-  }
-
-  .zone-opt:hover { opacity: 0.8; box-shadow: 0 0 8px currentColor; }
-
-  .zone-opt-clear {
-    grid-column: span 2;
-    background: transparent;
-    border: 1px solid var(--border2) !important;
-    color: var(--muted);
-    padding: 8px;
-    border-radius: 0;
-    cursor: pointer;
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.14em;
-    text-align: center;
-    transition: border-color 0.1s, color 0.1s;
-  }
-
-  .zone-opt-clear:hover { border-color: var(--ph-dark) !important; color: var(--dim); }
-
-  /* ── GENERATE BTN ── */
-  .generate-btn {
-    width: 100%;
-    background: transparent;
-    color: var(--text);
-    border: 1px solid var(--muted);
-    border-radius: 0;
-    padding: 14px;
-    font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    cursor: pointer;
-    margin-top: 32px;
-    transition: background 0.15s, box-shadow 0.15s;
-    text-shadow: 0 0 6px var(--ph-dim);
-  }
-
-  .generate-btn:hover {
-    background: rgba(255,255,255,0.04);
-    border-color: var(--dim);
-    box-shadow: none;
-  }
-
-  .share-box {
-    display: none;
-    margin-top: 20px;
-    background: var(--surface);
-    border: 1px solid var(--border2);
-    border-radius: 0;
-    padding: 16px;
-  }
-
-  .share-box.visible { display: block; }
-
-  .share-label {
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--dim);
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-
-  .share-url {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--ph-dim);
-    word-break: break-all;
-    margin-bottom: 12px;
-    line-height: 1.6;
-  }
-
-  .copy-btn {
-    background: transparent;
-    border: 1px solid var(--border2);
-    color: var(--muted);
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.14em;
-    padding: 8px 14px;
-    border-radius: 0;
-    cursor: pointer;
-    transition: border-color 0.15s, color 0.15s, box-shadow 0.15s;
-  }
-
-  .copy-btn:hover { border-color: var(--ph-dark); color: var(--dim); }
-  .copy-btn.copied { border-color: var(--ph); color: var(--ph); box-shadow: 0 0 8px var(--ph-glow); }
-
-  /* ── CLIENT ── */
-  #client { max-width: 500px; margin: 0 auto; padding: 24px 16px 80px; }
-
-  .client-wordmark {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.16em;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-
-  .client-name {
-    font-family: var(--vt);
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    color: var(--ph);
-    text-shadow: 0 0 8px var(--ph), 0 0 20px var(--ph-dim);
-    letter-spacing: 0.05em;
-    line-height: 1;
-    margin-bottom: 2px;
-  }
-
-  .client-month {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--dim);
-    margin-top: 2px;
-    letter-spacing: 0.14em;
-    margin-bottom: 20px;
-  }
-
-  .cal-dow-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-bottom: 3px; }
-
-  .cal-dow {
-    font-family: var(--mono);
-    font-size: 7px;
-    color: var(--muted);
-    text-align: center;
-    padding: 4px 0;
-    letter-spacing: 0.1em;
-  }
-
-  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
-
-  .cal-day {
-    aspect-ratio: 1;
-    border-radius: 0;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-    cursor: pointer;
-    transition: border-color 0.12s, box-shadow 0.12s;
-    position: relative;
-  }
-
-  .cal-day:hover {
-    border-color: var(--ph-dark);
-    box-shadow: 0 0 8px var(--ph-glow);
-    z-index: 2;
-  }
-
-  .cal-day.today {
-    border-color: var(--ph) !important;
-    box-shadow: 0 0 0 1px var(--ph), 0 0 12px var(--ph-glow) !important;
-  }
-
-  .cal-day.empty { background: transparent; border-color: transparent; cursor: default; }
-  .cal-day.empty:hover { border-color: transparent; box-shadow: none; }
-
-  .cal-day .day-num { font-family: var(--mono); font-size: 13px; font-weight: 700; line-height: 1; }
-  .cal-day .day-zone { font-family: var(--mono); font-size: 5px; font-weight: 700; letter-spacing: 0.06em; opacity: 0.85; }
-
-  /* Zone color classes — all on phosphor-dark base */
-  .zc-pink   { background: var(--pink-bg)   !important; border-color: var(--pink-acc)44   !important; }
-  .zc-orange { background: var(--orange-bg) !important; border-color: var(--orange-acc)44 !important; }
-  .zc-blue   { background: var(--blue-bg)   !important; border-color: var(--blue-acc)44   !important; }
-  .zc-yellow { background: var(--yellow-bg) !important; border-color: var(--yellow-acc)44 !important; }
-  .zc-green  { background: var(--green-bg)  !important; border-color: var(--ph)44  !important; }
-  .zc-purple { background: var(--purple-bg) !important; border-color: var(--purple-acc)44 !important; }
-  .zc-red    { background: var(--red-bg)    !important; border-color: var(--red-acc)44    !important; }
-  .zc-brown  { background: var(--brown-bg)  !important; border-color: var(--brown-acc)44  !important; }
-
-  .zc-pink   .day-num, .zc-pink   .day-zone,
-  .zc-pink   .dn,      .zc-pink   .zl { color: var(--pink-text); text-shadow: 0 0 4px var(--pink-acc)88; }
-  .zc-orange .day-num, .zc-orange .day-zone,
-  .zc-orange .dn,      .zc-orange .zl { color: var(--orange-text); text-shadow: 0 0 4px var(--orange-acc)88; }
-  .zc-blue   .day-num, .zc-blue   .day-zone,
-  .zc-blue   .dn,      .zc-blue   .zl { color: var(--blue-text); text-shadow: 0 0 4px var(--blue-acc)88; }
-  .zc-yellow .day-num, .zc-yellow .day-zone,
-  .zc-yellow .dn,      .zc-yellow .zl { color: var(--yellow-text); text-shadow: 0 0 4px var(--yellow-acc)88; }
-  .zc-green  .day-num, .zc-green  .day-zone,
-  .zc-green  .dn,      .zc-green  .zl { color: var(--green-text); text-shadow: 0 0 4px var(--green-acc)88; }
-  .zc-purple .day-num, .zc-purple .day-zone,
-  .zc-purple .dn,      .zc-purple .zl { color: var(--purple-text); text-shadow: 0 0 4px var(--purple-acc)88; }
-  .zc-red    .day-num, .zc-red    .day-zone,
-  .zc-red    .dn,      .zc-red    .zl { color: var(--red-text); text-shadow: 0 0 4px var(--red-acc)88; }
-  .zc-brown  .day-num, .zc-brown  .day-zone,
-  .zc-brown  .dn,      .zc-brown  .zl { color: var(--brown-text); text-shadow: 0 0 4px var(--brown-acc)88; }
-
-  /* ── LEGEND ── */
-  .legend { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 4px; }
-  .legend-chip {
-    font-family: var(--mono);
-    font-size: 8px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    padding: 3px 7px;
-    border-radius: 0;
-    border: 1px solid currentColor;
-    opacity: 0.75;
-  }
-  .client-footer {
-    margin-top: 24px;
-    font-family: var(--mono);
-    font-size: 8px;
-    color: var(--muted);
-    letter-spacing: 0.16em;
-    text-align: center;
-    opacity: 0.5;
-  }
-
-  /* ── SCORE BARS — SEGMENTED PIP-BOY STYLE ── */
-  .scores-label {
-    font-family: var(--mono);
-    font-size: 8px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--dim);
-    opacity: 0.7;
-    margin-bottom: 10px;
-  }
-
-  .score-rows { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
-
-  .score-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    padding: 7px 10px;
-    border: 1px solid transparent;
-    transition: border-color 0.12s, background 0.12s;
-  }
-
-  .score-row:hover { background: var(--ph-faint); border-color: var(--border2); }
-  .score-row .tap-hint { font-family: var(--mono); font-size: 7px; letter-spacing: 0.1em; color: var(--muted); margin-left: auto; flex-shrink: 0; white-space: nowrap; }
-  .score-emoji { font-size: 14px; width: 18px; flex-shrink: 0; text-align: center; }
-  .score-cat { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.06em; width: 80px; flex-shrink: 0; }
-
-  /* Segmented pip bar */
-  .score-bar-wrap {
-    flex: 1;
-    display: flex;
-    gap: 2px;
-    height: 10px;
-    align-items: center;
-  }
-
-  .score-pip {
-    flex: 1;
-    height: 8px;
-    border-radius: 0;
-    transition: background 0.4s ease-out, box-shadow 0.4s ease-out;
-  }
-
-  .score-val {
-    font-family: var(--vt);
-    font-size: 13px;
-    font-weight: 600;
-    line-height: 1;
-    width: 28px;
-    text-align: right;
-    flex-shrink: 0;
-  }
-
-  /* ── DAY SHEET (Level 1) ── */
-  .bottom-sheet {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.90);
-    z-index: 200;
-    align-items: flex-end;
-    justify-content: center;
-  }
-  .bottom-sheet.open { display: flex; }
-
-  .sheet-inner {
-    background: var(--surface);
-    border-top: 1px solid var(--border2);
-    border-left: 1px solid var(--border);
-    border-right: 1px solid var(--border);
-    border-radius: 0;
-    padding: 20px 20px 44px;
-    width: 100%;
-    max-width: 500px;
-    animation: slideUp 0.2s ease-out;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.6);
-  }
-
-  .sheet-handle {
-    width: 40px;
-    height: 2px;
-    background: var(--ph-dark);
-    margin: 0 auto 20px;
-  }
-
-  .sheet-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 4px; }
-
-  .sheet-date {
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--dim);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-
-  .sheet-zone-name {
-    font-family: var(--vt);
-    font-size: 28px;
-    line-height: 1;
-    letter-spacing: 0.06em;
-    text-shadow: 0 0 10px currentColor, 0 0 24px currentColor;
-  }
-
-  .sheet-archetype {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.16em;
-    color: var(--dim);
-    margin-top: 3px;
-    text-transform: uppercase;
-  }
-
-  .sheet-tagline {
-    font-family: var(--vt);
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    margin-top: 4px;
-    line-height: 1.3;
-    color: var(--ph-dim);
-    margin-bottom: 6px;
-  }
-
-  .sheet-identity {
-    font-family: var(--mono);
-    font-size: 13px;
-    line-height: 1.7;
-    color: var(--dim);
-    margin-bottom: 18px;
-    padding-bottom: 18px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .sheet-close {
-    background: transparent;
-    border: 1px solid var(--border2);
-    color: var(--muted);
-    font-size: 14px;
-    width: 30px;
-    height: 30px;
-    border-radius: 0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    margin-left: 12px;
-    transition: border-color 0.12s, color 0.12s;
-  }
-  .sheet-close:hover { border-color: var(--ph-dark); color: var(--dim); }
-
-  /* ── WINDOW DIRECTIVE ── */
-  .window-block {
-    background: var(--ph-faint);
-    border: 1px solid var(--border);
-    border-left: 2px solid var(--ph-dark);
-    padding: 12px 14px;
-    margin-bottom: 18px;
-  }
-
-  .window-label {
-    font-family: var(--mono);
-    font-size: 8px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 6px;
-  }
-
-  .window-directive {
-    font-family: var(--mono);
-    font-size: 12px;
-    line-height: 1.65;
-    color: var(--text);
-  }
-
-  /* ── GUIDANCE CARDS (ON/OFF in day sheet) ── */
-  .guidance-blocks { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 4px; }
-  .guidance-card { border: 1px solid; padding: 12px 14px; border-radius: 0; }
-  .guidance-card-label { font-family: var(--mono); font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 8px; font-weight: 700; }
-  .guidance-card-text { font-family: var(--mono); font-size: 11px; line-height: 1.65; }
-
-  /* ── DEEP SHEET (Level 2) ── */
-  .deep-sheet {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.94);
-    z-index: 300;
-    align-items: flex-end;
-    justify-content: center;
-  }
-  .deep-sheet.open { display: flex; }
-
-  .deep-inner {
-    background: var(--surface2);
-    border-top: 1px solid var(--border2);
-    border-left: 1px solid var(--border);
-    border-right: 1px solid var(--border);
-    border-radius: 0;
-    padding: 20px 20px 54px;
-    width: 100%;
-    max-width: 500px;
-    animation: slideUp 0.18s ease-out;
-    max-height: 88vh;
-    overflow-y: auto;
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.7);
-  }
-
-  .deep-back {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.16em;
-    color: var(--muted);
-    cursor: pointer;
-    margin-bottom: 18px;
-    padding: 4px 0;
-    transition: color 0.12s;
-  }
-  .deep-back:hover { color: var(--dim); }
-  .deep-back svg { width: 12px; height: 12px; }
-
-  .deep-header { margin-bottom: 20px; }
-  .deep-cat-emoji { font-size: 20px; margin-bottom: 6px; }
-
-  .deep-cat-name {
-    font-family: var(--vt);
-    font-size: 26px;
-    line-height: 1;
-    letter-spacing: 0.06em;
-    text-shadow: 0 0 10px currentColor, 0 0 22px currentColor;
-    margin-bottom: 3px;
-  }
-
-  .deep-cat-zone {
-    font-family: var(--mono);
-    font-size: 8px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 14px;
-  }
-
-  .deep-score-display {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 18px;
-    padding-bottom: 18px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .deep-score-num {
-    font-family: var(--vt);
-    font-size: 40px;
-    font-weight: 700;
-    line-height: 1;
-    letter-spacing: 0.04em;
-    text-shadow: 0 0 10px currentColor, 0 0 24px currentColor;
-  }
-
-  /* Segmented score bar in deep sheet */
-  .deep-score-bar-wrap {
-    flex: 1;
-    display: flex;
-    gap: 3px;
-    height: 14px;
-    align-items: center;
-  }
-
-  .deep-score-pip {
-    flex: 1;
-    height: 12px;
-    border-radius: 0;
-    transition: background 0.5s ease-out, box-shadow 0.5s ease-out;
-  }
-
-  .deep-section { margin-bottom: 22px; }
-
-  .deep-section-label {
-    font-family: var(--mono);
-    font-size: 8px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .deep-section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--subtle);
-  }
-
-  .deep-guidance-text {
-    font-family: var(--mono);
-    font-size: 14px;
-    line-height: 1.72;
-    color: var(--text);
-    margin-bottom: 10px;
-  }
-
-  .deep-insight-text {
-    font-family: var(--mono);
-    font-size: 11px;
-    line-height: 1.65;
-    color: var(--muted);
-  }
-
-  /* ON/OFF state cards */
-  .on-off-block { display: flex; flex-direction: column; gap: 8px; }
-
-  .on-card {
-    border: 1px solid var(--ph-dark);
-    background: var(--ph-faint);
-    padding: 14px 16px;
-  }
-
-  .off-card {
-    border: 1px solid var(--off-border);
-    background: var(--off-bg);
-    padding: 14px 16px;
-  }
-
-  .on-off-label {
-    font-family: var(--mono);
-    font-size: 8px;
-    letter-spacing: 0.2em;
-    font-weight: 700;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-  }
-
-  .on-off-text {
-    font-family: var(--mono);
-    font-size: 13px;
-    line-height: 1.65;
-  }
-
-  .deep-window-note {
-    background: var(--ph-faint);
-    border: 1px solid var(--border);
-    border-left: 2px solid var(--ph-dark);
-    padding: 12px 14px;
-    margin-top: 10px;
-  }
-
-  .deep-window-note p {
-    font-family: var(--mono);
-    font-size: 11px;
-    line-height: 1.65;
-    color: var(--dim);
-  }
-
-  /* ── WAVE GRAPH ── */
-  #waveGraph svg { cursor: zoom-in; transition: opacity 0.15s; }
-  #waveGraph svg:hover { opacity: 0.8; }
-  .wave-tap-hint { font-family: var(--mono); font-size: 8px; color: var(--muted); letter-spacing: 0.1em; text-align: right; margin-top: 4px; opacity: 0.5; }
-
-  /* ── WAVE LIGHTBOX ── */
-  #waveLightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.96); z-index: 500; align-items: center; justify-content: center; padding: 20px; cursor: zoom-out; }
-  #waveLightbox.open { display: flex; }
-  #waveLightboxInner {
-    width: 100%;
-    max-width: 700px;
-    background: var(--surface);
-    border: 1px solid var(--border2);
-    padding: 20px;
-    box-shadow: 0 0 40px var(--ph-glow);
-  }
-  #waveLightboxInner svg { width: 100% !important; height: auto !important; }
-
-  @media (max-width: 380px) {
-    .cal-day .day-num { font-size: 11px; }
-    .guidance-blocks { grid-template-columns: 1fr; }
-  }
-
-  /* ── DAY NOTES ─────────────────────────────── */
-  .note-section {
-    margin-top: 20px;
-    border-top: 1px solid var(--surface2);
-    padding-top: 16px;
-  }
-  .note-label {
-    font-family: 'Orbitron', monospace;
-    font-size: 10px;
-    letter-spacing: 0.18em;
-    color: var(--muted);
-    margin-bottom: 8px;
-  }
-  .note-textarea {
-    width: 100%;
-    min-height: 72px;
-    background: var(--surface);
-    border: 1px solid var(--surface2);
-    color: var(--text);
-    font-family: 'Inconsolata', monospace;
-    font-size: 13px;
-    line-height: 1.6;
-    padding: 10px 12px;
-    resize: vertical;
-    box-sizing: border-box;
-    outline: none;
-    border-radius: 0;
-    transition: border-color 0.2s;
-  }
-  .note-textarea:focus {
-    border-color: var(--ph-dark);
-  }
-  .note-textarea::placeholder {
-    color: var(--muted);
-    opacity: 0.5;
-  }
-  .note-status {
-    font-family: 'Inconsolata', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 5px;
-    height: 14px;
-    transition: opacity 0.4s;
-  }
-  .note-status.saved { color: var(--ph-dark); }
-  /* dot indicator on calendar cell when note exists */
-  .cal-day .note-dot {
-    width: 4px; height: 4px;
-    border-radius: 50%;
-    background: var(--dim);
-    margin: 1px auto 0;
-  }
+body{
+font-family:Arial,Helvetica,sans-serif;
+background:#0c0c0c;
+color:white;
+margin:0;
+padding:0;
+}
+
+.wrapper{
+max-width:1100px;
+margin:auto;
+padding:30px;
+}
+
+h1,h2,h3{
+margin-top:0;
+}
+
+.admin-panel{
+background:#111;
+padding:20px;
+border-radius:6px;
+margin-bottom:30px;
+}
+
+input,select{
+padding:8px;
+margin:6px 0;
+background:#181818;
+border:1px solid #333;
+color:white;
+}
+
+button{
+padding:10px 16px;
+background:#222;
+border:1px solid #444;
+color:white;
+cursor:pointer;
+}
+
+button:hover{
+background:#333;
+}
+
+.calendar{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:6px;
+margin-top:20px;
+}
+
+.day{
+background:#181818;
+padding:12px;
+text-align:center;
+border:1px solid #333;
+cursor:pointer;
+}
+
+.day:hover{
+background:#222;
+}
+
+.zone-Pink{background:#ff4fa3;}
+.zone-Orange{background:#ff8a3d;}
+.zone-Yellow{background:#ffd84a;color:black;}
+.zone-Green{background:#2ecc71;}
+.zone-Blue{background:#3a8bff;}
+.zone-Purple{background:#9b59b6;}
+.zone-Red{background:#ff3b3b;}
+.zone-Brown{background:#8b5a2b;}
+
+.link-box{
+margin-top:20px;
+background:#111;
+padding:14px;
+word-break:break-all;
+}
+
+.client-view{
+display:none;
+max-width:1000px;
+margin:auto;
+padding:40px;
+}
+
+.client-title{
+font-size:28px;
+margin-bottom:20px;
+}
+
+.client-calendar{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:6px;
+}
+
+.client-day{
+padding:14px;
+text-align:center;
+border:1px solid #333;
+}
 
 </style>
+
 </head>
+
 <body>
 
-<!-- ADMIN -->
-<div id="admin" class="view active">
-  <div style="max-width:680px;margin:0 auto;padding:40px 20px 80px">
-    <div class="wordmark">luckify.me</div>
-    <div class="admin-title">// CALENDAR GENERATOR</div>
-    <div class="field-group">
-      <label>Client Handle</label>
-      <input type="text" id="clientName" placeholder="e.g. mkcrusher" autocomplete="off" autocapitalize="off">
-    </div>
-    <div class="field-group">
-      <div class="month-row">
-        <div><label>Month</label>
-          <select id="selMonth">
-            <option value="0">January</option><option value="1">February</option>
-            <option value="2">March</option><option value="3">April</option>
-            <option value="4">May</option><option value="5">June</option>
-            <option value="6">July</option><option value="7">August</option>
-            <option value="8">September</option><option value="9">October</option>
-            <option value="10">November</option><option value="11">December</option>
-          </select>
-        </div>
-        <div><label>Year</label><select id="selYear"></select></div>
-      </div>
-    </div>
-    <div class="field-group">
-      <div class="zone-grid-label">Tap each day to assign zone</div>
-      <div class="zone-grid" id="adminGrid"></div>
-    </div>
-    <button class="generate-btn" onclick="generateLink()">GENERATE LINK →</button>
-    <div class="share-box" id="shareBox">
-      <div class="share-label">Share with client</div>
-      <div class="share-url" id="shareUrl"></div>
-      <button class="copy-btn" id="copyBtn" onclick="copyLink()">COPY LINK</button>
-    </div>
-  </div>
+<div class="wrapper" id="adminMode">
+
+<h1>Luckify Operator Panel</h1>
+
+<div class="admin-panel">
+
+<h3>Client Info</h3>
+
+<label>Client Handle</label><br>
+<input id="clientHandle" style="width:300px"><br>
+
+<label>Birth Date</label><br>
+<input type="date" id="birthDate"><br>
+
+<label>Birth Time</label><br>
+<input type="time" id="birthTime"><br>
+
+<label>Birth Location</label><br>
+<input id="birthLocation"><br>
+
+<label>Current / Event Location</label><br>
+<input id="eventLocation"><br>
+
+<h3>Calendar Settings</h3>
+
+<label>Month</label>
+<select id="monthSelect"></select>
+
+<label>Year</label>
+<select id="yearSelect"></select>
+
+<br><br>
+
+<button onclick="generateForecast()">Generate Month Forecast</button>
+
+<h3>Manual Override</h3>
+
+<div id="calendar" class="calendar"></div>
+
+<button onclick="generateLink()">Generate Client Link</button>
+
+<div id="linkOutput" class="link-box"></div>
+
 </div>
 
-<!-- ZONE PICKER -->
-<div class="overlay" id="pickerOverlay" onclick="closePicker(event)">
-  <div class="zone-picker" onclick="event.stopPropagation()">
-    <div class="picker-title">SELECT ZONE</div>
-    <div class="picker-options" id="pickerOptions"></div>
-  </div>
 </div>
 
-<!-- CLIENT -->
-<div id="client" class="view">
-  <div style="max-width:500px;margin:0 auto;padding:24px 16px 80px">
-    <div class="client-wordmark">Lucky Window // luckify.me</div>
-    <div class="client-name" id="clientNameDisplay"></div>
-    <div class="client-month" id="clientMonthDisplay"></div>
-    <div class="cal-dow-row">
-      <div class="cal-dow">SUN</div><div class="cal-dow">MON</div>
-      <div class="cal-dow">TUE</div><div class="cal-dow">WED</div>
-      <div class="cal-dow">THU</div><div class="cal-dow">FRI</div>
-      <div class="cal-dow">SAT</div>
-    </div>
-    <div class="cal-grid" id="clientGrid"></div>
-    <div class="legend" id="clientLegend"></div>
-    <div class="client-footer">COLOR ZONE = DAILY ENVIRONMENTAL ALIGNMENT // AM READING</div>
-  </div>
+
+<div id="clientMode" class="client-view">
+
+<div class="client-title" id="clientTitle"></div>
+
+<div class="client-calendar" id="clientCalendar"></div>
+
 </div>
 
-<!-- DAY SHEET (Level 1) -->
-<div class="bottom-sheet" id="daySheet" onclick="closeDaySheet(event)">
-  <div class="sheet-inner" id="daySheetInner" onclick="event.stopPropagation()">
-    <div class="sheet-handle"></div>
-    <div class="sheet-top">
-      <div>
-        <div class="sheet-date" id="sheetDate"></div>
-        <div class="sheet-zone-name" id="sheetZoneName"></div>
-        <div class="sheet-archetype" id="sheetArchetype"></div>
-        <div class="sheet-tagline" id="sheetTagline"></div>
-      </div>
-      <button class="sheet-close" onclick="document.getElementById('daySheet').classList.remove('open')">✕</button>
-    </div>
-    <div class="sheet-identity" id="sheetIdentity"></div>
-    <div class="window-block" id="windowBlock">
-      <div class="window-label">Energy Pattern</div>
-      <div id="waveGraph"></div>
-    </div>
-    <div class="scores-label">TODAY'S FOCUS — TAP TO GO DEEPER</div>
-    <div class="score-rows" id="scoreRows"></div>
-    <div class="guidance-blocks" id="guidanceBlocks"></div>
-    <div class="note-section">
-      <div class="note-label">SESSION NOTE</div>
-      <textarea class="note-textarea" id="dayNoteInput" placeholder="What happened today..."></textarea>
-      <div class="note-status" id="noteStatus"></div>
-    </div>
-  </div>
-</div>
+  <script>
 
-<!-- CATEGORY DEEP DIVE (Level 2) -->
-<div class="deep-sheet" id="deepSheet" onclick="closeDeepSheet(event)">
-  <div class="deep-inner" id="deepInner" onclick="event.stopPropagation()">
-    <div class="deep-back" onclick="closeDeepSheetBtn()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-      BACK TO DAY
-    </div>
-    <div class="deep-header">
-      <div class="deep-cat-emoji" id="deepEmoji"></div>
-      <div class="deep-cat-name" id="deepCatName"></div>
-      <div class="deep-cat-zone" id="deepCatZone"></div>
-    </div>
-    <div class="deep-score-display">
-      <div class="deep-score-num" id="deepScoreNum"></div>
-      <div class="deep-score-bar-wrap" id="deepScoreBar"></div>
-    </div>
-    <div id="deepContent"></div>
-  </div>
-</div>
+const ZONES = [
+"Pink",
+"Orange",
+"Yellow",
+"Green",
+"Blue",
+"Purple",
+"Red",
+"Brown"
+];
 
-<!-- WAVE LIGHTBOX -->
-<div id="waveLightbox" onclick="document.getElementById('waveLightbox').classList.remove('open')">
-  <div id="waveLightboxInner"></div>
-</div>
+let dayZones = {};
 
-<script>
-/* ═══════════════════════════════════════════════
-   ZONE CONFIG
-═══════════════════════════════════════════════ */
-const ZONES = {
-  Pink:   { bg:'#6b1a5a', text:'#ffd6f5', acc:'#D030A0', cls:'zc-pink'   },
-  Orange: { bg:'#5a2800', text:'#ffe8b0', acc:'#E87020', cls:'zc-orange' },
-  Blue:   { bg:'#102848', text:'#c0e0ff', acc:'#4080E0', cls:'zc-blue'   },
-  Yellow: { bg:'#3a3000', text:'#fff7b0', acc:'#F0C020', cls:'zc-yellow' },
-  Green:  { bg:'#163018', text:'#c8ffcc', acc:'#6EC25A', cls:'zc-green'  },
-  Purple: { bg:'#281040', text:'#e8ccff', acc:'#8A2BE2', cls:'zc-purple' },
-  Red:    { bg:'#401008', text:'#ffd0cc', acc:'#E04030', cls:'zc-red'    },
-  Brown:  { bg:'#2a1a08', text:'#e8cca8', acc:'#A97040', cls:'zc-brown'  },
-};
-const ZONE_NAMES = ['Pink','Orange','Blue','Yellow','Green','Purple','Red','Brown'];
-const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-const CAT_EMOJI = { Action:'[A]', Strategy:'[S]', Discipline:'[D]', Social:'[C]', Creativity:'[X]', Risk:'[R]' };
+const monthSelect = document.getElementById("monthSelect");
+const yearSelect = document.getElementById("yearSelect");
 
-/* ═══════════════════════════════════════════════
-   RHYTHM DATA — pulled directly from your frameworks
-═══════════════════════════════════════════════ */
-const RHYTHM_DATA = {
-  Orange: {
-    archetype: 'The Builder',
-    identity: 'Grind day. Stack the work. This isn\'t a flash day — it\'s a volume day. The edge comes from sustained, consistent output over a longer window than you\'d normally sustain. You\'re not going to feel the surge. You\'re going to feel steady, capable, and able to keep going. Use it to put in work that compounds.',
-    waveNote: 'Continuous upward climb. No peak, no fall. Builds without breaking.',
-    categories: {
-      Action: {
-        headline: 'Reliable, repeatable execution.',
-        guidance: 'You can go again and again today without burning out. This is a volume day — sustained effort converts. Don\'t wait for the surge. The steady state is the signal.',
-        on: 'Reliable, repeatable execution. You can go again and again today without burning out.',
-        off: 'Activity without output. You\'re in motion but nothing is completing. Pick one thing and finish it.',
-      },
-      Strategy: {
-        headline: 'Practical sequencing — you see the order of operations clearly.',
-        guidance: 'Orange rewards structure over inspiration today. You see what needs to happen in what order, without overthinking. Build the plan and execute it linearly.',
-        on: 'Practical sequencing — you see the order of operations clearly and without overthinking.',
-        off: 'You\'re re-examining things that are already working. Leave the foundation alone.',
-      },
-      Discipline: {
-        headline: 'The routine runs itself today. Lean into it.',
-        guidance: 'Process adherence is effortless on Orange days. The system is already in motion — your job is to stay inside it, not redesign it.',
-        on: 'The routine runs itself today. Lean into it.',
-        off: 'The process has become the point instead of the vehicle. You\'re protecting structure rather than using it.',
-      },
-      Social: {
-        headline: 'You\'re the stable presence in the room today.',
-        guidance: 'Others anchor to you without asking. This is a day to invest in relationships that compound — people feel your reliability and it builds trust.',
-        on: 'You\'re the stable presence in the room today. Others anchor to you without asking.',
-        off: 'You\'re carrying the group\'s weight and it\'s accumulating. Know when you\'re absorbing versus contributing.',
-      },
-      Creativity: {
-        headline: 'Practical output. Your hands know the next move before your head does.',
-        guidance: 'Orange creativity is body-level — it generates through doing, not conceiving. Start building and let the direction reveal itself. Don\'t wait for inspiration.',
-        on: 'Practical output. Your hands know the next move before your head does.',
-        off: 'The bar for "done" keeps moving. Pick a finish line and hit it.',
-      },
-      Risk: {
-        headline: 'Check the foundation before you size the bet.',
-        guidance: 'Orange is one of the better risk windows — the floor is active. Even when things don\'t go as planned, the downside is bounded. Take the calculated move you\'ve been holding.',
-        on: 'You\'re checking the foundation before you size the bet. Right instinct today.',
-        off: 'You\'re waiting for certainty that isn\'t coming. The window is closing.',
-      },
-    }
-  },
-
-  Blue: {
-    archetype: 'The Pursuer',
-    identity: 'Know your target. Rise fast. Don\'t blink at the top. Blue is a pursuit day — you process fast, read precisely, and operate best when you have a specific target locked. The danger is the fork: you\'ll hit a peak and have to decide. The players who do well on Blue days already decided how they\'d handle that moment before it arrived.',
-    waveNote: 'Steep rise → cup/catch at peak → fork: rises again or crashes. Don\'t blink at the top.',
-    categories: {
-      Action: {
-        headline: 'Locked target, fast execution.',
-        guidance: 'You\'ve got the engine running. Give it a destination. Lock one target for this session and move toward it without diluting focus. Blue rewards depth, not spread.',
-        on: 'You\'ve got a locked target and you\'re moving toward it cleanly.',
-        off: 'You\'re starting over repeatedly because you never locked a target to begin with.',
-      },
-      Strategy: {
-        headline: 'You\'re holding multiple variables and finding the line through them.',
-        guidance: 'Blue analytical days are for depth. You can hold complexity and converge it faster than usual. Trust the read — it\'s your best data of the day.',
-        on: 'You\'re holding multiple variables at once and finding the line through them. Trust it.',
-        off: 'You\'re stalling at the decision point. Both options look valid. Pick one — delay is the wrong choice.',
-      },
-      Discipline: {
-        headline: 'Focus holds today when the goal is articulated.',
-        guidance: 'The clearer the objective, the stronger the follow-through. Write down the one target for this session before you start. That specificity is what loads the system.',
-        on: 'Focus holds today. The clearer the goal, the stronger the follow-through.',
-        off: 'Each session feels like your first because you\'re not carrying the objective forward.',
-      },
-      Social: {
-        headline: 'Ask the right question and the room opens.',
-        guidance: 'Blue sharpens communication today. You\'re precise, direct, and people track with you. Lean into conversation — the relational read is accurate.',
-        on: 'You ask the right question and the room opens up. Lean into the conversation today.',
-        off: 'You\'re pursuing the connection but not receiving what comes back. Listen harder.',
-      },
-      Creativity: {
-        headline: 'Ideas build on each other quickly. The sequence is there.',
-        guidance: 'Rapid connective ideation — ideas link logically without gaps. Follow the chain. Blue creativity is sequential, not scattered.',
-        on: 'Ideas build on each other quickly and logically. The sequence is there.',
-        off: 'You\'ve peaked and you\'re spinning. Release into the next cycle instead of holding the top.',
-      },
-      Risk: {
-        headline: 'Your read is sharpest on the rise.',
-        guidance: 'Trust the early assessment — it\'s the cleanest data you\'ll have all day. At the fork, the hesitation isn\'t wisdom. It\'s the fork. Make the call.',
-        on: 'Your read is sharpest on the rise. Trust the early assessment — it\'s your best data of the day.',
-        off: 'The read is done but you\'re not pulling the trigger. The hesitation isn\'t wisdom, it\'s the fork.',
-      },
-    }
-  },
-
-  Red: {
-    archetype: 'The Catalyst',
-    identity: 'Maximum impact. Authorized only. Every action you take today leaves a larger residue in the field than normal — positive or negative. You have more influence today than you think. The requirement is authorization: know why you\'re making each move before you make it. Reactive Red drains. Authorized Red shifts outcomes.',
-    waveNote: 'Vertical impacts. Residue accumulates with each strike. Threshold detonation when the field loads.',
-    categories: {
-      Action: {
-        headline: 'Direct, physical, immediate.',
-        guidance: 'You act and the analysis confirms it after — and the timing is right. Red is the most physical day in the system. Trust the body\'s first read, but make sure it\'s authorized before it fires.',
-        on: 'Direct, physical, immediate. You act and the analysis confirms it after. The timing is right.',
-        off: 'You\'re firing before authorization is complete. Impact lands before you\'ve decided it should.',
-      },
-      Strategy: {
-        headline: 'Ground-truth read — you see exactly what is.',
-        guidance: 'No gap between the read and the reality on Red days. Tactical clarity is your edge. Short time horizon is appropriate — play what\'s in front of you, not what you\'re planning for.',
-        on: 'Ground-truth read. You see exactly what is, not what should be. No gap between read and reality.',
-        off: 'Short horizon only. You\'re playing the street, not the session.',
-      },
-      Discipline: {
-        headline: 'When authorized, the commitment is complete.',
-        guidance: 'Red discipline is absolute when it\'s running clean. No internal negotiation. The system executes. The catch: it\'s binary — fully on or fully off. There\'s no sustainable middle on Red days.',
-        on: 'When authorized, the commitment is complete. No renegotiation.',
-        off: 'All or nothing. No sustainable middle available today.',
-      },
-      Social: {
-        headline: 'You shift the dynamic before you open your mouth.',
-        guidance: 'Your presence is amplified today. Use that deliberately — the influence is real and so is the residue. Small interactions accumulate into larger field effects. Be intentional.',
-        on: 'You shift the dynamic before you open your mouth. Use that deliberately.',
-        off: 'Small impacts are compounding in your relationships without your awareness. Something is building toward a threshold.',
-      },
-      Creativity: {
-        headline: 'Clearing what doesn\'t work is the creative act today.',
-        guidance: 'Red creativity is destructive before it\'s constructive — you identify what needs to go and remove it. Clearing is the output. Make sure the replacement is ready before you clear.',
-        on: 'Clearing what doesn\'t work to make space for what\'s next. Destruction as strategy.',
-        off: 'You\'re clearing before the replacement is ready. You create the vacuum before you have what goes in it.',
-      },
-      Risk: {
-        headline: 'Maximum authorized impact available.',
-        guidance: 'Full force on a verified target produces outsized results on Red days. The key word is verified. Before every significant risk today, one question: is this authorized or is the root energy looking for a release?',
-        on: 'Maximum authorized impact available. Full force on a verified target produces outsized results.',
-        off: 'You\'re taking the risk because the energy needs a release, not because the hand warrants it.',
-      },
-    }
-  },
-
-  Green: {
-    archetype: 'The Reader',
-    identity: 'You\'re reading the room better than anyone today. Use it. Green is a relational intelligence day — you\'re not the highest-output version of yourself, you\'re the most accurate reader of the environment. You pick up on tells, dynamics, and shifts that others miss. You\'re most dangerous today when you\'re listening.',
-    waveNote: 'Near-flat equilibrium baseline. Micro-variations self-resolve. High coherence, not high voltage.',
-    categories: {
-      Action: {
-        headline: 'Responsive, not reactive.',
-        guidance: 'Action on Green days arises from what the environment actually needs — not what you planned to do. Stay responsive. The right move will be obvious when you\'re reading the room instead of executing a script.',
-        on: 'Responsive, not reactive. You\'re acting on what the environment actually needs.',
-        off: 'You\'ve shifted from response to passivity. You\'re waiting for a signal that isn\'t coming.',
-      },
-      Strategy: {
-        headline: 'Read the players before you read the board.',
-        guidance: 'Relational data informs the strategic frame today. The live tells and table dynamics are more valuable than the technical analysis on Green days. Trust the read you\'re getting from the room.',
-        on: 'You read the players before you read the board. That\'s your edge today.',
-        off: 'You\'re taking on other people\'s reads instead of developing your own. Agreement is replacing assessment.',
-      },
-      Discipline: {
-        headline: 'Consistency without effort.',
-        guidance: 'The process feels right today — run it without second-guessing. Green days support steady process adherence. Don\'t disrupt what\'s working.',
-        on: 'Consistency without effort. The process feels right today.',
-        off: 'You\'re maintaining others\' structure while your own erodes.',
-      },
-      Social: {
-        headline: 'You hear what people mean, not just what they say.',
-        guidance: 'Deep accurate reception is the edge today. People feel genuinely received because they are. Use this in every high-value interaction. The relational read is your sharpest tool.',
-        on: 'You hear what people mean, not just what they say. Use that today.',
-        off: 'You\'re carrying weight that wasn\'t handed to you. The empathy is running without a boundary.',
-      },
-      Creativity: {
-        headline: 'Collaboration is more generative than solo work today.',
-        guidance: 'Green creativity flows through connection. Find the right partner or audience. Creating with or for others produces more on Green days than solo output.',
-        on: 'Collaboration is more generative than solo work today. Find the right partner.',
-        off: 'You\'re facilitating everyone else\'s output while yours sits.',
-      },
-      Risk: {
-        headline: 'The live tell is more valuable than the technical read today.',
-        guidance: 'Trust what you\'re picking up at the table — the relational data is sharper than the mathematical analysis on Green days. The Heart reads the room faster than the mind reads the board.',
-        on: 'The live tell is more valuable than the technical read today. Trust what you\'re picking up.',
-        off: 'You folded to manage the relationship, not the hand. That\'s a different decision.',
-      },
-    }
-  },
-
-  Yellow: {
-    archetype: 'The Phoenix',
-    identity: 'No filter today. Know which direction you\'re pointing. Yellow is the most volatile day in the system — and the highest potential upside. The dampening is off. Whatever state you\'re in when you sit down, that\'s what\'s going to express at full magnitude. The work on a Yellow day happens before the session starts.',
-    waveNote: 'Richter scale. Spikes from a flat baseline in both directions. Direction determines everything.',
-    categories: {
-      Action: {
-        headline: 'Zero to full commitment in one move.',
-        guidance: 'When the read is clean, you can go all the way without hesitation on Yellow days. Full force is available. The requirement is that you\'ve verified the state before you fire — Yellow amplifies whatever is already running.',
-        on: 'Zero to full commitment in one move. When the read is clean, you can go all the way without hesitation.',
-        off: 'You\'re firing before the structure is confirmed. Full force on an unverified target.',
-      },
-      Strategy: {
-        headline: 'Your gut is ahead of your analysis today.',
-        guidance: 'Intuitive reads arrive before analytical confirmation — and they hold up when checked. Let the gut lead. If the gut and the analysis are in conflict, don\'t override one with the other — sit with it until they align.',
-        on: 'Your gut is ahead of your analysis today — and it\'s right. Let it lead.',
-        off: 'The gut and the analysis are in conflict and you\'re overriding one to resolve the discomfort. You\'re losing both.',
-      },
-      Discipline: {
-        headline: 'When regulated, the will executes completely.',
-        guidance: 'Yellow discipline is absolute when it\'s running clean — no internal argument, no renegotiation. The catch is it\'s binary today. All or nothing. Build the regulation in before the session, not during.',
-        on: 'When you\'re regulated, the will executes completely. No internal argument.',
-        off: 'All or nothing. You\'re either fully locked or fully off — nothing in between today.',
-      },
-      Social: {
-        headline: 'You set the tone in the room before you open your mouth.',
-        guidance: 'Yellow presence is amplified. The room feels you before you speak. Use that deliberately — and stay aware that the dial is harder to calibrate today. Modulation requires more conscious effort.',
-        on: 'You set the tone in the room before you open your mouth.',
-        off: 'You\'re reading as too much or completely absent. The dial doesn\'t have a middle setting right now.',
-      },
-      Creativity: {
-        headline: 'Raw, unfiltered, distinctly yours.',
-        guidance: 'When polarity is positive, Yellow produces the most original output in the system. What you create today has no filter — it\'s pure signal. Capture it fast before the state shifts.',
-        on: 'Raw, unfiltered, distinctly yours. What you produce today is original.',
-        off: 'You\'re generating and destroying in the same motion. Nothing completes.',
-      },
-      Risk: {
-        headline: 'Maximum upside available — if the state is clean.',
-        guidance: 'The Solar Plexus confirms edge before the math on Yellow days. When the state is regulated, this is the day to press. The shadow is identity activation — playing the version of yourself that wins rather than the hand in front of you.',
-        on: 'Maximum upside available. The gut confirms the edge before the math — and the math catches up.',
-        off: 'You\'re playing the version of yourself that wins, not the hand in front of you. That\'s the tell.',
-      },
-    }
-  },
-
-  Purple: {
-    archetype: 'The Long Game',
-    identity: 'Already oriented toward what\'s coming. Play it slow. You\'re operating on a longer time horizon than everyone else today — you see where the session is going before they feel it turning. The edge is real, but it requires patience to cash. Purple rewards the player who builds slowly toward a result they can already see.',
-    waveNote: 'Slow build to peak. Fork at the top — gradual release or sharp drop. Patience is the instrument.',
-    categories: {
-      Action: {
-        headline: 'Every move is already pointing at the destination.',
-        guidance: 'You\'re playing the session, not the hand. Each decision today is already oriented toward a destination the system has calculated. Trust the deliberate initiation — don\'t rush the build.',
-        on: 'Every move is already pointing at the destination. You\'re playing the session, not the hand.',
-        off: 'The plan keeps extending. Preparation has become a reason not to start.',
-      },
-      Strategy: {
-        headline: 'Several moves ahead without effort.',
-        guidance: 'The arc of the session is visible before it begins on Purple days. Trust the long read. The trap is projecting so far forward that the present move becomes unclear — come back to what\'s in front of you.',
-        on: 'Several moves ahead without effort. The arc is visible. Trust it.',
-        off: 'You\'re playing a hand that hasn\'t been dealt yet. Come back to what\'s in front of you.',
-      },
-      Discipline: {
-        headline: 'Slow build, strong finish. The patience is the edge today.',
-        guidance: 'Sustained commitment when purpose is explicit. The slow build compounds. Impatient execution on Purple days costs you the advantage you built. Stay in the process.',
-        on: 'Slow build, strong finish. The patience is the edge today.',
-        off: 'The slow build is covering for not starting. Purpose without a start point is just delay.',
-      },
-      Social: {
-        headline: 'You already know where the conversation is going. Lead it there.',
-        guidance: 'You process others\' underlying motivations accurately today. Conversations go somewhere because you know the destination before they do. Use that to direct rather than follow.',
-        on: 'You already know where the conversation is going. Lead it there.',
-        off: 'You\'re responding to what you think they\'ll say instead of what they\'re actually saying.',
-      },
-      Creativity: {
-        headline: 'You\'re building from a future state you\'re already in.',
-        guidance: 'Visionary output — what you create today is ahead of its time because your orientation is ahead of its time. The trap is that the internal vision is so complete that execution feels like a reduction. Produce anyway.',
-        on: 'You\'re building from a future state you\'re already in. The output is ahead of its time.',
-        off: 'Nothing outside matches what you\'re seeing inside, so you don\'t produce. That\'s a trap.',
-      },
-      Risk: {
-        headline: 'Your edge is spotting the trend before the table knows it\'s turning.',
-        guidance: 'You identify where the session is trending before others detect the shift. The timing trap: you\'re right about the arc but early on the hand. Early and wrong have the same P&L outcome.',
-        on: 'Your edge is in spotting the trend before the table knows it\'s turning.',
-        off: 'You\'re right about the arc but your timing is early. Early and wrong have the same outcome.',
-      },
-    }
-  },
-
-  Pink: {
-    archetype: 'The Sparkplug',
-    identity: 'You\'re locked in. Fire at will. This is your peak output window. The read arrives before the analysis. The decision is made before you finish thinking about it — and it\'s right. You\'re not building toward anything today. You\'re already there. The job is to not overthink your way out of it.',
-    waveNote: 'Instant ignition. Sharp peak. Fork at the top — long taper or fast drop. Fires from any state.',
-    categories: {
-      Action: {
-        headline: 'You move first and you\'re right.',
-        guidance: 'Trust the initial read on Pink days. Initiation is immediate and accurate. The body and the decision align before deliberation completes — don\'t override that with second-guessing.',
-        on: 'You move first and you\'re right. Trust the initial read.',
-        off: 'High launch, low finish. You\'re starting everything and completing nothing. Pick one.',
-      },
-      Strategy: {
-        headline: 'You see the play before anyone else at the table.',
-        guidance: 'Pattern recognition fires ahead of analysis on Pink days. The read arrives before you can explain it — and it\'s correct. Run with the first assessment. Verification should confirm, not replace.',
-        on: 'You see the play before anyone else at the table. Run with it.',
-        off: 'You\'re so confident in the first read that you\'re skipping confirmation. Slow it down one beat.',
-      },
-      Discipline: {
-        headline: 'The process feels like an advantage today, not a leash.',
-        guidance: 'Structure and momentum are the same thing on Pink days. The process feeds the output rather than constraining it. Stay inside it.',
-        on: 'The process feels like an advantage today, not a leash.',
-        off: 'You\'re abandoning structure the moment it slows you down. That\'s how the edge leaks.',
-      },
-      Social: {
-        headline: 'You\'re reading the room accurately and people are tracking with you.',
-        guidance: 'Communication is precise and received on Pink days. You transmit clearly and others orient to your signal. The room is with you.',
-        on: 'You\'re reading the room accurately and people are tracking with you.',
-        off: 'You\'re talking but not landing. The room isn\'t with you — adjust the frequency.',
-      },
-      Creativity: {
-        headline: 'Ideas are complete when they arrive. Execute immediately.',
-        guidance: 'Pink creativity is the fastest in the system — ideas arrive whole and execution follows immediately. Don\'t hold back waiting for more data. What\'s arrived is sufficient.',
-        on: 'Ideas are complete when they arrive. Execute immediately.',
-        off: 'You\'re executing on concepts that aren\'t fully loaded yet. The idea needs ten more seconds.',
-      },
-      Risk: {
-        headline: 'The edge is real today.',
-        guidance: 'The yes arrives before the math finishes — and the math confirms it on Pink days. When this is happening, trust it and size accordingly. The shadow is identity activation: wanting to be right more than being accurate.',
-        on: 'The edge is real today. The yes arrives before the math finishes — and the math confirms it.',
-        off: 'You want to be right more than you want to be accurate. Those are different things.',
-      },
-    }
-  },
-
-  Brown: {
-    archetype: 'Sit This One Out',
-    identity: 'The field is running the results today. Not you. Brown days are not about execution — the environmental variable is dominant. Variance behaves unusually, effort-to-result ratios are off, and the field is doing things that have nothing to do with your process. The professional move on a Brown day is almost always the one that doesn\'t happen.',
-    waveNote: 'Elemental forces dominant. Human control reduced. This is field weather, not personal rhythm.',
-    categories: {
-      Action: {
-        headline: 'Deliberate, minimal, conserving.',
-        guidance: 'The body naturally asks: is this necessary? On Brown days, let it ask. The authorized actions are obvious. Everything else is exposure you don\'t need.',
-        on: 'Deliberate, minimal, conserving. The body asks: is this necessary? Let it.',
-        off: 'Forced action against elemental headwind. Output drains without producing equivalent return.',
-      },
-      Strategy: {
-        headline: 'Clarity about what not to do.',
-        guidance: 'The field reduces available paths naturally today. The strategic edge is in reading what isn\'t available and not forcing it. Adjust the game plan, not your technique.',
-        on: 'Clarity about what not to do. The field narrows the path — respect it.',
-        off: 'Frustration at reduced optionality. You\'re making decisions in resistance to the environment rather than with it.',
-      },
-      Discipline: {
-        headline: 'Rest as discipline.',
-        guidance: 'The practice on Brown days is knowing when to stop. Full stop is a professional decision, not a failure. The player who protects their stack on a Brown day wins the week.',
-        on: 'Rest as discipline. Knowing when to stop is the practice today.',
-        off: 'Proving effort to yourself on a day the field doesn\'t support it.',
-      },
-      Social: {
-        headline: 'Honest, low-energy presence.',
-        guidance: 'People often feel more comfortable with you on Brown days — no performance, just presence. Use it for conversations that don\'t require you to be on. Let the day be what it is.',
-        on: 'Honest, low-energy presence. No performance required — just show up.',
-        off: 'Social withdrawal read as isolation rather than conservation. Signal that you\'re conserving, not disappearing.',
-      },
-      Creativity: {
-        headline: 'Reflection and integration.',
-        guidance: 'Old ideas resurface with new clarity on Brown days. This is a composting day, not a production day. Review, integrate, let things settle. The output comes after.',
-        on: 'Reflection and integration. Old ideas surface with new clarity.',
-        off: 'You\'re trying to produce new work on a day designed for integrating old work.',
-      },
-      Risk: {
-        headline: 'Pass unless it\'s undeniable.',
-        guidance: 'The Brown standard: not strong edge, not favorable edge — undeniable edge. If you\'re evaluating whether it qualifies, it doesn\'t. Undeniable doesn\'t require evaluation.',
-        on: 'The clearest signal available: pass unless the edge is undeniable.',
-        off: 'You\'re playing because you\'re there, not because the hand warrants it. Brown is the day variance wins.',
-      },
-    }
-  },
-};
-
-
-/* SCORING ENGINE — see TWO-LAYER SCORING MODEL below */
-
-/* ── PIP BAR BUILDER ─────────────────────────────
-   score 0-3  → off  (dim red)
-   score 4-6  → mid  (zone color at 50%)
-   score 7-10 → on   (full zone color + glow)
-─────────────────────────────────────────────── */
-// fillPct: 0-1 zone-relative fill  |  state: 'on'|'mid'|'off'
-function buildPips(fillPct, state, acc, total, cls) {
-  const filled = Math.round(fillPct * total);
-  let html = '';
-  for (let i = 0; i < total; i++) {
-    let bg, shadow;
-    if (i < filled) {
-      if (state === 'off') {
-        bg = 'var(--off-dim)';
-        shadow = '0 0 3px var(--off-color)66';
-      } else if (state === 'mid') {
-        bg = acc + 'AA';
-        shadow = 'none';
-      } else {
-        bg = acc;
-        shadow = `0 0 5px ${acc}99`;
-      }
-    } else {
-      bg = 'var(--surface2)';
-      shadow = 'none';
-    }
-    html += `<div class="${cls}" style="background:${bg};box-shadow:${shadow}"></div>`;
-  }
-  return html;
+for(let m=0;m<12;m++){
+const opt=document.createElement("option");
+opt.value=m;
+opt.text=m+1;
+monthSelect.appendChild(opt);
 }
 
-/* ═══════════════════════════════════════════════
-   TWO-LAYER SCORING MODEL
-   Layer 1 — Rhythm Power: empirical (Sharpe-calibrated UFC data)
-   Layer 2 — Rhythm Allocation: theoretical (rhythm framework docs)
-   Formula: Category Score = Power × Allocation%, normalized globally
-═══════════════════════════════════════════════ */
-
-// Layer 1: How strong is the day overall (Sharpe-derived, normalized to Orange=10)
-const RHYTHM_POWER = {
-  Orange: 10.0,  // n=487, strongest validated
-  Blue:    8.4,  // n=529, strong tactical
-  Green:   5.0,  // n=336, reliable stabilizer
-  Red:     4.5,  // n=114, positive but lower confidence
-  Yellow:  3.8,  // baseline
-  Pink:    3.8,  // PROVISIONAL — n=37, too small
-  Brown:   3.8,  // PROVISIONAL — theory only
-  Purple:  3.3,  // floor — negative empirical, non-UFC value preserved
-};
-
-// Layer 2: Where does the day express (from rhythm framework docs, sums to 1.00 per zone)
-const RHYTHM_ALLOC = {
-  Orange: { Action:.26, Strategy:.20, Discipline:.20, Social:.12, Creativity:.10, Risk:.12 },
-  Blue:   { Action:.10, Strategy:.30, Discipline:.10, Social:.12, Creativity:.23, Risk:.15 },
-  Green:  { Action:.16, Strategy:.16, Discipline:.30, Social:.16, Creativity:.12, Risk:.10 },
-  Red:    { Action:.30, Strategy:.12, Discipline:.08, Social:.12, Creativity:.08, Risk:.30 },
-  Yellow: { Action:.14, Strategy:.16, Discipline:.16, Social:.28, Creativity:.14, Risk:.12 },
-  Purple: { Action:.08, Strategy:.22, Discipline:.18, Social:.10, Creativity:.30, Risk:.12 },
-  Pink:   { Action:.20, Strategy:.15, Discipline:.08, Social:.18, Creativity:.25, Risk:.14 }, // PROVISIONAL
-  Brown:  { Action:.10, Strategy:.20, Discipline:.25, Social:.20, Creativity:.15, Risk:.10 }, // PROVISIONAL
-};
-
-// Global ceiling: Orange Action = 10.0 × 0.26 = 2.60
-const GLOBAL_MAX = 10.0 * 0.26;
-
-function getZoneScores(zone) {
-  const p = RHYTHM_POWER[zone];
-  const alloc = RHYTHM_ALLOC[zone];
-  if (!p || !alloc) return [];
-  if (zone === 'Brown') return [];
-
-  const raw = Object.entries(alloc)
-    .map(([cat, a]) => ({ cat, rawScore: p * a }))
-    .sort((a,b) => b.rawScore - a.rawScore);
-
-  const zoneMax = raw[0].rawScore;
-  const onThresh  = zoneMax * 0.75;
-  const midThresh = zoneMax * 0.40;
-
-  return raw.map(r => ({
-    cat: r.cat,
-    normalized: Math.round((r.rawScore / GLOBAL_MAX) * 100) / 10,  // globally comparable display number
-    fillPct: r.rawScore / zoneMax,                                   // zone-relative visual fill
-    state: r.rawScore >= onThresh ? 'on' : r.rawScore >= midThresh ? 'mid' : 'off',
-  }));
+for(let y=2024;y<2035;y++){
+const opt=document.createElement("option");
+opt.value=y;
+opt.text=y;
+yearSelect.appendChild(opt);
 }
 
-/* ═══════════════════════════════════════════════
-   WINDOW DIRECTIVES
-═══════════════════════════════════════════════ */
-const WINDOW_DIRECTIVES = {
-  Pink:   { name: 'Noise',          score: '+14 to +20', text: 'Full ignition. Highest-energy window in the system. Move fast, trust first reads, size up. The energy itself is the edge — don\'t overthink it.' },
-  Orange: { name: 'Prime',          score: '+7 to +13',  text: 'Engaged and protected. Safest window for sustained effort. Build, create, engage fully. The safety floor is active — worst case is stagnant, not collapse.' },
-  Blue:   { name: 'Sub-Prime',      score: '+4 to +6',   text: 'Rising or descending — motion is active. Pursue one thing with intensity. Not the window for spreading attention; go deeper on a single target.' },
-  Yellow: { name: 'Edge / Neutral', score: '+3 to −2',   text: 'Reduced energetic filtering. What you put in is close to what you get out. The sub-window (Edge, Neutral, No Tax, Null Edge) determines exact posture.' },
-  Green:  { name: 'Survivor',       score: '−3 / −4',    text: 'Stable pocket just below neutral — Green is stabilizing. Stay present, don\'t force moves. The environment rewards composure over ambition.' },
-  Purple: { name: 'Identity',       score: '−5 to −9',   text: 'Full identity window — activation is the norm. Slower decision-making is not weakness, it\'s calibration. Momentum exists but requires a running start.' },
-  Red:    { name: 'Unstable Swing', score: '−16 to −29', text: 'Red is accumulating pressure — the table will feel catalytic, charged, and potentially personal. Play with authority or don\'t play. Half-committed action in Red drains instead of builds.' },
-  Brown:  { name: 'Luck',           score: '−30 to −40', text: 'Elemental forces are dominant. Outcomes are governed by Earth energy, not execution. Reduce personal pressure — what happens today is larger than your hand. Stay agile, stay open, don\'t force.' },
+monthSelect.value=new Date().getMonth();
+yearSelect.value=new Date().getFullYear();
+
+
+function daysInMonth(month,year){
+return new Date(year,month+1,0).getDate();
+}
+
+
+function renderCalendar(){
+
+const grid=document.getElementById("calendar");
+grid.innerHTML="";
+
+const month=parseInt(monthSelect.value);
+const year=parseInt(yearSelect.value);
+
+const totalDays=daysInMonth(month,year);
+
+for(let d=1; d<=totalDays; d++){
+
+const key=`${year}-${month}-${d}`;
+
+const div=document.createElement("div");
+div.className="day";
+
+if(dayZones[key]){
+div.classList.add(`zone-${dayZones[key]}`);
+div.innerHTML=d+"<br>"+dayZones[key];
+}else{
+div.innerHTML=d;
+}
+
+div.onclick=()=>{
+
+let current=dayZones[key];
+let idx=ZONES.indexOf(current);
+
+idx++;
+
+if(idx>=ZONES.length) idx=0;
+
+dayZones[key]=ZONES[idx];
+
+renderCalendar();
+
 };
 
-/* ═══════════════════════════════════════════════
-   WAVE SVGS — direct from rhythm framework documents
-═══════════════════════════════════════════════ */
-const WAVE_SVGS = {
-  Orange: `<svg viewBox="0 0 520 155" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
-  <line x1="0" y1="125" x2="520" y2="125" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-  <line x1="0" y1="85" x2="520" y2="85" stroke="rgba(255,255,255,0.03)" stroke-width="1" stroke-dasharray="4,4"/>
-  <line x1="0" y1="45" x2="520" y2="45" stroke="rgba(255,255,255,0.03)" stroke-width="1" stroke-dasharray="4,4"/>
-  <line x1="20" y1="125" x2="500" y2="125" stroke="rgba(232,112,32,0.1)" stroke-width="1" stroke-dasharray="2,8"/>
-  <path d="M 20,123 C 120,118 220,105 320,82 C 390,65 450,44 500,18" fill="none" stroke="#E87020" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
-  <polygon points="500,18 494,24 506,24" fill="#E87020" opacity="0.7" transform="rotate(-55, 500, 18)"/>
-  <text x="340" y="62" font-family="IBM Plex Mono,monospace" font-size="8" fill="#E87020" opacity="0.9" letter-spacing="0.08em">EMPOWERED</text>
-  <text x="340" y="73" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(232,112,32,0.5)" letter-spacing="0.06em">slow continuous climb · always building</text>
-  <path d="M 20,123 C 150,122 300,121 450,119 C 470,119 488,118 500,118" fill="none" stroke="#E87020" stroke-width="2" stroke-linecap="round" opacity="0.35" stroke-dasharray="5,4"/>
-  <text x="180" y="112" font-family="IBM Plex Mono,monospace" font-size="8" fill="rgba(232,112,32,0.45)" letter-spacing="0.08em">UNEMPOWERED</text>
-  <text x="180" y="123" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(232,112,32,0.3)" letter-spacing="0.06em">flat or near-flat · stagnant, not falling</text>
-  <circle cx="20" cy="123" r="3" fill="#E87020" opacity="0.5"/>
-  <text x="20" y="141" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(232,112,32,0.2)" letter-spacing="0.08em">STABLE FLOOR — no peak to fall from</text>
-  <text x="8" y="152" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.15)" letter-spacing="0.08em">START</text>
-  <text x="200" y="152" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.15)" letter-spacing="0.08em">SUSTAINED BUILD</text>
-  <text x="430" y="152" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.15)" letter-spacing="0.08em">ONGOING</text>
-</svg>`,
+grid.appendChild(div);
 
-  Blue: `<svg viewBox="0 -20 580 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
-  <line x1="0" y1="170" x2="580" y2="170" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-  <line x1="0" y1="100" x2="580" y2="100" stroke="rgba(255,255,255,0.03)" stroke-width="1" stroke-dasharray="4,6"/>
-  <line x1="0" y1="40" x2="580" y2="40" stroke="rgba(255,255,255,0.03)" stroke-width="1" stroke-dasharray="4,6"/>
-  <path d="M 40,168 C 44,155 52,130 62,105 C 70,84 80,62 90,44 C 96,32 102,22 108,16" fill="none" stroke="#4080E0" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
-  <text x="28" y="158" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(64,128,224,0.5)" letter-spacing="0.08em">RISE</text>
-  <path d="M 108,16 C 118,10 130,8 142,10 C 154,12 162,20 166,32 C 170,44 168,58 162,68 C 156,78 146,84 136,84 C 126,84 118,78 114,68 C 110,58 110,46 114,36 C 118,26 124,18 130,14 C 136,10 142,8 148,8" fill="none" stroke="#4080E0" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
-  <text x="170" y="52" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(64,128,224,0.5)" letter-spacing="0.08em">CUP / CATCH</text>
-  <circle cx="148" cy="8" r="4" fill="#4080E0" opacity="0.9"/>
-  <text x="156" y="12" font-family="IBM Plex Mono,monospace" font-size="8" fill="rgba(64,128,224,0.8)" letter-spacing="0.1em">FORK</text>
-  <path d="M 148,8 C 160,6 178,4 200,2 C 222,0 248,-2 272,-4 C 296,-6 318,-8 336,-10" fill="none" stroke="#4080E0" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
-  <polygon points="336,-10 330,-4 342,-4" fill="#4080E0" opacity="0.85"/>
-  <text x="250" y="14" font-family="IBM Plex Mono,monospace" font-size="8" fill="rgba(64,128,224,0.75)" letter-spacing="0.08em">STABLE SWING</text>
-  <text x="250" y="25" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(64,128,224,0.4)" letter-spacing="0.06em">rises again · mirrors the rise</text>
-  <path d="M 148,8 C 148,30 148,60 148,90 C 148,115 146,135 140,152 C 134,164 124,170 114,166 C 104,162 100,150 104,140 C 108,130 118,126 128,128" fill="none" stroke="#4080E0" stroke-width="2" stroke-linecap="round" opacity="0.35" stroke-dasharray="5,4"/>
-  <text x="154" y="95" font-family="IBM Plex Mono,monospace" font-size="8" fill="rgba(64,128,224,0.35)" letter-spacing="0.08em">CRASH</text>
-  <text x="154" y="106" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(64,128,224,0.22)" letter-spacing="0.06em">drops · can cup/catch itself</text>
-  <text x="26" y="186" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(64,128,224,0.4)" letter-spacing="0.06em">SUB-PRIME</text>
-  <text x="26" y="195" font-family="IBM Plex Mono,monospace" font-size="6.5" fill="rgba(255,255,255,0.12)" letter-spacing="0.06em">+4 to +6</text>
-  <text x="100" y="186" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(64,128,224,0.4)" letter-spacing="0.06em">VARIANCE</text>
-  <text x="100" y="195" font-family="IBM Plex Mono,monospace" font-size="6.5" fill="rgba(255,255,255,0.12)" letter-spacing="0.06em">−12/−13</text>
-  <text x="310" y="186" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(64,128,224,0.4)" letter-spacing="0.06em">STABLE SWING</text>
-  <text x="310" y="195" font-family="IBM Plex Mono,monospace" font-size="6.5" fill="rgba(255,255,255,0.12)" letter-spacing="0.06em">−14/−15 · reset</text>
-</svg>`,
+}
 
-  Green: `<svg viewBox="0 0 520 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
-  <line x1="0" y1="60" x2="520" y2="60" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
-  <line x1="0" y1="30" x2="520" y2="30" stroke="rgba(255,255,255,0.02)" stroke-width="1" stroke-dasharray="4,6"/>
-  <line x1="0" y1="90" x2="520" y2="90" stroke="rgba(255,255,255,0.02)" stroke-width="1" stroke-dasharray="4,6"/>
-  <path d="M 20,60 C 50,60 70,60 90,58 C 105,56 115,50 125,48 C 135,46 145,48 155,54 C 165,59 175,61 195,60 C 220,60 240,60 260,62 C 272,64 280,68 290,70 C 300,72 310,70 322,66 C 334,62 344,60 370,60 C 395,60 410,60 430,59 C 442,58 450,55 460,54 C 470,53 478,55 488,58 C 496,60 504,61 520,60" fill="none" stroke="#6EC25A" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
-  <text x="200" y="54" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(110,194,90,0.35)" letter-spacing="0.1em">EQUILIBRIUM BASELINE</text>
-  <line x1="125" y1="48" x2="125" y2="38" stroke="rgba(110,194,90,0.2)" stroke-width="1" stroke-dasharray="2,3"/>
-  <text x="100" y="36" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(110,194,90,0.3)" letter-spacing="0.06em">micro variation</text>
-  <line x1="290" y1="70" x2="290" y2="80" stroke="rgba(110,194,90,0.2)" stroke-width="1" stroke-dasharray="2,3"/>
-  <text x="268" y="92" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(110,194,90,0.3)" letter-spacing="0.06em">fast resolution</text>
-  <circle cx="20" cy="60" r="3" fill="#6EC25A" opacity="0.4"/>
-  <text x="8" y="112" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.15)" letter-spacing="0.08em">START</text>
-  <text x="200" y="112" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.15)" letter-spacing="0.08em">SUSTAINED BALANCE</text>
-  <text x="440" y="112" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.15)" letter-spacing="0.08em">ONGOING</text>
-</svg>`,
-
-  Red: `<svg viewBox="0 0 520 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
-  <line x1="0" y1="110" x2="520" y2="110" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
-  <text x="4" y="107" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(255,255,255,0.2)">BASE</text>
-  <path d="M 20,110 C 80,110 100,108 140,107 C 180,106 220,104 280,102 C 320,101 370,99 430,97 C 460,96 490,95 510,94" fill="none" stroke="rgba(224,64,48,0.25)" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="3,5"/>
-  <text x="330" y="91" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(224,64,48,0.3)" letter-spacing="0.08em">ACCUMULATING BASELINE SHIFT</text>
-  <line x1="80" y1="110" x2="80" y2="82" stroke="#E04030" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
-  <line x1="75" y1="82" x2="85" y2="82" stroke="#E04030" stroke-width="2" opacity="0.7"/>
-  <line x1="160" y1="108" x2="160" y2="74" stroke="#E04030" stroke-width="2.5" stroke-linecap="round" opacity="0.75"/>
-  <line x1="155" y1="74" x2="165" y2="74" stroke="#E04030" stroke-width="2" opacity="0.75"/>
-  <line x1="240" y1="106" x2="240" y2="64" stroke="#E04030" stroke-width="2.5" stroke-linecap="round" opacity="0.8"/>
-  <line x1="235" y1="64" x2="245" y2="64" stroke="#E04030" stroke-width="2" opacity="0.8"/>
-  <line x1="320" y1="103" x2="320" y2="52" stroke="#E04030" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
-  <line x1="315" y1="52" x2="325" y2="52" stroke="#E04030" stroke-width="2" opacity="0.85"/>
-  <line x1="400" y1="100" x2="400" y2="36" stroke="#E04030" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
-  <line x1="395" y1="36" x2="405" y2="36" stroke="#E04030" stroke-width="2" opacity="0.9"/>
-  <line x1="480" y1="96" x2="480" y2="8" stroke="#E04030" stroke-width="3.5" stroke-linecap="round" opacity="1"/>
-  <line x1="480" y1="8" x2="460" y2="18" stroke="#E04030" stroke-width="1.5" opacity="0.6"/>
-  <line x1="480" y1="8" x2="500" y2="18" stroke="#E04030" stroke-width="1.5" opacity="0.6"/>
-  <line x1="480" y1="8" x2="468" y2="4" stroke="#E04030" stroke-width="1.5" opacity="0.4"/>
-  <line x1="480" y1="8" x2="492" y2="4" stroke="#E04030" stroke-width="1.5" opacity="0.4"/>
-  <text x="440" y="28" font-family="IBM Plex Mono,monospace" font-size="8" fill="#E04030" letter-spacing="0.1em">THRESHOLD</text>
-  <text x="445" y="38" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(224,64,48,0.6)" letter-spacing="0.08em">DETONATION</text>
-  <text x="60" y="144" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(255,255,255,0.15)" letter-spacing="0.06em">IMPACT 1</text>
-  <text x="140" y="144" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(255,255,255,0.15)" letter-spacing="0.06em">IMPACT 2</text>
-  <text x="220" y="144" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(255,255,255,0.15)" letter-spacing="0.06em">IMPACT 3</text>
-  <text x="300" y="144" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(255,255,255,0.15)" letter-spacing="0.06em">IMPACT 4</text>
-  <text x="380" y="144" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(255,255,255,0.15)" letter-spacing="0.06em">IMPACT 5</text>
-  <text x="462" y="144" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(224,64,48,0.5)" letter-spacing="0.06em">DETONATE</text>
-  <text x="60" y="156" font-family="IBM Plex Mono,monospace" font-size="6.5" fill="rgba(224,64,48,0.25)" letter-spacing="0.06em">each impact leaves a residue bump · direction not determined by launch direction</text>
-</svg>`,
-
-  Yellow: `<svg viewBox="0 0 520 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
-  <line x1="0" y1="90" x2="520" y2="90" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
-  <line x1="0" y1="45" x2="520" y2="45" stroke="rgba(255,255,255,0.03)" stroke-width="1" stroke-dasharray="4,4"/>
-  <line x1="0" y1="135" x2="520" y2="135" stroke="rgba(255,255,255,0.03)" stroke-width="1" stroke-dasharray="4,4"/>
-  <text x="4" y="94" font-family="IBM Plex Mono,monospace" font-size="8" fill="rgba(255,255,255,0.25)" letter-spacing="0.08em">0</text>
-  <line x1="20" y1="90" x2="500" y2="90" stroke="rgba(240,192,32,0.2)" stroke-width="1.5" stroke-dasharray="3,6"/>
-  <text x="210" y="84" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(255,255,255,0.2)" letter-spacing="0.1em">NEUTRAL — TRUE ZERO</text>
-  <path d="M 20,90 L 80,90 C 100,90 110,88 120,78 C 130,65 138,40 148,18 C 155,4 160,2 165,4 C 170,8 175,22 185,45 C 195,68 205,84 220,89 L 500,90" fill="none" stroke="#F0C020" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
-  <text x="170" y="14" font-family="IBM Plex Mono,monospace" font-size="8" fill="#F0C020" opacity="0.9" letter-spacing="0.08em">EMPOWERED</text>
-  <text x="170" y="25" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(240,192,32,0.5)" letter-spacing="0.06em">spike upward · sharp return to baseline</text>
-  <path d="M 20,90 L 260,90 C 280,90 290,92 300,102 C 310,115 318,140 328,162 C 335,176 340,178 345,176 C 350,172 355,158 365,135 C 375,112 385,96 400,91 L 500,90" fill="none" stroke="#F0C020" stroke-width="2" stroke-linecap="round" opacity="0.35" stroke-dasharray="5,4"/>
-  <text x="350" y="158" font-family="IBM Plex Mono,monospace" font-size="8" fill="rgba(240,192,32,0.45)" letter-spacing="0.08em">UNEMPOWERED</text>
-  <text x="350" y="169" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(240,192,32,0.3)" letter-spacing="0.06em">spike downward · same magnitude</text>
-  <line x1="8" y1="10" x2="8" y2="170" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
-  <text x="12" y="14" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(255,255,255,0.15)">+</text>
-  <text x="12" y="170" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(255,255,255,0.15)">−</text>
-</svg>`,
-
-  Pink: `<svg viewBox="0 0 520 150" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
-  <line x1="0" y1="125" x2="520" y2="125" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-  <line x1="0" y1="85" x2="520" y2="85" stroke="rgba(255,255,255,0.03)" stroke-width="1" stroke-dasharray="4,4"/>
-  <line x1="0" y1="45" x2="520" y2="45" stroke="rgba(255,255,255,0.03)" stroke-width="1" stroke-dasharray="4,4"/>
-  <path d="M 60,123 C 68,108 80,72 96,38 C 104,22 112,14 120,12" fill="none" stroke="#D030A0" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
-  <circle cx="120" cy="12" r="4" fill="#D030A0" opacity="0.9"/>
-  <text x="128" y="10" font-family="IBM Plex Mono,monospace" font-size="8" fill="rgba(208,48,160,0.7)" letter-spacing="0.1em">PEAK · FORK</text>
-  <path d="M 120,12 C 150,13 200,28 260,58 C 320,88 390,112 480,123" fill="none" stroke="#D030A0" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
-  <path d="M 300,72 C 310,58 320,28 332,16 C 340,8 348,8 356,10 C 368,14 376,38 386,62 C 394,80 402,100 418,118" fill="none" stroke="#D030A0" stroke-width="1.5" stroke-linecap="round" opacity="0.3" stroke-dasharray="3,4"/>
-  <text x="334" y="6" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(208,48,160,0.35)" letter-spacing="0.06em">RE-IGNITION</text>
-  <text x="230" y="50" font-family="IBM Plex Mono,monospace" font-size="8" fill="#D030A0" opacity="0.85" letter-spacing="0.08em">EMPOWERED</text>
-  <text x="230" y="61" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(208,48,160,0.5)" letter-spacing="0.06em">long taper · can re-ignite</text>
-  <path d="M 120,12 C 132,22 148,52 164,80 C 176,102 190,116 210,123" fill="none" stroke="#D030A0" stroke-width="2" stroke-linecap="round" opacity="0.35" stroke-dasharray="5,4"/>
-  <text x="168" y="72" font-family="IBM Plex Mono,monospace" font-size="8" fill="rgba(208,48,160,0.45)" letter-spacing="0.08em">UNEMPOWERED</text>
-  <text x="168" y="83" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(208,48,160,0.3)" letter-spacing="0.06em">mirrors the ignition</text>
-  <circle cx="60" cy="123" r="3" fill="#D030A0" opacity="0.4"/>
-  <text x="30" y="142" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.2)" letter-spacing="0.08em">IGNITION</text>
-  <text x="100" y="142" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.2)" letter-spacing="0.08em">PEAK</text>
-  <text x="340" y="142" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.2)" letter-spacing="0.08em">RELEASE</text>
-</svg>`,
-
-  Purple: `<svg viewBox="0 0 520 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
-  <line x1="0" y1="120" x2="520" y2="120" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-  <line x1="0" y1="80" x2="520" y2="80" stroke="rgba(255,255,255,0.03)" stroke-width="1" stroke-dasharray="4,4"/>
-  <line x1="0" y1="40" x2="520" y2="40" stroke="rgba(255,255,255,0.03)" stroke-width="1" stroke-dasharray="4,4"/>
-  <path d="M 20,118 C 60,116 100,110 150,90 C 190,74 220,30 260,18" fill="none" stroke="#8A2BE2" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
-  <circle cx="260" cy="18" r="4" fill="#8A2BE2" opacity="0.9"/>
-  <text x="268" y="14" font-family="IBM Plex Mono,monospace" font-size="8" fill="rgba(138,43,226,0.7)" letter-spacing="0.1em">PEAK · FORK</text>
-  <path d="M 260,18 C 310,20 360,50 420,90 C 450,108 480,116 510,119" fill="none" stroke="#8A2BE2" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
-  <text x="370" y="62" font-family="IBM Plex Mono,monospace" font-size="8" fill="#8A2BE2" opacity="0.8" letter-spacing="0.08em">EMPOWERED</text>
-  <text x="370" y="73" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(138,43,226,0.5)" letter-spacing="0.06em">gradual release</text>
-  <path d="M 260,18 C 280,30 295,60 310,85 C 322,104 335,114 355,119" fill="none" stroke="#8A2BE2" stroke-width="2" stroke-linecap="round" opacity="0.4" stroke-dasharray="5,4"/>
-  <text x="310" y="55" font-family="IBM Plex Mono,monospace" font-size="8" fill="rgba(138,43,226,0.5)" letter-spacing="0.08em">UNEMPOWERED</text>
-  <text x="310" y="66" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(138,43,226,0.35)" letter-spacing="0.06em">mirrors the build</text>
-  <text x="20" y="134" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.2)" letter-spacing="0.08em">SLOW START</text>
-  <text x="140" y="134" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.2)" letter-spacing="0.08em">BUILD</text>
-  <text x="230" y="134" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.2)" letter-spacing="0.08em">PEAK</text>
-  <text x="370" y="134" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.2)" letter-spacing="0.08em">RELEASE</text>
-</svg>`,
-
-  Brown: `<svg viewBox="0 0 520 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
-  <line x1="0" y1="60" x2="520" y2="60" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-  <path d="M 20,60 C 80,58 140,62 200,60 C 260,58 320,64 380,60 C 420,57 460,63 500,60" fill="none" stroke="#A97040" stroke-width="2" stroke-linecap="round" opacity="0.5" stroke-dasharray="6,4"/>
-  <text x="180" y="50" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(169,112,64,0.4)" letter-spacing="0.1em">ELEMENTAL — NOT HUMAN RHYTHM</text>
-  <text x="140" y="80" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(169,112,64,0.3)" letter-spacing="0.08em">outcomes governed by Earth energy · not execution</text>
-  <circle cx="20" cy="60" r="3" fill="#A97040" opacity="0.3"/>
-  <text x="8" y="112" font-family="IBM Plex Mono,monospace" font-size="7.5" fill="rgba(255,255,255,0.1)" letter-spacing="0.08em">ENVIRONMENTAL OVERLAY</text>
-</svg>`,
-};
+}
 
 
-const CELL_LINE = {
-  Orange:'Make your move', Blue:'Think it through',   Red:'Careful aggression',
-  Green:'Build the habit', Yellow:'Show up present',  Purple:'Go inward',
-  Pink:'Full expression',  Brown:'Rest and reset',
-};
+function generateForecast(){
 
-/* ═══════════════════════════════════════════════
-   ADMIN SETUP
-═══════════════════════════════════════════════ */
-const adminDayZones = {};
-let pickerTargetDay = null;
+const month=parseInt(monthSelect.value);
+const year=parseInt(yearSelect.value);
 
-function initAdmin() {
-  const now = new Date();
-  const ys = document.getElementById('selYear');
-  for (let y = now.getFullYear(); y <= now.getFullYear()+2; y++) {
-    const o = document.createElement('option'); o.value=y; o.textContent=y; ys.appendChild(o);
-  }
-  document.getElementById('selMonth').value = now.getMonth();
-  document.getElementById('selMonth').addEventListener('change', renderAdminGrid);
-  document.getElementById('selYear').addEventListener('change', renderAdminGrid);
+const totalDays=daysInMonth(month,year);
 
-  const po = document.getElementById('pickerOptions');
-  const PICKER_COLORS = {
-    Pink:   { bg: '#D030A0', text: '#fff' },
-    Orange: { bg: '#E87020', text: '#fff' },
-    Blue:   { bg: '#4080E0', text: '#fff' },
-    Yellow: { bg: '#F0C020', text: '#1a1400' },
-    Green:  { bg: '#6EC25A', text: '#0a1a08' },
-    Purple: { bg: '#8A2BE2', text: '#fff' },
-    Red:    { bg: '#E04030', text: '#fff' },
-    Brown:  { bg: '#A97040', text: '#fff' },
-  };
-  ZONE_NAMES.forEach(z => {
-    const btn = document.createElement('button');
-    btn.className = 'zone-opt';
-    btn.style.background = PICKER_COLORS[z].bg;
-    btn.style.color = PICKER_COLORS[z].text;
-    btn.textContent = z.toUpperCase();
-    btn.onclick = () => assignZone(z);
-    po.appendChild(btn);
+for(let d=1; d<=totalDays; d++){
+
+const key=`${year}-${month}-${d}`;
+
+const dateObj=new Date(year,month,d);
+
+const zone=calculateZone(dateObj);
+
+dayZones[key]=zone;
+
+}
+
+renderCalendar();
+
+}
+
+
+function calculateZone(date){
+
+/*
+Placeholder engine.
+
+Replace this with your real
+Wu Xing / BaZi scoring logic.
+
+Right now it produces a
+deterministic rotating zone.
+*/
+
+const base=date.getDate();
+
+return ZONES[ base % ZONES.length ];
+
+}
+
+renderCalendar();
+
+function generateLink(){
+
+const handle=document.getElementById("clientHandle").value.trim() || "client";
+
+const month=parseInt(monthSelect.value);
+const year=parseInt(yearSelect.value);
+
+const entries = Object.entries(dayZones)
+  .filter(([k])=>{
+    const p=k.split("-");
+    return parseInt(p[0])===year && parseInt(p[1])===month;
+  })
+  .map(([k,z])=>{
+    const day=k.split("-")[2];
+    return `${day}:${z}`;
   });
-  const clr = document.createElement('div');
-  clr.className = 'zone-opt-clear'; clr.textContent = '— CLEAR —'; clr.onclick = () => assignZone(null);
-  po.appendChild(clr);
-  renderAdminGrid();
+
+const params = new URLSearchParams({
+  n: handle,
+  m: month,
+  y: year,
+  d: entries.join(",")
+});
+
+const url = `${location.origin}${location.pathname}?${params.toString()}`;
+
+document.getElementById("linkOutput").innerText = url;
+
 }
 
-function getAdminMY() { return { month: parseInt(document.getElementById('selMonth').value), year: parseInt(document.getElementById('selYear').value) }; }
 
-function renderAdminGrid() {
-  const { month, year } = getAdminMY();
-  const dim = new Date(year, month+1, 0).getDate();
-  const fdow = new Date(year, month, 1).getDay();
-  const grid = document.getElementById('adminGrid');
-  grid.innerHTML = '';
-  ['S','M','T','W','T','F','S'].forEach(d => { const el=document.createElement('div'); el.className='dow-label'; el.textContent=d; grid.appendChild(el); });
-  for (let i=0; i<fdow; i++) { const el=document.createElement('div'); el.className='day-cell-admin empty'; grid.appendChild(el); }
-  for (let d=1; d<=dim; d++) {
-    const el = document.createElement('div'); el.className='day-cell-admin'; el.dataset.day=d;
-    const zone = adminDayZones[`${year}-${month}-${d}`] || null;
-    applyZoneToAdmin(el, d, zone); el.onclick = () => openPicker(d); grid.appendChild(el);
+function renderClientCalendar(name, month, year, zoneMap){
+
+document.getElementById("adminMode").style.display="none";
+document.getElementById("clientMode").style.display="block";
+
+document.getElementById("clientTitle").innerText = `${name} — ${month+1}/${year}`;
+
+const grid=document.getElementById("clientCalendar");
+grid.innerHTML="";
+
+const totalDays=daysInMonth(month,year);
+
+for(let d=1; d<=totalDays; d++){
+
+const div=document.createElement("div");
+div.className="client-day";
+
+const zone=zoneMap[d];
+
+if(zone){
+div.classList.add(`zone-${zone}`);
+div.innerHTML = d + "<br>" + zone;
+}else{
+div.innerHTML = d;
+}
+
+grid.appendChild(div);
+
+}
+
+}
+
+
+function bootClientMode(){
+
+const params=new URLSearchParams(window.location.search);
+
+if(!(params.has("n") && params.has("m") && params.has("y"))) return;
+
+const name=params.get("n") || "client";
+const month=parseInt(params.get("m"));
+const year=parseInt(params.get("y"));
+const raw=params.get("d") || "";
+
+const zoneMap={};
+
+raw.split(",").forEach(pair=>{
+  const [day,zone]=pair.split(":");
+  if(day && zone){
+    zoneMap[parseInt(day)] = zone;
   }
+});
+
+renderClientCalendar(name,month,year,zoneMap);
+
 }
 
-function applyZoneToAdmin(el, day, zone) {
-  el.className = 'day-cell-admin'; el.innerHTML = '';
-  if (zone) {
-    el.classList.add(ZONES[zone].cls);
-    const dn=document.createElement('div'); dn.className='dn'; dn.textContent=day;
-    const zl=document.createElement('div'); zl.className='zl'; zl.textContent=zone.substring(0,3).toUpperCase();
-    el.appendChild(dn); el.appendChild(zl);
-  } else {
-    const dn=document.createElement('div'); dn.className='dn'; dn.style.color='#333'; dn.textContent=day; el.appendChild(dn);
-  }
-}
 
-function openPicker(day) { pickerTargetDay=day; document.getElementById('pickerOverlay').classList.add('open'); }
-function closePicker(e) { if (e.target===document.getElementById('pickerOverlay')) document.getElementById('pickerOverlay').classList.remove('open'); }
+bootClientMode();
 
-function assignZone(zone) {
-  const { month, year } = getAdminMY();
-  const key = `${year}-${month}-${pickerTargetDay}`;
-  if (zone) adminDayZones[key]=zone; else delete adminDayZones[key];
-  document.querySelectorAll('#adminGrid .day-cell-admin').forEach(c => { if (parseInt(c.dataset.day)===pickerTargetDay) applyZoneToAdmin(c, pickerTargetDay, zone||null); });
-  document.getElementById('pickerOverlay').classList.remove('open');
-}
-
-function generateLink() {
-  const name = document.getElementById('clientName').value.trim();
-  if (!name) { document.getElementById('clientName').focus(); return; }
-  const { month, year } = getAdminMY();
-  const entries = Object.entries(adminDayZones)
-    .filter(([k]) => { const p=k.split('-'); return parseInt(p[1])===month && parseInt(p[0])===year; })
-    .map(([k,z]) => `${k.split('-')[2]}:${z}`);
-  const params = new URLSearchParams({ n:name, m:month, y:year, d:entries.join(',') });
-  const url = `${location.origin}${location.pathname}?${params.toString()}`;
-  document.getElementById('shareUrl').textContent = url;
-  document.getElementById('shareBox').classList.add('visible');
-  document.getElementById('copyBtn').textContent = 'COPY LINK';
-  document.getElementById('copyBtn').classList.remove('copied');
-}
-
-function copyLink() {
-  navigator.clipboard.writeText(document.getElementById('shareUrl').textContent).then(() => {
-    const btn = document.getElementById('copyBtn'); btn.textContent='COPIED ✓'; btn.classList.add('copied');
-  });
-}
-
-/* ═══════════════════════════════════════════════
-   CLIENT VIEW
-═══════════════════════════════════════════════ */
-function initClient(params) {
-  const name  = params.get('n') || 'OPERATOR';
-  const month = parseInt(params.get('m'));
-  const year  = parseInt(params.get('y'));
-  const raw   = params.get('d') || '';
-  const dayZones = {};
-  raw.split(',').forEach(pair => { const [d,z]=pair.split(':'); if(d&&z) dayZones[parseInt(d)]=z; });
-
-  document.getElementById('clientNameDisplay').textContent = name.toUpperCase();
-  document.getElementById('clientMonthDisplay').textContent = `${MONTHS[month]} ${year}`;
-  renderClientCal(year, month, dayZones);
-  renderLegend(dayZones);
-  // dot indicators for days with notes
-  const clientN = (new URLSearchParams(window.location.search)).get('n') || 'default';
-  const urlY = parseInt((new URLSearchParams(window.location.search)).get('y'));
-  const urlM = parseInt((new URLSearchParams(window.location.search)).get('m'));
-  if (!isNaN(urlY) && !isNaN(urlM)) refreshNoteDots(clientN, urlY, urlM);
-  document.getElementById('admin').classList.remove('active');
-  document.getElementById('client').classList.add('active');
-}
-
-function renderClientCal(year, month, dayZones) {
-  const dim = new Date(year, month+1, 0).getDate();
-  const fdow = new Date(year, month, 1).getDay();
-  const now = new Date();
-  const today = (now.getFullYear()===year && now.getMonth()===month) ? now.getDate() : -1;
-  const grid = document.getElementById('clientGrid');
-  grid.innerHTML = '';
-  for (let i=0; i<fdow; i++) { const el=document.createElement('div'); el.className='cal-day empty'; grid.appendChild(el); }
-  for (let d=1; d<=dim; d++) {
-    const zone = dayZones[d] || null;
-    const el = document.createElement('div'); el.className='cal-day';
-    if (d===today) el.classList.add('today');
-    if (zone && ZONES[zone]) el.classList.add(ZONES[zone].cls);
-    const dn=document.createElement('div'); dn.className='day-num';
-    if (!zone) dn.style.color='#333';
-    dn.textContent=d; el.appendChild(dn);
-    if (zone) {
-      const dz=document.createElement('div'); dz.className='day-zone'; dz.textContent=zone.substring(0,3).toUpperCase(); el.appendChild(dz);
-      el.onclick = () => openDaySheet(d, zone, month, year);
-    }
-    grid.appendChild(el);
-  }
-}
-
-function renderLegend(dayZones) {
-  const present = [...new Set(Object.values(dayZones))];
-  const sorted = ZONE_NAMES.filter(z=>present.includes(z));
-  const wrap = document.getElementById('clientLegend'); wrap.innerHTML='';
-  sorted.forEach(z => {
-    const chip=document.createElement('div'); chip.className='legend-chip';
-    chip.style.background=ZONES[z].bg; chip.style.color=ZONES[z].text; chip.textContent=z.toUpperCase(); wrap.appendChild(chip);
-  });
-}
-
-/* ═══════════════════════════════════════════════
-   DAY SHEET
-═══════════════════════════════════════════════ */
-let currentZone = null;
-
-
-/* ═══════════════════════════════════════════════
-   DAY NOTES — localStorage
-═══════════════════════════════════════════════ */
-let _noteKey = null;
-let _noteSaveTimer = null;
-
-function noteStorageKey(name, year, month, day) {
-  return `lw_note_${name}_${year}_${month}_${day}`;
-}
-
-function loadNote(name, year, month, day) {
-  try { return localStorage.getItem(noteStorageKey(name, year, month, day)) || ''; }
-  catch(e) { return ''; }
-}
-
-function saveNote(name, year, month, day, text) {
-  try {
-    const key = noteStorageKey(name, year, month, day);
-    if (text.trim()) { localStorage.setItem(key, text); }
-    else { localStorage.removeItem(key); }
-    return true;
-  } catch(e) { return false; }
-}
-
-function getAllNoteKeys(name, year, month) {
-  // returns object {day: true} for days that have notes
-  const result = {};
-  try {
-    for (let d = 1; d <= 31; d++) {
-      const val = localStorage.getItem(noteStorageKey(name, year, month, d));
-      if (val && val.trim()) result[d] = true;
-    }
-  } catch(e) {}
-  return result;
-}
-
-function initNoteField(name, year, month, day) {
-  _noteKey = { name, year, month, day };
-  const ta = document.getElementById('dayNoteInput');
-  const status = document.getElementById('noteStatus');
-  if (!ta) return;
-
-  ta.value = loadNote(name, year, month, day);
-  status.textContent = '';
-  status.className = 'note-status';
-
-  // debounced auto-save on input
-  ta.oninput = () => {
-    clearTimeout(_noteSaveTimer);
-    status.textContent = '...';
-    status.className = 'note-status';
-    _noteSaveTimer = setTimeout(() => {
-      const ok = saveNote(_noteKey.name, _noteKey.year, _noteKey.month, _noteKey.day, ta.value);
-      status.textContent = ok ? 'SAVED' : 'ERROR';
-      status.className = 'note-status' + (ok ? ' saved' : '');
-      refreshNoteDots(_noteKey.name, _noteKey.year, _noteKey.month);
-      setTimeout(() => { status.textContent = ''; status.className = 'note-status'; }, 1800);
-    }, 600);
-  };
-}
-
-function refreshNoteDots(name, year, month) {
-  const noted = getAllNoteKeys(name, year, month);
-  document.querySelectorAll('.cal-day').forEach(el => {
-    const dn = el.querySelector('.day-num');
-    if (!dn) return;
-    const d = parseInt(dn.textContent);
-    const existing = el.querySelector('.note-dot');
-    if (noted[d] && !existing) {
-      const dot = document.createElement('div');
-      dot.className = 'note-dot';
-      el.appendChild(dot);
-    } else if (!noted[d] && existing) {
-      existing.remove();
-    }
-  });
-}
-
-function openDaySheet(day, zone, month, year) {
-  currentZone = zone;
-  const z = ZONES[zone];
-  const rd = RHYTHM_DATA[zone];
-  const wd = WINDOW_DIRECTIVES[zone];
-
-  document.getElementById('sheetDate').textContent = `${MONTHS[month].substring(0,3).toUpperCase()} ${day}, ${year}`;
-
-  const zn = document.getElementById('sheetZoneName');
-  zn.textContent = zone.toUpperCase(); zn.style.color = z.text;
-
-  const arch = document.getElementById('sheetArchetype');
-  arch.textContent = rd ? rd.archetype : ''; arch.style.color = z.text;
-
-  document.getElementById('sheetTagline').textContent = CELL_LINE[zone] || '';
-  document.getElementById('sheetTagline').style.color = z.text;
-
-  document.getElementById('sheetIdentity').textContent = rd ? rd.identity : '';
-  document.getElementById('sheetIdentity').style.color = z.text;
-
-  document.getElementById('daySheetInner').style.borderTopColor = z.acc + '55';
-
-  // Wave graph
-  const waveEl = document.getElementById('waveGraph');
-  const svgMarkup = WAVE_SVGS[zone] || '';
-  waveEl.innerHTML = svgMarkup
-    ? svgMarkup + '<div class="wave-tap-hint">TAP TO EXPAND</div>'
-    : '';
-  if (svgMarkup) {
-    waveEl.querySelector('svg').onclick = () => {
-      document.getElementById('waveLightboxInner').innerHTML = svgMarkup;
-      document.getElementById('waveLightbox').classList.add('open');
-    };
-  }
-  document.getElementById('windowBlock').style.borderColor = `${z.acc}33`;
-
-  // Scores
-  const scores = getZoneScores(zone);
-  const rows = document.getElementById('scoreRows');
-  const gb = document.getElementById('guidanceBlocks');
-  rows.innerHTML = '';
-  gb.innerHTML = '';
-
-  if (zone === 'Brown') {
-    // Brown: no category scoring — show decision rule only
-    const brownRd = RHYTHM_DATA['Brown'];
-    rows.style.display = 'none';
-    document.querySelector('.scores-label').style.display = 'none';
-    gb.innerHTML = `
-      <div class="guidance-card" style="border-color:${z.acc}55;background:${z.acc}08;grid-column:span 2">
-        <div class="guidance-card-label" style="color:${z.acc};letter-spacing:0.18em">THE STANDARD</div>
-        <div class="guidance-card-text" style="color:var(--text);font-size:13px;line-height:1.7">${brownRd?.decisionRule || 'Undeniable edge only. If you are evaluating whether it qualifies, it does not.'}</div>
-      </div>
-    `;
-  } else {
-    rows.style.display = 'flex';
-    document.querySelector('.scores-label').style.display = 'block';
-    scores.forEach(({ cat, normalized, fillPct, state }) => {
-      const row = document.createElement('div');
-      row.className = 'score-row';
-      const pipHtml = buildPips(fillPct, state, z.acc, 10, 'score-pip');
-      const stateColor = state === 'on' ? z.acc : state === 'mid' ? 'var(--dim)' : 'var(--off-color)';
-      row.innerHTML = `
-        <div class="score-emoji">${CAT_EMOJI[cat]||'·'}</div>
-        <div class="score-cat" style="color:var(--text)">${cat}</div>
-        <div class="score-bar-wrap">${pipHtml}</div>
-        <div class="score-val" style="color:${stateColor};text-shadow:0 0 6px ${stateColor}88">${normalized.toFixed(1)}</div>
-        <div class="tap-hint" style="color:var(--muted);pointer-events:none">TAP ›</div>
-      `;
-      row.onclick = () => openDeepSheet(cat, zone);
-      rows.appendChild(row);
-    });
-
-    // Top category ON/OFF preview
-    const cats = rd ? rd.categories : null;
-    if (cats) {
-      const topCat = scores[0]?.cat;
-      const catData = topCat ? cats[topCat] : null;
-      if (catData) {
-        gb.innerHTML = `
-          <div class="guidance-card" style="border-color:var(--ph-dark);background:var(--ph-faint)">
-            <div class="guidance-card-label" style="color:${z.acc}">▲ ON  ·  ${topCat.toUpperCase()}</div>
-            <div class="guidance-card-text" style="color:var(--text)">${catData.on}</div>
-          </div>
-          <div class="guidance-card" style="border-color:var(--off-border);background:var(--off-bg)">
-            <div class="guidance-card-label" style="color:var(--off-color);text-shadow:0 0 8px var(--off-color)">▼ OFF  ·  ${topCat.toUpperCase()}</div>
-            <div class="guidance-card-text" style="color:var(--off-dim)">${catData.off}</div>
-          </div>
-        `;
-      }
-    }
-  }
-
-  document.getElementById('daySheet').classList.add('open');
-
-  // Notes
-  const clientN = (new URLSearchParams(window.location.search)).get('n') || 'default';
-  initNoteField(clientN, year, month, day);
-}
-
-function closeDaySheet(e) {
-  if (e.target===document.getElementById('daySheet')) document.getElementById('daySheet').classList.remove('open');
-}
-
-/* ═══════════════════════════════════════════════
-   DEEP SHEET (category drill-down)
-═══════════════════════════════════════════════ */
-function openDeepSheet(cat, zone) {
-  const z = ZONES[zone];
-  const rd = RHYTHM_DATA[zone];
-  const scores = getZoneScores(zone);
-  const scoreObj = scores.find(s=>s.cat===cat);
-  const catData = rd && rd.categories ? rd.categories[cat] : null;
-
-  document.getElementById('deepEmoji').textContent = CAT_EMOJI[cat]||'·';
-  const cn = document.getElementById('deepCatName'); cn.textContent = cat; cn.style.color = z.text;
-  document.getElementById('deepCatZone').textContent = `${zone.toUpperCase()}  //  ${rd?.archetype?.toUpperCase()||''}`;
-
-  const scoreNum = document.getElementById('deepScoreNum');
-  const scoreVal = scoreObj ? scoreObj.normalized : 0;
-  const scoreState = scoreObj?.state || 'off';
-  scoreNum.textContent = scoreObj ? scoreVal.toFixed(1) : '—';
-  const scoreColor = scoreState === 'on' ? z.acc : scoreState === 'mid' ? 'var(--dim)' : 'var(--off-color)';
-  scoreNum.style.color = scoreColor;
-  scoreNum.style.textShadow = `0 0 10px ${scoreColor}88`;
-
-  const barEl = document.getElementById('deepScoreBar');
-  if (barEl) barEl.innerHTML = '';
-
-  document.getElementById('deepInner').style.borderTopColor = z.acc + '44';
-
-  const content = document.getElementById('deepContent');
-  content.innerHTML = '';
-
-  if (catData) {
-    // Headline + guidance
-    let html = `
-      <div class="deep-section">
-        <div class="deep-section-label">THE READ</div>
-        <div class="deep-guidance-text" style="color:${z.acc};text-shadow:0 0 10px ${z.acc}66;font-size:15px;margin-bottom:12px">${catData.headline}</div>
-        <div class="deep-guidance-text">${catData.guidance}</div>
-      </div>
-    `;
-
-    // ON / OFF signals
-    html += `
-      <div class="deep-section">
-        <div class="deep-section-label" style="color:var(--dim)">STATE CHECK</div>
-        <div class="on-off-block">
-          <div class="on-card">
-            <div class="on-off-label" style="color:${z.acc};text-shadow:0 0 8px ${z.acc}">▲ ON</div>
-            <div class="on-off-text" style="color:var(--text)">${catData.on}</div>
-          </div>
-          <div class="off-card">
-            <div class="on-off-label" style="color:var(--off-color);text-shadow:0 0 8px var(--off-color)">▼ OFF</div>
-            <div class="on-off-text" style="color:var(--off-dim)">${catData.off}</div>
-          </div>
-        </div>
-      </div>
-    `;
-
-    // Wave note
-    if (rd.waveNote) {
-      html += `
-        <div class="deep-window-note">
-          <div style="font-family:var(--mono);font-size:8px;letter-spacing:0.2em;color:var(--muted);margin-bottom:6px">ENERGY PATTERN</div>
-          <p>${rd.waveNote}</p>
-        </div>
-      `;
-    }
-
-    content.innerHTML = html;
-  } else {
-    content.innerHTML = `<div class="deep-guidance-text" style="color:${z.text};opacity:0.5">No data for this category.</div>`;
-  }
-
-  document.getElementById('deepSheet').classList.add('open');
-
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    const barEl = document.getElementById('deepScoreBar');
-    if (barEl && scoreObj) barEl.innerHTML = buildPips(scoreObj.fillPct, scoreObj.state, z.acc, 10, 'deep-score-pip');
-  }));
-}
-
-function closeDeepSheet(e) {
-  if (e.target===document.getElementById('deepSheet')) document.getElementById('deepSheet').classList.remove('open');
-}
-
-function closeDeepSheetBtn() {
-  document.getElementById('deepSheet').classList.remove('open');
-}
-
-/* ═══════════════════════════════════════════════
-   BOOT
-═══════════════════════════════════════════════ */
-const urlParams = new URLSearchParams(location.search);
-if (urlParams.has('n') && urlParams.has('m') && urlParams.has('y')) {
-  initClient(urlParams);
-} else {
-  initAdmin();
-}
 </script>
 </body>
 </html>
