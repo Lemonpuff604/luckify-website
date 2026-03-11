@@ -1,1134 +1,348 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lucky Window // Monthly Form</title>
-<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<title>Lucky Window Admin</title>
+
 <style>
-  :root {
-    --bg: #050505;
-    --surface: #0c0c0c;
-    --surface-2: #101010;
-    --border: #1c1c1c;
-    --muted: #333;
-    --dim: #555;
-    --text: #ccc;
-    --bright: #eee;
-    --accent: #c8a96e;
 
-    --pink-bg:   #4a1040; --pink-text:   #f9c8ee;
-    --orange-bg: #3d1a00; --orange-text: #ffd6a0;
-    --blue-bg:   #0a1e35; --blue-text:   #a8d4f5;
-    --yellow-bg: #2a2200; --yellow-text: #fff1a0;
-    --green-bg:  #0e1f10; --green-text:  #b8f0c0;
-    --purple-bg: #1a0a2e; --purple-text: #d4b8f5;
-    --red-bg:    #2e0a08; --red-text:    #ffc0bc;
-    --brown-bg:  #1a0f08; --brown-text:  #d4b898;
-  }
+body{
+font-family:Arial;
+background:#0c0c0c;
+color:white;
+padding:30px;
+}
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+h2{
+margin-top:0;
+}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Courier Prime', monospace;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0 0 60px;
-    position: relative;
-    overflow-x: hidden;
-  }
+.admin-panel{
+max-width:900px;
+margin:auto;
+}
 
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.6;
-  }
+textarea{
+width:100%;
+min-height:120px;
+background:#111;
+border:1px solid #333;
+color:white;
+padding:12px;
+font-family:monospace;
+}
 
-  header, .card, .zone-strip, #forecast-wrap {
-    width: 100%;
-    max-width: 780px;
-    position: relative;
-    z-index: 1;
-  }
+button{
+background:#222;
+color:white;
+border:1px solid #444;
+padding:10px 16px;
+cursor:pointer;
+}
 
-  header {
-    padding: 48px 24px 0;
-  }
+button:hover{
+background:#333;
+}
 
-  .sys-label {
-    font-size: 9px;
-    letter-spacing: 0.3em;
-    color: var(--dim);
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
+.admin-buttons{
+margin-top:10px;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
 
-  h1 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(42px, 8vw, 72px);
-    letter-spacing: 0.08em;
-    color: var(--bright);
-    line-height: 0.9;
-    margin-bottom: 4px;
-  }
+.admin-grid{
+margin-top:20px;
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:6px;
+}
 
-  h1 span { color: var(--accent); }
+.day{
+background:#181818;
+padding:14px;
+text-align:center;
+cursor:pointer;
+border:1px solid #333;
+}
 
-  .sub {
-    font-size: 10px;
-    letter-spacing: 0.25em;
-    color: var(--dim);
-    text-transform: uppercase;
-    margin-top: 10px;
-    padding-bottom: 28px;
-    border-bottom: 1px solid var(--border);
-  }
+.day:hover{
+background:#222;
+}
 
-  .card {
-    padding: 0 24px;
-    margin-top: 32px;
-  }
+.zone-Pink{background:#ff4fa3;}
+.zone-Orange{background:#ff8a3d;}
+.zone-Yellow{background:#ffd84a;color:black;}
+.zone-Green{background:#2ecc71;}
+.zone-Blue{background:#3a8bff;}
+.zone-Purple{background:#9b59b6;}
+.zone-Red{background:#ff3b3b;}
 
-  .section-label {
-    font-size: 9px;
-    letter-spacing: 0.3em;
-    color: var(--dim);
-    text-transform: uppercase;
-    margin-bottom: 14px;
-  }
+.link-output{
+margin-top:20px;
+background:#111;
+padding:14px;
+word-break:break-all;
+}
 
-  .grid-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  label {
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    color: var(--dim);
-    text-transform: uppercase;
-  }
-
-  input, select {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--bright);
-    font-family: 'Courier Prime', monospace;
-    font-size: 14px;
-    padding: 10px 12px;
-    outline: none;
-    transition: border-color 0.2s;
-    -webkit-appearance: none;
-    appearance: none;
-    width: 100%;
-  }
-
-  input:focus, select:focus, textarea:focus { border-color: var(--accent); }
-
-  .helper {
-    margin-top: 2px;
-    font-size: 10px;
-    color: var(--dim);
-    line-height: 1.5;
-  }
-
-  .divider {
-    height: 1px;
-    background: var(--border);
-    margin: 28px 0;
-  }
-
-  .btn-run {
-    width: 100%;
-    background: var(--accent);
-    color: #000;
-    border: none;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 20px;
-    letter-spacing: 0.15em;
-    padding: 16px;
-    cursor: pointer;
-    transition: opacity 0.15s, transform 0.1s;
-    margin-top: 8px;
-  }
-
-  .btn-run:hover { opacity: 0.88; }
-  .btn-run:active { transform: scale(0.99); }
-
-  #forecast-wrap {
-    padding: 0 24px;
-    margin-top: 32px;
-  }
-
-  .forecast-header {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    align-items: end;
-    margin-bottom: 14px;
-    flex-wrap: wrap;
-  }
-
-  .forecast-note {
-    font-size: 10px;
-    color: var(--dim);
-    letter-spacing: 0.08em;
-  }
-
-  .forecast-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-  }
-
-  .forecast-card {
-    border: 1px solid;
-    padding: 16px;
-    animation: fadeIn 0.25s ease;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .forecast-card.Pink   { background: var(--pink-bg);   border-color: var(--pink-text);   color: var(--pink-text); }
-  .forecast-card.Orange { background: var(--orange-bg); border-color: var(--orange-text); color: var(--orange-text); }
-  .forecast-card.Blue   { background: var(--blue-bg);   border-color: var(--blue-text);   color: var(--blue-text); }
-  .forecast-card.Yellow { background: var(--yellow-bg); border-color: var(--yellow-text); color: var(--yellow-text); }
-  .forecast-card.Green  { background: var(--green-bg);  border-color: var(--green-text);  color: var(--green-text); }
-  .forecast-card.Purple { background: var(--purple-bg); border-color: var(--purple-text); color: var(--purple-text); }
-  .forecast-card.Red    { background: var(--red-bg);    border-color: var(--red-text);    color: var(--red-text); }
-  .forecast-card.Brown  { background: var(--brown-bg);  border-color: var(--brown-text);  color: var(--brown-text); }
-
-  .f-top {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    align-items: start;
-    margin-bottom: 10px;
-  }
-
-  .f-date {
-    font-size: 11px;
-    opacity: 0.8;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
-  .f-zone {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 34px;
-    line-height: 0.9;
-    letter-spacing: 0.08em;
-  }
-
-  .f-band {
-    font-size: 9px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    opacity: 0.75;
-    margin-bottom: 14px;
-  }
-
-  .f-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    border-top: 1px solid currentColor;
-    padding-top: 12px;
-  }
-
-  .f-stat label {
-    font-size: 8px;
-    letter-spacing: 0.18em;
-    opacity: 0.65;
-    color: currentColor;
-    margin-bottom: 4px;
-  }
-
-  .f-stat .val {
-    font-size: 14px;
-    font-weight: 700;
-  }
-
-  .f-mantra {
-    margin-top: 12px;
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    opacity: 0.7;
-  }
-
-  .error-msg {
-    background: var(--red-bg);
-    border: 1px solid var(--red-text);
-    color: var(--red-text);
-    padding: 14px 16px;
-    font-size: 12px;
-    letter-spacing: 0.05em;
-  }
-
-  .zone-strip {
-    padding: 0 24px;
-    margin-top: 48px;
-  }
-
-  .strip-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 6px 10px;
-    margin-bottom: 2px;
-    font-size: 10px;
-    letter-spacing: 0.1em;
-  }
-
-  .strip-chip { width: 10px; height: 10px; flex-shrink: 0; }
-  .strip-name { font-weight: 700; width: 52px; }
-  .strip-range { opacity: 0.5; flex: 1; }
-  .strip-band { opacity: 0.35; font-size: 9px; letter-spacing: 0.15em; text-align: right; }
-
-  .loc-wrap { position: relative; }
-  .loc-badge {
-    font-size: 9px;
-    letter-spacing: 0.15em;
-    color: var(--accent);
-    margin-top: 4px;
-    min-height: 14px;
-  }
-
-  .loc-dropdown {
-    position: absolute;
-    top: 100%; left: 0; right: 0;
-    background: #111;
-    border: 1px solid var(--accent);
-    border-top: none;
-    z-index: 100;
-    max-height: 220px;
-    overflow-y: auto;
-  }
-  .loc-dropdown:empty { display: none; }
-
-  .loc-option {
-    padding: 9px 12px;
-    font-size: 12px;
-    cursor: pointer;
-    border-bottom: 1px solid var(--border);
-    color: var(--text);
-    letter-spacing: 0.05em;
-    transition: background 0.1s;
-  }
-  .loc-option:hover, .loc-option.active {
-    background: #1a1a1a;
-    color: var(--bright);
-  }
-  .loc-option .loc-tz {
-    font-size: 9px;
-    color: var(--dim);
-    float: right;
-    letter-spacing: 0.1em;
-  }
-
-  .time-row {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 8px;
-    align-items: end;
-  }
-
-  .ampm-toggle {
-    display: flex;
-    border: 1px solid var(--border);
-    overflow: hidden;
-    height: 42px;
-  }
-
-  .ampm-toggle button {
-    background: var(--surface);
-    border: none;
-    color: var(--dim);
-    font-family: 'Courier Prime', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    padding: 0 14px;
-    cursor: pointer;
-    transition: background 0.15s, color 0.15s;
-    height: 100%;
-  }
-
-  .ampm-toggle button.active {
-    background: var(--accent);
-    color: #000;
-  }
-
-  .ampm-toggle button:first-child { border-right: 1px solid var(--border); }
-
-  @media (max-width: 700px) {
-    .forecast-grid { grid-template-columns: 1fr; }
-  }
-
-  @media (max-width: 520px) {
-    .grid-2 { grid-template-columns: 1fr; }
-    .f-stats { grid-template-columns: 1fr 1fr; }
-    .time-row { grid-template-columns: 1fr; }
-    .ampm-toggle { width: 100%; }
-  }
 </style>
+
 </head>
+
 <body>
 
-<header>
-  <div class="sys-label">luckify.me // elemental alignment</div>
-  <h1>LUCKY<br><span>WINDOW</span></h1>
-  <div class="sub">Monthly Forecast Form &nbsp;·&nbsp; BaZi Engine v2</div>
-</header>
+<div class="admin-panel">
 
-<div class="card">
-  <div class="section-label">Birth Data</div>
-  <div class="grid-2">
-    <div class="field">
-      <label>Birthday</label>
-      <input type="date" id="birthDate" value="1963-08-30">
-    </div>
-    <div class="field">
-      <label>Birth Time</label>
-      <div class="time-row">
-        <input type="text" id="birthTime" placeholder="12:00" value="12:00" oninput="autoColonTime(this)" maxlength="5">
-        <div class="ampm-toggle">
-          <button id="btnAM" class="active" type="button" onclick="setAMPM('AM')">AM</button>
-          <button id="btnPM" type="button" onclick="setAMPM('PM')">PM</button>
-        </div>
-      </div>
-    </div>
-  </div>
+<h2>Lucky Window — Calendar Builder</h2>
 
-  <div class="grid-2" style="margin-top:12px">
-    <div class="field">
-      <label>Birth Place</label>
-      <div class="loc-wrap">
-        <input type="text" id="birthLocInput" placeholder="e.g. New York, Toronto…" autocomplete="off" oninput="locSearch(this,'birthLocDrop','birthLocBadge','birthGMT')" onkeydown="locKey(event,'birthLocDrop','birthLocBadge','birthGMT')">
-        <div class="loc-dropdown" id="birthLocDrop"></div>
-      </div>
-      <div class="loc-badge" id="birthLocBadge"></div>
-      <input type="hidden" id="birthGMT" value="-5">
-    </div>
+<label>Client Handle</label>
+<br>
+<input id="clientHandle" style="width:300px">
 
-    <div class="field">
-      <label>Current Location</label>
-      <div class="loc-wrap">
-        <input type="text" id="currentLocInput" placeholder="e.g. Vancouver, Las Vegas…" autocomplete="off" oninput="locSearch(this,'currentLocDrop','currentLocBadge','currentGMT')" onkeydown="locKey(event,'currentLocDrop','currentLocBadge','currentGMT')">
-        <div class="loc-dropdown" id="currentLocDrop"></div>
-      </div>
-      <div class="loc-badge" id="currentLocBadge"></div>
-      <input type="hidden" id="currentGMT" value="-7">
-    </div>
-  </div>
+<br><br>
 
-  <div class="divider"></div>
+<label>Month</label>
+<select id="selMonth"></select>
 
-  <div class="section-label">Forecast Settings</div>
-  <div class="grid-2">
-    <div class="field">
-      <label>Month Anchor Date</label>
-      <input type="date" id="forecastStartDate">
-    </div>
-    <div class="field">
-      <label>Range</label>
-      <input type="text" value="Selected calendar month" disabled>
-      <div class="helper">This form will calculate every day in the month of the selected date.</div>
-    </div>
-  </div>
+<label>Year</label>
+<select id="selYear"></select>
 
-  <button class="btn-run" onclick="run30DayForecast()">GENERATE MONTH FORECAST</button>
+<br><br>
+
+<h3>Paste Zone Output</h3>
+
+<textarea id="bulkZoneInput" placeholder="2026-03-01|Pink"></textarea>
+
+<div class="admin-buttons">
+
+<button onclick="importFullDateZones()">Import Full-Date Format</button>
+
+<button onclick="importCompactZones()">Import Day:Zone Format</button>
+
+<button onclick="clearSelectedMonth()">Clear Selected Month</button>
+
 </div>
 
-<div id="forecast-wrap"></div>
+<h3>Manual Override</h3>
 
-<div class="zone-strip">
-  <div class="section-label" style="margin-bottom:10px">Zone Reference</div>
-  <div id="zoneRef"></div>
+<div id="adminGrid" class="admin-grid"></div>
+
+<br>
+
+<button onclick="generateLink()">Generate Link</button>
+
+<div id="linkOutput" class="link-output"></div>
+
 </div>
 
 <script>
-const LUCKY_CFG = {
-  AM_HOUR: 10, PM_HOUR: 19, MINUTE: 0,
-  DEFAULT_BOUNDARY: "MIDNIGHT",
-  DEFAULT_PRESET: "CLASSIC",
-  NATAL_W: { year: 1, month: 2, day: 3, hour: 1 },
-  NATAL_YEAR_MULT: 1.5,
-  ENV_W_DAY: 0.7, ENV_W_YEAR: 0.3,
-  ENV_COUNTER_BOOST: 0.08,
-  SHAPE_TANH_K: 1.2,
-  PEAK_ENV_GAIN: 0.25,
-  STABLE_MAX: 0.30, SWINGY_MIN: 0.45,
-  ENV_MATRIX: [
-    [1,    0.35, 0,   -0.9, 0.85],
-    [0.85, 1,    0.35, 0.85,-0.9],
-    [0,    0.85, 1,    0.35, 0.85],
-    [-0.9, 0,    0.85, 1,    0.35],
-    [0.35,-0.9,  0,    0.85, 1]
-  ]
-};
 
-const EL_ORDER = ["Wood","Fire","Earth","Metal","Water"];
-const LUCKY_BASELINE = 72;
-
-const STEMS = [
-  {key:"Jia",  yin:false, element:"Wood"},
-  {key:"Yi",   yin:true,  element:"Wood"},
-  {key:"Bing", yin:false, element:"Fire"},
-  {key:"Ding", yin:true,  element:"Fire"},
-  {key:"Wu",   yin:false, element:"Earth"},
-  {key:"Ji",   yin:true,  element:"Earth"},
-  {key:"Geng", yin:false, element:"Metal"},
-  {key:"Xin",  yin:true,  element:"Metal"},
-  {key:"Ren",  yin:false, element:"Water"},
-  {key:"Gui",  yin:true,  element:"Water"}
+const ZONES=[
+"Pink",
+"Orange",
+"Yellow",
+"Green",
+"Blue",
+"Purple",
+"Red"
 ];
-const STEM_KEYS = STEMS.map(s => s.key);
 
-const BRANCHES = [
-  {key:"Zi",animal:"Rat"},{key:"Chou",animal:"Ox"},{key:"Yin",animal:"Tiger"},
-  {key:"Mao",animal:"Rabbit"},{key:"Chen",animal:"Dragon"},{key:"Si",animal:"Snake"},
-  {key:"Wu",animal:"Horse"},{key:"Wei",animal:"Goat"},{key:"Shen",animal:"Monkey"},
-  {key:"You",animal:"Rooster"},{key:"Xu",animal:"Dog"},{key:"Hai",animal:"Pig"}
-];
-const BRANCH_KEYS = BRANCHES.map(b => b.key);
+let adminDayZones={};
 
-const BRANCH_HIDDEN_STEMS = {
-  Rat:["Gui"], Ox:["Ji","Xin","Gui"], Tiger:["Jia","Bing","Wu"], Rabbit:["Yi"],
-  Dragon:["Wu","Yi","Gui"], Snake:["Bing","Geng","Wu"], Horse:["Ding","Ji"],
-  Goat:["Ji","Yi","Ding"], Monkey:["Geng","Ren","Wu"], Rooster:["Xin"],
-  Dog:["Wu","Xin","Ding"], Pig:["Ren","Jia"]
+const monthSelect=document.getElementById("selMonth");
+const yearSelect=document.getElementById("selYear");
+
+for(let m=0;m<12;m++){
+const opt=document.createElement("option");
+opt.value=m;
+opt.text=m+1;
+monthSelect.appendChild(opt);
+}
+
+for(let y=2024;y<2035;y++){
+const opt=document.createElement("option");
+opt.value=y;
+opt.text=y;
+yearSelect.appendChild(opt);
+}
+
+monthSelect.value=new Date().getMonth();
+yearSelect.value=new Date().getFullYear();
+
+function renderAdminGrid(){
+
+const grid=document.getElementById("adminGrid");
+grid.innerHTML="";
+
+const month=parseInt(monthSelect.value);
+const year=parseInt(yearSelect.value);
+
+const days=new Date(year,month+1,0).getDate();
+
+for(let d=1;d<=days;d++){
+
+const key=`${year}-${month}-${d}`;
+
+const div=document.createElement("div");
+div.className="day";
+
+if(adminDayZones[key]){
+
+div.classList.add(`zone-${adminDayZones[key]}`);
+
+div.innerHTML=d+"<br>"+adminDayZones[key];
+
+}else{
+
+div.innerHTML=d;
+
+}
+
+div.onclick=()=>{
+
+let current=adminDayZones[key];
+
+let idx=ZONES.indexOf(current);
+
+idx++;
+
+if(idx>=ZONES.length)idx=0;
+
+adminDayZones[key]=ZONES[idx];
+
+renderAdminGrid();
+
 };
 
-const HIDDEN_WEIGHTS_BY_COUNT = { 1:[1.00], 2:[0.70,0.30], 3:[0.70,0.20,0.10] };
-const SEASONAL_PRESETS = {
-  CLASSIC: { "旺":1.00,"相":0.85,"休":0.70,"囚":0.50,"死":0.30 },
-  TWELVE:  { "旺":1.00,"相":0.90,"休":0.75,"囚":0.55,"死":0.30 }
-};
-const GEN_CYCLE = ["Wood","Fire","Earth","Metal","Water"];
-const KE_CYCLE  = ["Wood","Earth","Water","Fire","Metal"];
-const TIGER_MONTH_STEM_BASE = {0:3, 1:5, 2:7, 3:9, 4:1};
+grid.appendChild(div);
 
-function coerceDate(v) {
-  if (v instanceof Date) return new Date(v.getTime());
-  const d = new Date(v);
-  if (!isNaN(d)) return d;
-  throw new Error("Invalid date: " + v);
-}
-function jdFromDate(date) { return date.getTime() / 86400000 + 2440587.5; }
-function norm360(x) { x = x % 360; return x < 0 ? x + 360 : x; }
-function localToUTC(localDate, tzHours) { return new Date(+coerceDate(localDate) - Number(tzHours) * 3600000); }
-function solarLongitudeUTC(utcDate) {
-  const JD = jdFromDate(utcDate);
-  const T  = (JD - 2451545.0) / 36525.0;
-  const L0 = norm360(280.46646 + 36000.76983*T + 0.0003032*T*T);
-  const M  = norm360(357.52911 + 35999.05029*T - 0.0001537*T*T);
-  const Mr = M * Math.PI / 180;
-  const C  = (1.914602 - 0.004817*T - 0.000014*T*T)*Math.sin(Mr)
-           + (0.019993 - 0.000101*T)*Math.sin(2*Mr)
-           + 0.000289*Math.sin(3*Mr);
-  const trueLong = L0 + C;
-  const omega = 125.04 - 1934.136*T;
-  return norm360(trueLong - 0.00569 - 0.00478*Math.sin(omega*Math.PI/180));
-}
-function solarLon(localDate, tzHours) { return solarLongitudeUTC(localToUTC(localDate, Number(tzHours))); }
-function pillarFromIdx(stemIdx, branchIdx) {
-  const stemKey = STEM_KEYS[stemIdx - 1];
-  const branchKey = BRANCH_KEYS[branchIdx - 1];
-  const stem = STEMS.find(s => s.key === stemKey) || {};
-  return { stemIdx, branchIdx, stemKey, stemElement: stem.element,
-           branchKey, branchAnimal: BRANCHES.find(b=>b.key===branchKey)?.animal };
-}
-function adjustedYearForLichun(d, tz) {
-  const y = d.getFullYear();
-  const lon = solarLon(d, tz);
-  const m = d.getMonth();
-  const after = (m > 1) || (m===1 && d.getDate()>=4) || (lon>=315||lon<45);
-  return after ? y : y-1;
-}
-function stemFromYear(y)   { return 1 + ((y-4)%10+10)%10; }
-function branchFromYear(y) { return 1 + ((y-4)%12+12)%12; }
-function monthBranchFromLon(lon) {
-  const l = ((+lon%360)+360)%360;
-  const k = Math.floor(((l-315+360)%360)/30);
-  return (k%12)+1;
-}
-function monthStemFromYearStem(ys, mb) {
-  const group = Math.floor((ys-1)/2);
-  const base = TIGER_MONTH_STEM_BASE[group];
-  return 1 + ((base-1+(mb-1))%10);
-}
-function hourBranchFromTime(d) {
-  const h = d.getHours() + d.getMinutes()/60;
-  const slot = Math.floor(((h+1)%24)/2);
-  return slot+1;
-}
-function hourStemFromDayStem(ds, hb) {
-  const bases = [1,3,5,7,9];
-  const g = Math.floor((ds-1)/2);
-  return 1+((bases[g]-1+(hb-1))%10);
-}
-function sexagenaryDay(localDT, tzHours, boundary) {
-  let y=localDT.getFullYear(), m=localDT.getMonth(), d=localDT.getDate();
-  if (String(boundary||"MIDNIGHT").toUpperCase()==="ZI") {
-    const hrs = localDT.getHours()+localDT.getMinutes()/60;
-    if (hrs>=23) {
-      const next=new Date(localDT.getTime()+86400000);
-      y=next.getFullYear(); m=next.getMonth(); d=next.getDate();
-    }
-  }
-  const localMid = new Date(y,m,d,0,0,0);
-  const utcMid   = localToUTC(localMid, tzHours);
-  const JDN      = Math.floor(jdFromDate(utcMid)+0.5);
-  return { stemNum: 1+((JDN+9)%10+10)%10, branchNum: 1+((JDN+1)%12+12)%12 };
-}
-function dayStemObj(localDT, tzHours, boundary) {
-  const n = sexagenaryDay(localDT, tzHours, boundary);
-  const s = STEMS[n.stemNum-1];
-  return { key:s.key, element:s.element, yin:s.yin };
-}
-function dayBranchObj(localDT, tzHours, boundary) {
-  const n = sexagenaryDay(localDT, tzHours, boundary);
-  const b = BRANCHES[n.branchNum-1];
-  return { key:b.key, animal:b.animal };
-}
-function stemKeyToElement(key) { return STEMS.find(s=>s.key===key)?.element||""; }
-function seasonElementFromLon(lon) {
-  const l = ((+lon%360)+360)%360;
-  if (l>=315||l<45)  return "Wood";
-  if (l>=45&&l<135)  return "Fire";
-  if (l>=135&&l<225) return "Metal";
-  return "Water";
-}
-function statusForElement(el, seasonEl) {
-  if (el===seasonEl) return "旺";
-  const si = GEN_CYCLE.indexOf(seasonEl);
-  if (el===GEN_CYCLE[(si+1)%5]) return "相";
-  if (el===GEN_CYCLE[(si+4)%5]) return "休";
-  const ki = KE_CYCLE.indexOf(seasonEl);
-  if (el===KE_CYCLE[(ki+1)%5]) return "囚";
-  return "死";
-}
-function seasonalMult(el, sunLon, preset) {
-  const table = SEASONAL_PRESETS[(preset||"CLASSIC").toUpperCase()]||SEASONAL_PRESETS.CLASSIC;
-  return table[statusForElement(el, seasonElementFromLon(sunLon))]||1.0;
-}
-function accumulatePillar(totals, pillar, weight, sunLon, preset) {
-  totals[pillar.stemElement] += weight * seasonalMult(pillar.stemElement, sunLon, preset);
-  const hidden  = BRANCH_HIDDEN_STEMS[pillar.branchAnimal]||[];
-  const splits  = HIDDEN_WEIGHTS_BY_COUNT[hidden.length]||[];
-  for (let i=0;i<hidden.length;i++) {
-    const el = stemKeyToElement(hidden[i]);
-    totals[el] += (splits[i]||0) * weight * seasonalMult(el, sunLon, preset);
-  }
-}
-function fullPillars(localDT, tzHours, boundary) {
-  const tz = Number(tzHours);
-  const lon = solarLon(localDT, tz);
-  const adjY = adjustedYearForLichun(localDT, tz);
-  const yStem = stemFromYear(adjY), yBranch = branchFromYear(adjY);
-  const year = pillarFromIdx(yStem, yBranch);
-  const mBranch = monthBranchFromLon(lon);
-  const mStem   = monthStemFromYearStem(yStem, mBranch);
-  const month = pillarFromIdx(mStem, mBranch);
-  const dStemO = dayStemObj(localDT, tz, boundary);
-  const dBranchO = dayBranchObj(localDT, tz, boundary);
-  const dStem = STEM_KEYS.indexOf(dStemO.key)+1;
-  const dBranch = BRANCH_KEYS.indexOf(dBranchO.key)+1;
-  const day = pillarFromIdx(dStem, dBranch);
-  const hBranch = hourBranchFromTime(localDT);
-  const hStem = hourStemFromDayStem(dStem, hBranch);
-  const hour = pillarFromIdx(hStem, hBranch);
-  return { year, month, day, hour, sunLon: lon };
-}
-function fullChartElementPct(localDT, tzHours, boundary, preset, wts) {
-  const P = fullPillars(localDT, tzHours, boundary);
-  if (!P) return null;
-  const W = Object.assign({year:1,month:2,day:3,hour:1}, wts||{});
-  const totals = {Wood:0,Fire:0,Earth:0,Metal:0,Water:0};
-  accumulatePillar(totals, P.year,  W.year,  P.sunLon, preset);
-  accumulatePillar(totals, P.month, W.month, P.sunLon, preset);
-  accumulatePillar(totals, P.day,   W.day,   P.sunLon, preset);
-  accumulatePillar(totals, P.hour,  W.hour,  P.sunLon, preset);
-  const sum = Object.values(totals).reduce((a,b)=>a+b,0)||1;
-  const out={};
-  for (const el of EL_ORDER) out[el]=Math.round((totals[el]/sum)*100);
-  return out;
-}
-function dayElementPct(localDT, tzHours, boundary, preset) {
-  const s = dayStemObj(localDT, tzHours, boundary);
-  const b = dayBranchObj(localDT, tzHours, boundary);
-  if (!s||!b) return null;
-  const lon = solarLon(localDT, tzHours);
-  const totals = {Wood:0,Fire:0,Earth:0,Metal:0,Water:0};
-  totals[s.element] += 1 * seasonalMult(s.element, lon, preset);
-  const hidden  = BRANCH_HIDDEN_STEMS[b.animal]||[];
-  const weights = HIDDEN_WEIGHTS_BY_COUNT[hidden.length]||[];
-  for (let i=0;i<hidden.length;i++) {
-    const el=stemKeyToElement(hidden[i]);
-    totals[el] += (weights[i]||0) * seasonalMult(el, lon, preset);
-  }
-  const sum = Object.values(totals).reduce((a,b)=>a+b,0)||1;
-  const out={};
-  for (const el of EL_ORDER) out[el]=Math.round((totals[el]/sum)*100);
-  return out;
-}
-function toVec01(pct) { return EL_ORDER.map(el=>(pct&&pct[el]!=null?Number(pct[el]):0)/100); }
-function dotRel(from, to, M) {
-  const left=new Array(5).fill(0);
-  for (let i=0;i<5;i++){let s=0;for(let j=0;j<5;j++) s+=from[j]*M[j][i]; left[i]=s;}
-  let out=0; for(let i=0;i<5;i++) out+=left[i]*to[i]; return out;
-}
-function shape(x) { return Math.tanh(LUCKY_CFG.SHAPE_TANH_K*x); }
-function entropy(v) { const eps=1e-9; let H=0; for(let i=0;i<5;i++){const p=Math.max(eps,v[i]); H-=p*Math.log(p);} return H; }
-function peakiness(v) { return (Math.log(5)-entropy(v))/Math.log(5); }
-function controllerOf(el) { return {Wood:"Metal",Fire:"Water",Earth:"Wood",Metal:"Fire",Water:"Earth"}[el]||null; }
-function dominantEl(pct) {
-  let best="Wood",bestV=-1;
-  for(const el of EL_ORDER){const v=Number(pct[el]||0); if(v>bestV){bestV=v;best=el;}}
-  return best;
-}
-function personEnvScore(birthLocalDT, birthGMT, envLocalDT, envGMT, opts) {
-  opts=opts||{};
-  const boundary = String(opts.boundary||LUCKY_CFG.DEFAULT_BOUNDARY).toUpperCase();
-  const preset   = String(opts.preset||LUCKY_CFG.DEFAULT_PRESET).toUpperCase();
-  const W = Object.assign({}, LUCKY_CFG.NATAL_W);
-  W.year *= LUCKY_CFG.NATAL_YEAR_MULT;
-  const personPct  = fullChartElementPct(birthLocalDT, Number(birthGMT), boundary, preset, W);
-  const envDayPct  = dayElementPct(envLocalDT, Number(envGMT), boundary, preset);
-  const envYearPct = fullChartElementPct(envLocalDT, Number(envGMT), boundary, preset, {year:1,month:0,day:0,hour:0});
-  if (!personPct||!envDayPct||!envYearPct) return null;
-  const ed = toVec01(envDayPct);
-  const ey = toVec01(envYearPct);
-  const P = fullPillars(envLocalDT, Number(envGMT), boundary);
-  const yearStemEl = P?.year?.stemElement||"Earth";
-  const counterEl  = controllerOf(yearStemEl);
-  let eblend = new Array(5);
-  for(let i=0;i<5;i++) eblend[i] = LUCKY_CFG.ENV_W_DAY*ed[i] + LUCKY_CFG.ENV_W_YEAR*ey[i];
-  if (counterEl) {
-    const idx = EL_ORDER.indexOf(counterEl);
-    if (idx>=0) eblend[idx] += LUCKY_CFG.ENV_COUNTER_BOOST;
-  }
-  const sumE = eblend.reduce((a,b)=>a+Math.max(0,b),0)||1;
-  for(let i=0;i<5;i++) eblend[i]=Math.max(0,eblend[i])/sumE;
-  const a = toVec01(personPct);
-  const e = eblend;
-  const env_peak = peakiness(e);
-  const raw = shape(dotRel(e,a,LUCKY_CFG.ENV_MATRIX)*(1+LUCKY_CFG.PEAK_ENV_GAIN*env_peak));
-  const total = Math.round((raw*0.5+0.5)*100);
-  const edge50 = total-50;
-  const stability = env_peak<=LUCKY_CFG.STABLE_MAX?"Stable":env_peak>=LUCKY_CFG.SWINGY_MIN?"Swingy":"Normal";
-  return { total, edge50, stability, env_peak, yearStemEl,
-           dom_person: dominantEl(personPct),
-           dom_env: dominantEl({Wood:Math.round(e[0]*100),Fire:Math.round(e[1]*100),Earth:Math.round(e[2]*100),Metal:Math.round(e[3]*100),Water:Math.round(e[4]*100)}) };
-}
-function colorZoneFromDelta(d) {
-  if (d>=14)  return "Pink";
-  if (d>=7)   return "Orange";
-  if (d>=4)   return "Blue";
-  if (d>=-2)  return "Yellow";
-  if (d>=-4)  return "Green";
-  if (d>=-9)  return "Purple";
-  if (d>=-11) return "Green";
-  if (d>=-15) return "Blue";
-  if (d>=-29) return "Red";
-  return "Brown";
-}
-function bandFromDelta(d) {
-  if (d>=14)  return "Peak";
-  if (d>=7)   return "Strong";
-  if (d>=4)   return "Favorable";
-  if (d>=-2)  return "Baseline";
-  if (d>=-4)  return "Mild friction";
-  if (d>=-9)  return "Challenged";
-  if (d>=-11) return "Recovery";
-  if (d>=-15) return "Recovery";
-  if (d>=-29) return "Adverse";
-  return "Floor";
-}
-const ZONE_MANTRAS = {
-  Pink:   "Full expression",
-  Orange: "Make your move",
-  Blue:   "Think it through",
-  Yellow: "Show up present",
-  Green:  "Build the habit",
-  Purple: "Go inward",
-  Red:    "Careful aggression",
-  Brown:  "Rest and reset"
-};
-function normTime(t, def) {
-  if (!t||t==="") return def;
-  if (typeof t==="number") {
-    let frac = t>=1 ? t-Math.floor(t) : t;
-    const totalMin = Math.round(frac*1440);
-    const hh=Math.floor(totalMin/60), mm=totalMin%60;
-    return String(hh).padStart(2,"0")+":"+String(mm).padStart(2,"0");
-  }
-  const s=String(t).trim();
-  const parts=s.split(":");
-  if (parts.length>=2) {
-    return String(parseInt(parts[0],10)).padStart(2,"0")+":"+String(parseInt(parts[1],10)).padStart(2,"0");
-  }
-  return def;
-}
-function buildLocalDT(dateStr, hhmm) {
-  const [hh,mm] = hhmm.split(":").map(Number);
-  const d = coerceDate(dateStr);
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate(), hh, mm, 0);
-}
-function parseDateInput(val) {
-  const parts = val.split("-");
-  if (parts.length===3) return new Date(+parts[0], +parts[1]-1, +parts[2], 12, 0, 0);
-  return coerceDate(val);
-}
-function calcZone(birthDateStr, birthTimeStr, birthGMT, eventDateStr, eventGMT) {
-  const bt = normTime(birthTimeStr, "12:00");
-  const birthLocalDT = buildLocalDT(parseDateInput(birthDateStr), bt);
-  const envLocalDT = buildLocalDT(parseDateInput(eventDateStr), "10:00");
-  const r = personEnvScore(birthLocalDT, Number(birthGMT), envLocalDT, Number(eventGMT), {
-    boundary: "ZI",
-    preset: "CLASSIC"
-  });
-  if (!r) throw new Error("Calculation failed — check inputs.");
-  const delta = r.total - LUCKY_BASELINE;
-  const zone  = colorZoneFromDelta(delta);
-  const band  = bandFromDelta(delta);
-  return { zone, band, delta, total: r.total, edge50: r.edge50, stability: r.stability,
-           domPerson: r.dom_person, domEnv: r.dom_env, yearStemEl: r.yearStemEl };
 }
 
-let _ampm = "AM";
-function setAMPM(val) {
-  _ampm = val;
-  document.getElementById("btnAM").classList.toggle("active", val==="AM");
-  document.getElementById("btnPM").classList.toggle("active", val==="PM");
-}
-function autoColonTime(input) {
-  let v = input.value.replace(/[^0-9]/g, "");
-  if (v.length >= 3) v = v.slice(0,2) + ":" + v.slice(2,4);
-  input.value = v;
-}
-function get24hBirthTime() {
-  const raw = document.getElementById("birthTime").value.trim() || "12:00";
-  const parts = raw.split(":");
-  let hh = parseInt(parts[0]||"12", 10);
-  const mm = parseInt(parts[1]||"0", 10);
-  if (_ampm === "AM") {
-    if (hh === 12) hh = 0;
-  } else {
-    if (hh !== 12) hh += 12;
-  }
-  return String(hh).padStart(2,"0") + ":" + String(mm).padStart(2,"0");
-}
-(function initDates() {
-  const today = new Date();
-  const y = today.getFullYear();
-  const m = String(today.getMonth()+1).padStart(2,"0");
-  const d = String(today.getDate()).padStart(2,"0");
-  document.getElementById("forecastStartDate").value = `${y}-${m}-${d}`;
-})();
-(function renderZoneReference() {
-  const zones = [
-    {name:"Pink",   range:"delta ≥ 14",     band:"Peak",          bg:"#4a1040",text:"#f9c8ee"},
-    {name:"Orange", range:"delta 7 → 13",    band:"Strong",        bg:"#3d1a00",text:"#ffd6a0"},
-    {name:"Blue",   range:"delta 4 → 6",     band:"Favorable",     bg:"#0a1e35",text:"#a8d4f5"},
-    {name:"Yellow", range:"delta -2 → 3",    band:"Baseline",      bg:"#2a2200",text:"#fff1a0"},
-    {name:"Green",  range:"delta -4 → -3",   band:"Mild friction", bg:"#0e1f10",text:"#b8f0c0"},
-    {name:"Purple", range:"delta -9 → -5",   band:"Challenged",    bg:"#1a0a2e",text:"#d4b8f5"},
-    {name:"Green",  range:"delta -11 → -10", band:"Recovery",      bg:"#0e1f10",text:"#b8f0c0"},
-    {name:"Blue",   range:"delta -15 → -12", band:"Recovery",      bg:"#0a1e35",text:"#a8d4f5"},
-    {name:"Red",    range:"delta -29 → -16", band:"Adverse",       bg:"#2e0a08",text:"#ffc0bc"},
-    {name:"Brown",  range:"delta < -29",     band:"Floor",         bg:"#1a0f08",text:"#d4b898"},
-  ];
-  const container = document.getElementById("zoneRef");
-  container.innerHTML = zones.map(z => `
-    <div class="strip-row" style="background:${z.bg};color:${z.text}">
-      <div class="strip-chip" style="background:${z.text};opacity:0.7"></div>
-      <span class="strip-name">${z.name}</span>
-      <span class="strip-range">${z.range}</span>
-      <span class="strip-band">${z.band}</span>
-    </div>
-  `).join('');
-})();
-
-const GEONAMES_PROXY = "https://geonames-proxy.luckifyme.workers.dev";
-function getOffsetForTZ(tzid, forDate) {
-  try {
-    const d = forDate || new Date();
-    const formatter = new Intl.DateTimeFormat("en-US", {
-      timeZone: tzid,
-      timeZoneName: "shortOffset"
-    });
-    const parts = formatter.formatToParts(d);
-    const tzPart = parts.find(p => p.type === "timeZoneName");
-    if (!tzPart) return 0;
-    const raw = tzPart.value;
-    if (raw === "GMT") return 0;
-    const m = raw.match(/GMT([+-])(\d+)(?::(\d+))?/);
-    if (!m) return 0;
-    const sign = m[1]==="+" ? 1 : -1;
-    const h = parseInt(m[2],10);
-    const min = m[3] ? parseInt(m[3],10)/60 : 0;
-    return sign * (h + min);
-  } catch(e) { return 0; }
-}
-function getOffsetForDateStr(tzid, dateStr) {
-  if (!tzid) return null;
-  try {
-    const d = new Date(dateStr + "T12:00:00");
-    return getOffsetForTZ(tzid, d);
-  } catch(e) { return null; }
-}
-const _selectedTZ = { birthGMT: null, currentGMT: null };
-function debounce(fn, ms) {
-  let t;
-  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
-}
-async function searchGeoNames(query) {
-  const cleanQuery = query.split(",")[0].trim();
-  const url = `${GEONAMES_PROXY}?q=${encodeURIComponent(cleanQuery)}&maxRows=8`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error("Search failed");
-  const data = await res.json();
-  if (data.status) throw new Error(data.status.message);
-  const cities = data.geonames || [];
-  const results = await Promise.all(cities.map(async c => {
-    try {
-      const tzRes = await fetch(`${GEONAMES_PROXY}?lat=${c.lat}&lng=${c.lng}`);
-      const tzData = await tzRes.json();
-      const tzId = tzData.timezoneId;
-      if (!tzId) return null;
-      return { city: c.name, country: c.countryCode, admin: c.adminName1 || "", tz: tzId };
-    } catch(e) { return null; }
-  }));
-  return results.filter(Boolean);
-}
-function renderDrop(results, inputEl, dropId, badgeId, hiddenId) {
-  const drop = document.getElementById(dropId);
-  drop.innerHTML = "";
-  if (!results.length) {
-    drop.innerHTML = `<div class="loc-option" style="opacity:0.4;cursor:default">No results</div>`;
-    return;
-  }
-  results.forEach((c, i) => {
-    const div = document.createElement("div");
-    div.className = "loc-option" + (i===0 ? " active" : "");
-    const offset = getOffsetForTZ(c.tz, new Date());
-    const sign = offset >= 0 ? "+" : "";
-    const admin = c.admin ? `<span style="opacity:0.35;font-size:9px"> · ${c.admin}</span>` : "";
-    div.innerHTML = `${c.city}${admin} <span style="opacity:0.45;font-size:10px">${c.country}</span><span class="loc-tz">UTC${sign}${offset}</span>`;
-    div.addEventListener("mousedown", () => selectCity(c, inputEl, dropId, badgeId, hiddenId));
-    drop.appendChild(div);
-  });
-}
-const _searchState = {};
-function locSearch(inputEl, dropId, badgeId, hiddenId) {
-  const q = inputEl.value.trim();
-  const drop = document.getElementById(dropId);
-  _selectedTZ[hiddenId] = null;
-  if (q.length < 2) { drop.innerHTML = ""; return; }
-  drop.innerHTML = `<div class="loc-option" style="opacity:0.4;cursor:default;letter-spacing:0.15em;font-size:10px">searching…</div>`;
-  if (!_searchState[hiddenId]) {
-    _searchState[hiddenId] = debounce(async (query, iEl, dId, bId, hId) => {
-      try {
-        const results = await searchGeoNames(query);
-        if (iEl.value.trim() === query) renderDrop(results, iEl, dId, bId, hId);
-      } catch(err) {
-        document.getElementById(dId).innerHTML = `<div class="loc-option" style="opacity:0.4;cursor:default;font-size:10px">⚠ ${err.message}</div>`;
-      }
-    }, 320);
-  }
-  _searchState[hiddenId](q, inputEl, dropId, badgeId, hiddenId);
-}
-function selectCity(cityObj, inputEl, dropId, badgeId, hiddenId) {
-  const offset = getOffsetForTZ(cityObj.tz, new Date());
-  const sign = offset >= 0 ? "+" : "";
-  const label = cityObj.admin ? `${cityObj.city}, ${cityObj.admin}, ${cityObj.country}` : `${cityObj.city}, ${cityObj.country}`;
-  inputEl.value = label;
-  document.getElementById(hiddenId).value = offset;
-  document.getElementById(badgeId).textContent = `UTC${sign}${offset}  ·  ${cityObj.tz}`;
-  document.getElementById(dropId).innerHTML = "";
-  _selectedTZ[hiddenId] = cityObj.tz;
-}
-function locKey(e, dropId, badgeId, hiddenId) {
-  const drop = document.getElementById(dropId);
-  const opts = drop.querySelectorAll(".loc-option:not([style*='cursor:default'])");
-  if (!opts.length) return;
-  const active = drop.querySelector(".loc-option.active");
-  let idx = Array.from(opts).indexOf(active);
-  if (e.key === "ArrowDown") {
-    e.preventDefault();
-    if (active) active.classList.remove("active");
-    opts[Math.min(idx+1, opts.length-1)].classList.add("active");
-  } else if (e.key === "ArrowUp") {
-    e.preventDefault();
-    if (active) active.classList.remove("active");
-    opts[Math.max(idx-1, 0)].classList.add("active");
-  } else if (e.key === "Enter" || e.key === "Tab") {
-    const sel = drop.querySelector(".loc-option.active");
-    if (sel) {
-      e.preventDefault();
-      sel.dispatchEvent(new MouseEvent("mousedown"));
-    }
-  } else if (e.key === "Escape") {
-    drop.innerHTML = "";
-  }
 }
 
-document.addEventListener("click", e => {
-  if (!e.target.closest(".loc-wrap")) {
-    document.querySelectorAll(".loc-dropdown").forEach(d => d.innerHTML="");
-  }
+function importFullDateZones(){
+
+const raw=document.getElementById("bulkZoneInput").value.trim();
+
+const lines=raw.split("\n");
+
+let imported=0;
+
+lines.forEach(line=>{
+
+const parts=line.split("|");
+
+if(parts.length!==2)return;
+
+const date=parts[0].trim();
+
+const zone=parts[1].trim();
+
+const m=date.match(/^(\d+)-(\d+)-(\d+)$/);
+
+if(!m)return;
+
+const y=parseInt(m[1]);
+const mo=parseInt(m[2])-1;
+const d=parseInt(m[3]);
+
+adminDayZones[`${y}-${mo}-${d}`]=zone;
+
+imported++;
+
 });
 
-function formatDisplayDate(dateStr) {
-  const d = new Date(dateStr + "T12:00:00");
-  return d.toLocaleDateString(undefined, {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-    year: "numeric"
-  });
-}
-function generateMonthDates(anchorDateStr) {
-  const out = [];
-  const anchor = new Date(anchorDateStr + "T12:00:00");
-  const year = anchor.getFullYear();
-  const month = anchor.getMonth();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
+renderAdminGrid();
 
-  for (let dayNum = 1; dayNum <= daysInMonth; dayNum++) {
-    const d = new Date(year, month, dayNum, 12, 0, 0);
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    out.push(`${y}-${m}-${day}`);
-  }
-  return out;
-}
-function renderForecast(results, startDateStr, currentLocationLabel) {
-  const wrap = document.getElementById("forecast-wrap");
-  const cards = results.map(r => {
-    const edgeStr = (r.edge50 >= 0 ? "+" : "") + r.edge50;
-    return `
-      <div class="forecast-card ${r.zone}">
-        <div class="f-top">
-          <div>
-            <div class="f-date">${formatDisplayDate(r.date)}</div>
-            <div class="f-zone">${r.zone}</div>
-          </div>
-          <div style="text-align:right;opacity:0.75;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;">Day ${r.index + 1}</div>
-        </div>
-        <div class="f-band">${r.band}</div>
-        <div class="f-stats">
-          <div class="f-stat"><label>Score</label><div class="val">${r.total}</div></div>
-          <div class="f-stat"><label>Delta</label><div class="val">${r.delta >= 0 ? "+" : ""}${r.delta}</div></div>
-          <div class="f-stat"><label>Edge</label><div class="val">${edgeStr}</div></div>
-          <div class="f-stat"><label>Stability</label><div class="val" style="font-size:12px">${r.stability}</div></div>
-          <div class="f-stat"><label>Person El</label><div class="val" style="font-size:12px">${r.domPerson}</div></div>
-          <div class="f-stat"><label>Env El</label><div class="val" style="font-size:12px">${r.domEnv}</div></div>
-        </div>
-        <div class="f-mantra">${ZONE_MANTRAS[r.zone] || ""}</div>
-      </div>
-    `;
-  }).join('');
+alert("Imported "+imported+" days");
 
-  wrap.innerHTML = `
-    <div class="forecast-header">
-      <div>
-        <div class="section-label" style="margin-bottom:6px">Monthly Forecast</div>
-        <div class="forecast-note">Anchor date: ${startDateStr} · Location: ${currentLocationLabel || 'Not set'}</div>
-      </div>
-      <div class="forecast-note">One calculated zone per day for the selected calendar month</div>
-    </div>
-    <div class="forecast-grid">${cards}</div>
-    <div class="export-wrap">
-      <div class="export-title">Paste into link generator</div>
-      <textarea id="exportText" class="export-text" readonly>${buildExportText(results)}</textarea>
-      <div class="export-actions">
-        <button class="btn-secondary" onclick="copyExportText()">COPY FULL-DATE FORMAT</button>
-        <button class="btn-secondary" onclick="copyCompactExportText()">COPY MONTH FORMAT</button>
-      </div>
-    </div>
-  `;
-}
-function buildExportText(results) {
-  return results.map(r => `${r.date}|${r.zone}`).join("\n");
 }
 
-function buildCompactExportText(results) {
-  return results.map(r => {
-    const day = parseInt(r.date.split("-")[2], 10);
-    return `${day}:${r.zone}`;
-  }).join(",");
+function importCompactZones(){
+
+const raw=document.getElementById("bulkZoneInput").value.trim();
+
+const month=parseInt(monthSelect.value);
+const year=parseInt(yearSelect.value);
+
+let imported=0;
+
+raw.split(",").forEach(pair=>{
+
+const p=pair.split(":");
+
+if(p.length!==2)return;
+
+const d=parseInt(p[0]);
+const zone=p[1].trim();
+
+adminDayZones[`${year}-${month}-${d}`]=zone;
+
+imported++;
+
+});
+
+renderAdminGrid();
+
+alert("Imported "+imported+" days");
+
 }
 
-async function copyExportText() {
-  const el = document.getElementById("exportText");
-  if (!el) return;
-  await navigator.clipboard.writeText(el.value);
+function clearSelectedMonth(){
+
+const month=parseInt(monthSelect.value);
+const year=parseInt(yearSelect.value);
+
+Object.keys(adminDayZones).forEach(key=>{
+
+const parts=key.split("-");
+
+if(parseInt(parts[0])===year && parseInt(parts[1])===month){
+
+delete adminDayZones[key];
+
 }
 
-async function copyCompactExportText() {
-  const text = window.__lastForecastResults ? buildCompactExportText(window.__lastForecastResults) : "";
-  if (!text) return;
-  await navigator.clipboard.writeText(text);
+});
+
+renderAdminGrid();
+
 }
 
-function run30DayForecast() {
-  const wrap = document.getElementById("forecast-wrap");
-  try {
-    const birthDateStr = document.getElementById("birthDate").value;
-    const birthTime = get24hBirthTime();
-    const startDateStr = document.getElementById("forecastStartDate").value;
-    const currentLocationLabel = document.getElementById("currentLocInput").value.trim();
+function generateLink(){
 
-    if (!birthDateStr) throw new Error("Please enter a birthday.");
-    if (!startDateStr) throw new Error("Please enter a month anchor date.");
-    if (!document.getElementById("birthLocInput").value.trim()) throw new Error("Please choose a birth place.");
-    if (!currentLocationLabel) throw new Error("Please choose a current location.");
+const handle=document.getElementById("clientHandle").value;
 
-    const dates = generateMonthDates(startDateStr);
-    const birthGMTBase = Number(document.getElementById("birthGMT").value);
-    const currentGMTBase = Number(document.getElementById("currentGMT").value);
+const month=parseInt(monthSelect.value);
+const year=parseInt(yearSelect.value);
 
-    const results = dates.map((date, index) => {
-      const birthGMT = _selectedTZ.birthGMT
-        ? (getOffsetForDateStr(_selectedTZ.birthGMT, birthDateStr) ?? birthGMTBase)
-        : birthGMTBase;
-      const currentGMT = _selectedTZ.currentGMT
-        ? (getOffsetForDateStr(_selectedTZ.currentGMT, date) ?? currentGMTBase)
-        : currentGMTBase;
+let entries=[];
 
-      const r = calcZone(birthDateStr, birthTime, birthGMT, date, currentGMT);
-      return { ...r, date, index };
-    });
+Object.entries(adminDayZones).forEach(([k,v])=>{
 
-    window.__lastForecastResults = results;
-    renderForecast(results, startDateStr, currentLocationLabel);
-  } catch (e) {
-    wrap.innerHTML = `<div class="error-msg">⚠ ${e.message}</div>`;
-  }
+const parts=k.split("-");
+
+if(parseInt(parts[0])===year && parseInt(parts[1])===month){
+
+entries.push(parts[2]+":"+v);
+
 }
+
+});
+
+const zoneString=entries.join(",");
+
+const link=window.location.origin+window.location.pathname+
+`?client=${handle}&month=${month}&year=${year}&zones=${encodeURIComponent(zoneString)}`;
+
+document.getElementById("linkOutput").innerText=link;
+
+}
+
+renderAdminGrid();
+
 </script>
+
 </body>
 </html>
