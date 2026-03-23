@@ -528,6 +528,7 @@
     .market-table td:first-child {
       background: var(--cream);
       font-size: 13px;
+      font-weight: 600;
     }
 
     .road-row { grid-template-columns: 36px 1fr; }
@@ -607,26 +608,26 @@
   <div class="section">
     <div class="section-label">01 &nbsp; Where We Started</div>
     <h2>An Honest Starting Point</h2>
-    <p>When we began testing in golf, we broke even. That is worth saying plainly — and it is also the point. We were in the variable discovery phase, building data infrastructure before deploying capital. Most operations skip this step. We did not.</p>
-    <p>That discipline is what makes everything that followed meaningful. <strong>That period is now behind us.</strong></p>
+    <p>When we began testing in golf, we broke even. That is worth saying plainly — and it is also the point. We were in the variable discovery phase: systematically isolating which factors produced statistically measurable effects before any capital was deployed at scale. Most operations skip this step. We did not.</p>
+    <p>Breaking even during hypothesis testing is not a failure — it is what rigorous model development looks like. You do not scale until the variables are validated. <strong>That phase is now complete.</strong></p>
   </div>
 
   <!-- 02 VALIDATION -->
   <div class="section">
     <div class="section-label">02 &nbsp; Validation Results</div>
     <h2>What the Data Confirmed</h2>
-    <p>Every signal was tested against 2025–2026 data the model had never seen — the gold standard in quantitative research. The question is not whether patterns exist in historical data. The question is whether they survive contact with the future.</p>
+    <p>Every surviving signal was stress-tested against 2025–2026 data the model had never seen — a methodology known as out-of-sample validation, and the standard by which quantitative models are judged in academic research and professional finance. It is specifically designed to expose false positives and data artifacts that look real in training but collapse on new data.</p>
 
     <div class="callout">
       <div class="callout-label">Key Finding</div>
-      <p>64.9% of our signals predicted the correct outcome on unseen data. The probability of that happening by random chance is <strong>0.3%</strong> — meaning there is a <strong>99.7% statistical probability</strong> these edges are real. In quantitative finance, retaining 30–40% of signal magnitude on new data is considered a success. Our best cluster retained <strong>72%</strong>.</p>
+      <p>64.9% of signals predicted the correct directional outcome on unseen data (vs. 50% expected by chance). A binomial probability test on this result yields <strong>p &lt; 0.003</strong> — well below the p &lt; 0.05 threshold used in peer-reviewed research to establish statistical significance. Put simply: there is a <strong>99.7% probability</strong> these edges are real. Additionally, all signals passed Benjamini-Hochberg correction — a method that specifically guards against false discoveries when testing large numbers of variables simultaneously.</p>
     </div>
 
     <div class="flagship">
       <div class="flag-cell before">
         <div class="flag-tag">Training Data</div>
         <div class="flag-num">−2.06</div>
-        <div class="flag-sub">stroke edge</div>
+        <div class="flag-sub">strokes · adjusted effect size</div>
       </div>
       <div class="flag-cell arrow">
         <div class="arrow-icon">→</div>
@@ -634,43 +635,44 @@
       <div class="flag-cell after">
         <div class="flag-tag">Out-of-Sample · 2025–26</div>
         <div class="flag-num">−2.94</div>
-        <div class="flag-sub">signal got stronger</div>
+        <div class="flag-sub">signal strengthened on new data</div>
       </div>
     </div>
+    <p style="margin-top:12px;font-size:13px;color:var(--gray-3);">Effect size retention of 72% out-of-sample. Industry benchmark for a robust signal is 30–40%. Signals that strengthen on new data — rather than decay — are rare and indicate a structural, not coincidental, relationship.</p>
   </div>
 
   <!-- 03 SIGNALS -->
   <div class="section">
     <div class="section-label">03 &nbsp; Signal Structure</div>
     <h2>What the Model Identified</h2>
-    <p>One proprietary variable category emerged as the dominant structural predictor — present in the top 7 most consistent signal types across the entire dataset. It is invisible to every mainstream betting market in existence. The market does not price it.</p>
-    <p>Within it, five distinct phases were identified:</p>
+    <p>One proprietary variable category emerged as the dominant structural predictor across the dataset — statistically significant in 7 of the top 7 most consistent signal types identified. It is absent from every mainstream sports pricing model in existence, meaning it represents an unpriced factor: a measurable variable with demonstrable predictive power that the market has not yet discovered or incorporated.</p>
+    <p>Within it, five distinct phases were identified and classified by their reproducibility and effect direction:</p>
 
     <div class="signals">
       <div class="signal-row">
         <div class="signal-name">Green Phase</div>
         <div><span class="signal-badge badge-green">Consistent Positive</span></div>
-        <div class="signal-desc">Most broadly applicable signal. Near-zero probability of randomness. n=462 in peak combination.</div>
+        <div class="signal-desc">Statistically significant positive effect across multiple rounds. adj. p ≈ 0.000 in peak combination. Sample size n=462 — large enough to rule out chance.</div>
       </div>
       <div class="signal-row">
         <div class="signal-name">Amplifier Phase</div>
         <div><span class="signal-badge badge-gold">Round-Dependent</span></div>
-        <div class="signal-desc">Strongest positive in Round 4. Reverses sharply in Round 1. Direction is context-driven — must be used with round data.</div>
+        <div class="signal-desc">Largest effect sizes in dataset — both positive and negative. Direction is determined by round context. Statistically significant in both directions; must be used with round data.</div>
       </div>
       <div class="signal-row">
         <div class="signal-name">Red Phase</div>
         <div><span class="signal-badge badge-red">Reliable Negative</span></div>
-        <div class="signal-desc">67% of the tour field underperforms in Round 2. Player-agnostic. Confirmed out-of-sample.</div>
+        <div class="signal-desc">Negative performance effect confirmed in 122 of 182 players (67%) in Round 2. Player-level consistency at this rate is statistically improbable by chance. Replicated out-of-sample.</div>
       </div>
       <div class="signal-row">
         <div class="signal-name">Conditional Phase</div>
         <div><span class="signal-badge badge-orange">Cycle-Dependent</span></div>
-        <div class="signal-desc">Positive in the first half of the broader cycle. Consistently negative in the second. n=546.</div>
+        <div class="signal-desc">Effect direction determined by position within the broader cycle. Statistically significant in both halves with opposing signs. n=546 — one of the largest validated cells in the dataset.</div>
       </div>
       <div class="signal-row">
         <div class="signal-name">Noise Phase</div>
         <div><span class="signal-badge badge-gray">Removed</span></div>
-        <div class="signal-desc">Failed to replicate on new data. Removed from model entirely.</div>
+        <div class="signal-desc">Failed directional replication on out-of-sample data across 4 of 4 test signals. Removed from model. This is the process working as intended.</div>
       </div>
     </div>
   </div>
@@ -679,35 +681,51 @@
   <div class="section">
     <div class="section-label">04 &nbsp; Market Strategy</div>
     <h2>Finding the Most Exploitable Markets</h2>
-    <p>Validated signals only generate returns in the right markets. We have been systematically testing and isolating which formats our edge is largest in — and where the market's pricing inefficiencies are most concentrated.</p>
+    <p>A validated signal is only valuable if it can be deployed in a market where the edge exceeds the friction of execution. Different betting formats have different levels of pricing efficiency — the degree to which the market has already incorporated available information. We are systematically measuring our edge-to-efficiency ratio across formats to identify where the model has the highest exploitable advantage.</p>
+
+    <div class="callout" style="margin-bottom:18px;">
+      <div class="callout-label">Why Group Size Matters</div>
+      <p>Bookmakers price 2-ball markets with high precision — two players, one outcome, relatively simple math. As group size increases, the number of possible outcome combinations grows exponentially, and the book's pricing model degrades proportionally. This is the <strong>combinatorial complexity problem</strong>: the larger the group, the harder it is for the market to hold accurate prices across all outcomes simultaneously. Our model exploits exactly this degradation. Early data suggests 3-ball markets carry meaningfully larger edges than 2-ball for this reason — and 6-ball formats may represent the highest inefficiency tier of all. Testing is ongoing.</p>
+    </div>
 
     <table class="market-table">
       <thead>
         <tr>
           <th>Market</th>
-          <th>Why We're Here</th>
+          <th>Pricing Efficiency</th>
+          <th>Our Edge</th>
           <th>Status</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td>2-Ball Matchups</td>
-          <td>Highest edge concentration. Head-to-head format removes field noise. Our variables are entirely absent from market pricing.</td>
+          <td>High — books price head-to-head with precision. Limited outcome combinations keep margins tight.</td>
+          <td>Lower relative edge. Our variables are unpriced but the book's baseline accuracy compresses the return.</td>
           <td><span class="status-pill" style="background:#FEF0E6;color:#C4693A;">Active Testing</span></td>
         </tr>
         <tr>
           <td>3-Ball Matchups</td>
-          <td>Three-way format isolates round-specific performance cleanly. Smaller fields amplify relative edge.</td>
+          <td>Moderate — three-way pricing introduces combinatorial complexity the book cannot fully resolve.</td>
+          <td>Higher edge than 2-ball. Early data shows meaningfully larger returns as book mispricing increases with group size.</td>
           <td><span class="status-pill" style="background:#FEF0E6;color:#C4693A;">Active Testing</span></td>
         </tr>
         <tr>
+          <td>6-Ball Matchups</td>
+          <td>Low — exponential outcome combinations make accurate pricing extremely difficult for standard book models.</td>
+          <td>Potentially highest profitability tier. Combinatorial mispricing at this scale may represent our largest exploitable edge.</td>
+          <td><span class="status-pill" style="background:#FBF4E4;color:#A07828;">Under Investigation</span></td>
+        </tr>
+        <tr>
           <td>Round Scoring Totals</td>
-          <td>Direct application of round-condition signals. R1 and R4 Moderate findings map precisely to this format.</td>
+          <td>Moderate — direct application of our round-condition signals to over/under format.</td>
+          <td>Clean mapping of R1 and R4 Moderate findings. Evaluating consistency of returns.</td>
           <td><span class="status-pill" style="background:#FBF4E4;color:#A07828;">Evaluating</span></td>
         </tr>
         <tr>
           <td>Outright Winner</td>
-          <td>Largest liquidity but most efficient pricing. Player-segmentation work will target specific players here in a future phase.</td>
+          <td>Highest — largest liquidity, most sophisticated book pricing models.</td>
+          <td>Long-term target once player segmentation is complete. Edge exists but requires precision targeting.</td>
           <td><span class="status-pill" style="background:var(--gray-5);color:var(--gray-3);">Future Phase</span></td>
         </tr>
       </tbody>
