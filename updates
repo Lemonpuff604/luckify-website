@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luckify Me — Quantitative Model Update 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black:      #0C0C0C;
+    --orange:     #E07840;
+    --orange-dim: #C4693A;
+    --cream:      #F7F4EF;
+    --warm-white: #FDFCFA;
+    --gray-1:     #1C1C1C;
+    --gray-2:     #3A3834;
+    --gray-3:     #7A7670;
+    --gray-4:     #B8B4AE;
+    --gray-5:     #E2DED8;
+    --green:      #2D6A4A;
+    --gold:       #A07828;
+  }
+
+  html { background: var(--black); }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--warm-white);
+    color: var(--gray-1);
+    max-width: 860px;
+    margin: 0 auto;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── TOP ACCENT ── */
+  .top-bar {
+    height: 3px;
+    background: var(--orange);
+  }
+
+  /* ── HEADER ── */
+  header {
+    padding: 52px 56px 44px;
+    border-bottom: 1px solid var(--gray-5);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 24px;
+  }
+
+  .brand-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: var(--orange);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 38px;
+    line-height: 1.1;
+    color: var(--black);
+    font-weight: 400;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--orange-dim);
+  }
+
+  .header-meta {
+    font-size: 12px;
+    color: var(--gray-3);
+    margin-top: 10px;
+    letter-spacing: 0.04em;
+  }
+
+  .header-right {
+    text-align: right;
+  }
+
+  .edition-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray-3);
+    border: 1px solid var(--gray-5);
+    padding: 6px 12px;
+    border-radius: 2px;
+  }
+
+  /* ── STAT ROW ── */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-bottom: 1px solid var(--gray-5);
+  }
+
+  .stat {
+    padding: 28px 28px 24px;
+    border-right: 1px solid var(--gray-5);
+    position: relative;
+  }
+  .stat:last-child { border-right: none; }
+
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px;
+    color: var(--orange);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gray-3);
+    margin-bottom: 4px;
+  }
+
+  .stat-sub {
+    font-size: 11px;
+    color: var(--gray-4);
+    line-height: 1.4;
+  }
+
+  /* ── MAIN CONTENT ── */
+  main {
+    padding: 0 56px;
+  }
+
+  /* ── SECTION ── */
+  .section {
+    padding: 40px 0;
+    border-bottom: 1px solid var(--gray-5);
+  }
+  .section:last-child { border-bottom: none; }
+
+  .section-label {
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    display: block;
+    height: 1px;
+    flex: 1;
+    background: var(--gray-5);
+  }
+
+  h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--black);
+    margin-bottom: 14px;
+    line-height: 1.2;
+  }
+
+  p {
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--gray-2);
+    margin-bottom: 12px;
+    max-width: 680px;
+  }
+  p:last-child { margin-bottom: 0; }
+
+  p strong { color: var(--black); font-weight: 600; }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-left: 3px solid var(--orange);
+    background: #FEF6EF;
+    padding: 16px 20px;
+    margin: 18px 0;
+    border-radius: 0 4px 4px 0;
+  }
+  .callout-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 6px;
+  }
+  .callout p {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--gray-1);
+    margin: 0;
+    max-width: none;
+  }
+
+  /* ── TWO COL ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 18px;
+  }
+
+  /* ── SIGNAL PILLS ── */
+  .signals {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 18px;
+  }
+
+  .signal-row {
+    display: grid;
+    grid-template-columns: 110px 120px 1fr;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+    background: var(--cream);
+    border-radius: 4px;
+  }
+
+  .signal-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--black);
+  }
+
+  .signal-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 2px;
+  }
+  .badge-green  { background: #E8F5EE; color: var(--green); }
+  .badge-red    { background: #FAECEC; color: #B22222; }
+  .badge-gold   { background: #FBF4E4; color: var(--gold); }
+  .badge-gray   { background: var(--gray-5); color: var(--gray-3); }
+  .badge-orange { background: #FEF0E6; color: var(--orange-dim); }
+
+  .signal-desc {
+    font-size: 12px;
+    color: var(--gray-3);
+    line-height: 1.5;
+  }
+
+  /* ── FLAGSHIP BOX ── */
+  .flagship {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0;
+    margin-top: 18px;
+    border: 1px solid var(--gray-5);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .flag-cell {
+    padding: 24px 20px;
+    text-align: center;
+  }
+  .flag-cell.before { background: var(--cream); }
+  .flag-cell.arrow  { background: var(--warm-white); display: flex; align-items: center; justify-content: center; border-left: 1px solid var(--gray-5); border-right: 1px solid var(--gray-5); }
+  .flag-cell.after  { background: #FEF6EF; }
+
+  .flag-tag {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .flag-cell.before .flag-tag { color: var(--gray-3); }
+  .flag-cell.after  .flag-tag { color: var(--orange); }
+
+  .flag-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 44px;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .flag-cell.before .flag-num { color: var(--black); }
+  .flag-cell.after  .flag-num { color: var(--orange); }
+
+  .flag-sub {
+    font-size: 11px;
+    color: var(--gray-3);
+  }
+  .flag-cell.after .flag-sub { color: #C4793A; }
+
+  .arrow-icon {
+    font-size: 22px;
+    color: var(--orange);
+  }
+
+  /* ── MARKET TABLE ── */
+  .market-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 18px;
+    font-size: 13px;
+  }
+
+  .market-table th {
+    text-align: left;
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gray-3);
+    padding: 10px 14px;
+    background: var(--cream);
+    border-bottom: 1px solid var(--gray-5);
+  }
+
+  .market-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--gray-5);
+    vertical-align: top;
+    color: var(--gray-2);
+    line-height: 1.5;
+  }
+
+  .market-table tr:last-child td { border-bottom: none; }
+  .market-table tr:nth-child(even) td { background: var(--cream); }
+
+  .market-table td:first-child {
+    font-weight: 600;
+    color: var(--black);
+    white-space: nowrap;
+  }
+
+  .status-pill {
+    display: inline-block;
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+
+  /* ── ROADMAP ── */
+  .roadmap {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 18px;
+    border: 1px solid var(--gray-5);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .road-row {
+    display: grid;
+    grid-template-columns: 36px 1fr auto;
+    align-items: center;
+    gap: 0;
+    border-bottom: 1px solid var(--gray-5);
+  }
+  .road-row:last-child { border-bottom: none; }
+
+  .road-num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: stretch;
+    font-size: 11px;
+    font-weight: 600;
+    color: white;
+    width: 36px;
+  }
+  .road-num.done   { background: var(--green); }
+  .road-num.active { background: var(--orange); }
+  .road-num.next   { background: var(--gold); }
+  .road-num.future { background: var(--gray-4); }
+
+  .road-content {
+    padding: 13px 16px;
+  }
+  .road-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: 2px;
+  }
+  .road-desc {
+    font-size: 12px;
+    color: var(--gray-3);
+    line-height: 1.5;
+  }
+
+  .road-status {
+    padding: 0 16px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .road-status.done   { color: var(--green); }
+  .road-status.active { color: var(--orange); }
+  .road-status.next   { color: var(--gold); }
+  .road-status.future { color: var(--gray-4); }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 28px 56px;
+    border-top: 1px solid var(--gray-5);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-brand {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gray-4);
+  }
+
+  .footer-note {
+    font-size: 11px;
+    color: var(--gray-4);
+    font-style: italic;
+  }
+
+  /* ── PRINT / SHARE ── */
+  @media print {
+    body { max-width: 100%; }
+    .top-bar { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    .stat-num, .flag-num { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 640px) {
+    header {
+      padding: 32px 24px 28px;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    h1 { font-size: 28px; }
+
+    .header-right { text-align: left; }
+
+    .stats {
+      grid-template-columns: 1fr 1fr;
+    }
+    .stat {
+      padding: 20px 18px 16px;
+      border-bottom: 1px solid var(--gray-5);
+    }
+    .stat:nth-child(2) { border-right: none; }
+    .stat:nth-child(3) { border-bottom: none; }
+    .stat:nth-child(4) { border-right: none; border-bottom: none; }
+    .stat-num { font-size: 28px; }
+
+    main { padding: 0 24px; }
+
+    .section { padding: 28px 0; }
+
+    h2 { font-size: 19px; }
+
+    p { font-size: 13.5px; max-width: 100%; }
+
+    .flagship {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto auto;
+    }
+    .flag-cell.arrow {
+      border-left: none;
+      border-right: none;
+      border-top: 1px solid var(--gray-5);
+      border-bottom: 1px solid var(--gray-5);
+      padding: 10px;
+    }
+    .arrow-icon {
+      transform: rotate(90deg);
+      display: inline-block;
+    }
+    .flag-num { font-size: 36px; }
+
+    .signal-row {
+      grid-template-columns: 1fr;
+      gap: 6px;
+      padding: 14px 14px;
+    }
+    .signal-name { font-size: 13px; }
+    .signal-desc { font-size: 12px; }
+
+    .market-table thead { display: none; }
+    .market-table, .market-table tbody,
+    .market-table tr, .market-table td { display: block; width: 100%; }
+    .market-table tr {
+      margin-bottom: 12px;
+      border: 1px solid var(--gray-5);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .market-table tr:last-child { margin-bottom: 0; }
+    .market-table td {
+      border-bottom: 1px solid var(--gray-5);
+      padding: 10px 14px;
+      font-size: 13px;
+    }
+    .market-table td:last-child { border-bottom: none; }
+    .market-table td:first-child {
+      background: var(--cream);
+      font-size: 13px;
+    }
+
+    .road-row { grid-template-columns: 36px 1fr; }
+    .road-status { display: none; }
+    .road-title { font-size: 13px; }
+    .road-desc { font-size: 11.5px; }
+
+    footer {
+      padding: 24px 24px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .stats, header, .section {
+    animation: fadeUp 0.5s ease both;
+  }
+  header        { animation-delay: 0.05s; }
+  .stats        { animation-delay: 0.15s; }
+  .section:nth-child(1) { animation-delay: 0.2s; }
+  .section:nth-child(2) { animation-delay: 0.25s; }
+  .section:nth-child(3) { animation-delay: 0.3s; }
+  .section:nth-child(4) { animation-delay: 0.35s; }
+  .section:nth-child(5) { animation-delay: 0.4s; }
+</style>
+</head>
+<body>
+
+<div class="top-bar"></div>
+
+<!-- HEADER -->
+<header>
+  <div>
+    <div class="brand-label">Luckify Me</div>
+    <h1>Quantitative Model<br><em>Update — 2026</em></h1>
+    <div class="header-meta">March 2026 &nbsp;·&nbsp; PGA Tour Golf &nbsp;·&nbsp; Findings & Strategy Summary</div>
+  </div>
+  <div class="header-right">
+    <div class="edition-tag">Confidential &nbsp;·&nbsp; Q1 2026</div>
+  </div>
+</header>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat">
+    <div class="stat-label">Signal Accuracy</div>
+    <div class="stat-num">64.9%</div>
+    <div class="stat-sub">correct direction on unseen data</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Confidence Level</div>
+    <div class="stat-num">99.7%</div>
+    <div class="stat-sub">probability signals are not random</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Validated Signals</div>
+    <div class="stat-num">254</div>
+    <div class="stat-sub">high-confidence edges after correction</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Combinations Tested</div>
+    <div class="stat-num">7,304</div>
+    <div class="stat-sub">variable combinations rigorously tested</div>
+  </div>
+</div>
+
+<main>
+
+  <!-- 01 ORIGIN -->
+  <div class="section">
+    <div class="section-label">01 &nbsp; Where We Started</div>
+    <h2>An Honest Starting Point</h2>
+    <p>When we began testing in golf, we broke even. That is worth saying plainly — and it is also the point. We were in the variable discovery phase, building data infrastructure before deploying capital. Most operations skip this step. We did not.</p>
+    <p>That discipline is what makes everything that followed meaningful. <strong>That period is now behind us.</strong></p>
+  </div>
+
+  <!-- 02 VALIDATION -->
+  <div class="section">
+    <div class="section-label">02 &nbsp; Validation Results</div>
+    <h2>What the Data Confirmed</h2>
+    <p>Every signal was tested against 2025–2026 data the model had never seen — the gold standard in quantitative research. The question is not whether patterns exist in historical data. The question is whether they survive contact with the future.</p>
+
+    <div class="callout">
+      <div class="callout-label">Key Finding</div>
+      <p>64.9% of our signals predicted the correct outcome on unseen data. The probability of that happening by random chance is <strong>0.3%</strong> — meaning there is a <strong>99.7% statistical probability</strong> these edges are real. In quantitative finance, retaining 30–40% of signal magnitude on new data is considered a success. Our best cluster retained <strong>72%</strong>.</p>
+    </div>
+
+    <div class="flagship">
+      <div class="flag-cell before">
+        <div class="flag-tag">Training Data</div>
+        <div class="flag-num">−2.06</div>
+        <div class="flag-sub">stroke edge</div>
+      </div>
+      <div class="flag-cell arrow">
+        <div class="arrow-icon">→</div>
+      </div>
+      <div class="flag-cell after">
+        <div class="flag-tag">Out-of-Sample · 2025–26</div>
+        <div class="flag-num">−2.94</div>
+        <div class="flag-sub">signal got stronger</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 SIGNALS -->
+  <div class="section">
+    <div class="section-label">03 &nbsp; Signal Structure</div>
+    <h2>What the Model Identified</h2>
+    <p>One proprietary variable category emerged as the dominant structural predictor — present in the top 7 most consistent signal types across the entire dataset. It is invisible to every mainstream betting market in existence. The market does not price it.</p>
+    <p>Within it, five distinct phases were identified:</p>
+
+    <div class="signals">
+      <div class="signal-row">
+        <div class="signal-name">Green Phase</div>
+        <div><span class="signal-badge badge-green">Consistent Positive</span></div>
+        <div class="signal-desc">Most broadly applicable signal. Near-zero probability of randomness. n=462 in peak combination.</div>
+      </div>
+      <div class="signal-row">
+        <div class="signal-name">Amplifier Phase</div>
+        <div><span class="signal-badge badge-gold">Round-Dependent</span></div>
+        <div class="signal-desc">Strongest positive in Round 4. Reverses sharply in Round 1. Direction is context-driven — must be used with round data.</div>
+      </div>
+      <div class="signal-row">
+        <div class="signal-name">Red Phase</div>
+        <div><span class="signal-badge badge-red">Reliable Negative</span></div>
+        <div class="signal-desc">67% of the tour field underperforms in Round 2. Player-agnostic. Confirmed out-of-sample.</div>
+      </div>
+      <div class="signal-row">
+        <div class="signal-name">Conditional Phase</div>
+        <div><span class="signal-badge badge-orange">Cycle-Dependent</span></div>
+        <div class="signal-desc">Positive in the first half of the broader cycle. Consistently negative in the second. n=546.</div>
+      </div>
+      <div class="signal-row">
+        <div class="signal-name">Noise Phase</div>
+        <div><span class="signal-badge badge-gray">Removed</span></div>
+        <div class="signal-desc">Failed to replicate on new data. Removed from model entirely.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 MARKETS -->
+  <div class="section">
+    <div class="section-label">04 &nbsp; Market Strategy</div>
+    <h2>Finding the Most Exploitable Markets</h2>
+    <p>Validated signals only generate returns in the right markets. We have been systematically testing and isolating which formats our edge is largest in — and where the market's pricing inefficiencies are most concentrated.</p>
+
+    <table class="market-table">
+      <thead>
+        <tr>
+          <th>Market</th>
+          <th>Why We're Here</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>2-Ball Matchups</td>
+          <td>Highest edge concentration. Head-to-head format removes field noise. Our variables are entirely absent from market pricing.</td>
+          <td><span class="status-pill" style="background:#FEF0E6;color:#C4693A;">Active Testing</span></td>
+        </tr>
+        <tr>
+          <td>3-Ball Matchups</td>
+          <td>Three-way format isolates round-specific performance cleanly. Smaller fields amplify relative edge.</td>
+          <td><span class="status-pill" style="background:#FEF0E6;color:#C4693A;">Active Testing</span></td>
+        </tr>
+        <tr>
+          <td>Round Scoring Totals</td>
+          <td>Direct application of round-condition signals. R1 and R4 Moderate findings map precisely to this format.</td>
+          <td><span class="status-pill" style="background:#FBF4E4;color:#A07828;">Evaluating</span></td>
+        </tr>
+        <tr>
+          <td>Outright Winner</td>
+          <td>Largest liquidity but most efficient pricing. Player-segmentation work will target specific players here in a future phase.</td>
+          <td><span class="status-pill" style="background:var(--gray-5);color:var(--gray-3);">Future Phase</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 05 ROADMAP -->
+  <div class="section">
+    <div class="section-label">05 &nbsp; Roadmap</div>
+    <h2>Where We Are. Where We're Going.</h2>
+    <p>The foundation is built. Deployment is the next phase.</p>
+
+    <div class="roadmap">
+      <div class="road-row">
+        <div class="road-num done">1</div>
+        <div class="road-content">
+          <div class="road-title">Variable Framework</div>
+          <div class="road-desc">Dominant predictor identified across 7,304 combinations. Noise variables isolated and removed.</div>
+        </div>
+        <div class="road-status done">Complete</div>
+      </div>
+      <div class="road-row">
+        <div class="road-num done">2</div>
+        <div class="road-content">
+          <div class="road-title">Out-of-Sample Validation</div>
+          <div class="road-desc">99.7% confidence on unseen 2025–2026 data. Flagship signal strengthened on new data.</div>
+        </div>
+        <div class="road-status done">Complete</div>
+      </div>
+      <div class="road-row">
+        <div class="road-num done">3</div>
+        <div class="road-content">
+          <div class="road-title">Signal Hierarchy Mapped</div>
+          <div class="road-desc">All five phases documented with round and cycle dependencies defined.</div>
+        </div>
+        <div class="road-status done">Complete</div>
+      </div>
+      <div class="road-row">
+        <div class="road-num active">4</div>
+        <div class="road-content">
+          <div class="road-title">Market Isolation</div>
+          <div class="road-desc">Active testing across 2-ball and 3-ball formats. Identifying where edge is largest vs. market pricing.</div>
+        </div>
+        <div class="road-status active">Active</div>
+      </div>
+      <div class="road-row">
+        <div class="road-num active">5</div>
+        <div class="road-content">
+          <div class="road-title">Player Segmentation</div>
+          <div class="road-desc">Profiling the most signal-sensitive players on tour. Building individual targeting layer on base model.</div>
+        </div>
+        <div class="road-status active">Active</div>
+      </div>
+      <div class="road-row">
+        <div class="road-num next">6</div>
+        <div class="road-content">
+          <div class="road-title">Composite Scorer Refinement</div>
+          <div class="road-desc">Calibrating the scoring system to fire conditionally rather than linearly — matching how the signals actually behave.</div>
+        </div>
+        <div class="road-status next">Next</div>
+      </div>
+      <div class="road-row">
+        <div class="road-num next">7</div>
+        <div class="road-content">
+          <div class="road-title">Live Deployment</div>
+          <div class="road-desc">Full systematic deployment across targeted markets with defined player targets and position sizing framework.</div>
+        </div>
+        <div class="road-status next">Next</div>
+      </div>
+      <div class="road-row">
+        <div class="road-num future">8</div>
+        <div class="road-content">
+          <div class="road-title">Multi-Sport Expansion</div>
+          <div class="road-desc">Apply validated framework to additional sports. Golf is the proof of concept.</div>
+        </div>
+        <div class="road-status future">Future</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-brand">Luckify Me &nbsp;·&nbsp; 2026</div>
+  <div class="footer-note">The edge is real. The market doesn't see it yet.</div>
+</footer>
+
+</body>
+</html>
