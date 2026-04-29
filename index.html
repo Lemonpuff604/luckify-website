@@ -3,1425 +3,1743 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Luckify.me — Lucky Window Performance Intelligence</title>
+<title>Luckify.me — Your Main Quest Starts Here</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inconsolata:wght@300;400;500;600;700&family=Lora:ital,wght@1,400;1,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --ph:       #FF8C00;
-    --ph-dim:   #CC6600;
-    --ph-dark:  #6A3800;
-    --ph-glow:  rgba(255,140,0,0.15);
-    --ph-faint: rgba(255,140,0,0.04);
+/* ═══════════════════════════════════════════════════════════
+   DESIGN SYSTEM — mirrors luckify-me/src/index.css exactly
+═══════════════════════════════════════════════════════════ */
+:root {
+  --pip-primary:      #FF7830;
+  --pip-secondary:    #C04E18;
+  --pip-accent:       #FFB068;
+  --pip-bg:           #050508;
+  --pip-bg-light:     #0b0b10;
+  --pip-border:       #1e1810;
+  --pip-muted:        #2e2618;
+  --pip-text:         #DDD8CC;
+  --pip-text-dim:     #6A6458;
+  --pip-glow:         0 0 12px rgba(255, 120, 48, 0.35);
+  --pip-glow-strong:  0 0 24px rgba(255, 120, 48, 0.65);
+  --pip-font-mono:    'Space Mono', 'Courier New', monospace;
+  --pip-font-body:    'DM Sans', sans-serif;
+  --zone-color:       255, 120, 48;
 
-    --bg:       #0D0C0B;
-    --surface:  #141210;
-    --surface2: #1A1714;
-    --border:   rgba(255,255,255,0.06);
-    --border2:  rgba(255,255,255,0.10);
+  /* zone backgrounds */
+  --pink-bg:   #3d0a34;
+  --orange-bg: #2e1200;
+  --blue-bg:   #0a1a3d;
+  --yellow-bg: #2a2000;
+  --green-bg:  #0a2a0a;
+  --purple-bg: #1a0a3d;
+  --red-bg:    #3d0a0a;
+  --brown-bg:  #2a1800;
 
-    --text:     #E8E4DC;
-    --dim:      #9C9890;
-    --muted:    #524E48;
-    --subtle:   #2E2B28;
+  /* zone text */
+  --pink-text:   #e87ad4;
+  --orange-text: #FF7830;
+  --blue-text:   #6aabff;
+  --yellow-text: #f5d76e;
+  --green-text:  #6ec25a;
+  --purple-text: #b06aff;
+  --red-text:    #ff6a6a;
+  --brown-text:  #c4935a;
 
-    --mono: 'Inconsolata', monospace;
-    --vt:   'Orbitron', sans-serif;
+  /* convenience */
+  --border-subtle: rgba(255,120,48,0.10);
+  --border-mid:    rgba(255,120,48,0.18);
+  --surface:       rgba(255,120,48,0.04);
+  --surface2:      rgba(255,120,48,0.07);
+  --glow-faint:    rgba(255,120,48,0.06);
+}
 
-    --pink:   #D030A0;
-    --orange: #E87020;
-    --blue:   #4080E0;
-    --yellow: #F0C020;
-    --green:  #6EC25A;
-    --purple: #8A2BE2;
-    --red:    #E04030;
-    --brown:  #A97040;
-  }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
+/* ── NEBULA BACKGROUND (from index.css) ── */
+body {
+  background-color: var(--pip-bg);
+  background-image:
+    radial-gradient(ellipse 120% 80% at 20% 10%, rgba(255,80,20,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 60% at 80% 90%, rgba(100,40,200,0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 100% at 60% 50%, rgba(20,60,140,0.05) 0%, transparent 65%),
+    radial-gradient(ellipse 100% 40% at 10% 80%, rgba(200,80,0,0.04) 0%, transparent 50%);
+  color: var(--pip-text);
+  font-family: var(--pip-font-body);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--mono);
-    overflow-x: hidden;
-    -webkit-font-smoothing: none;
-  }
+/* ── STELLAR GRAIN ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+  pointer-events: none; z-index: 9998; opacity: 0.55;
+}
 
-  /* CRT scanlines */
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px);
-    pointer-events: none; z-index: 9999;
-  }
-  /* vignette */
-  body::after {
-    content: '';
-    position: fixed; inset: 0;
-    background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.45) 100%);
-    pointer-events: none; z-index: 9998;
-  }
+/* ── CRT VIGNETTE ── */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background: radial-gradient(ellipse at center, transparent 52%, rgba(0,0,0,0.55) 100%);
+  pointer-events: none; z-index: 9999;
+}
 
-  ::-webkit-scrollbar { width: 3px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--ph-dark); }
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: var(--pip-bg); }
+::-webkit-scrollbar-thumb { background: var(--pip-secondary); border-radius: 2px; }
 
-  section { position: relative; z-index: 2; }
+section { position: relative; z-index: 2; }
 
-  /* ── SHARED ── */
-  .sys-label {
-    font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em;
-    text-transform: uppercase; color: var(--ph); margin-bottom: 0.6rem;
-    display: block;
-  }
-  .sys-label::before { content: '// '; opacity: 0.45; }
+/* ── BREATHING ORB ANIMATION ── */
+@keyframes pip-glow-breathe {
+  0%, 100% { box-shadow: 0 0 18px rgba(var(--zone-color), 0.45), 0 0 40px rgba(var(--zone-color), 0.20); }
+  50%       { box-shadow: 0 0 28px rgba(var(--zone-color), 0.85), 0 0 60px rgba(var(--zone-color), 0.40); }
+}
+@keyframes fu { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes hg {
+  0%,100% { opacity: 0.6; transform: translate(-50%,-55%) scale(1); }
+  50%      { opacity: 1;   transform: translate(-50%,-55%) scale(1.08); }
+}
+@keyframes orbpulse {
+  0%,100% { opacity: 0.65; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.04); }
+}
+@keyframes sp { 0%,100%{opacity:0.3} 50%{opacity:0.9} }
 
-  .sec-title {
-    font-family: var(--vt);
-    font-size: clamp(2rem, 5vw, 3.6rem);
-    line-height: 1.05; letter-spacing: 0.04em; font-weight: 700;
-  }
-  .sec-title .ph { color: var(--ph); text-shadow: 0 0 14px var(--ph-dim); }
+/* ── TYPOGRAPHY HELPERS ── */
+.mono    { font-family: var(--pip-font-mono); }
+.body-f  { font-family: var(--pip-font-body); }
 
-  .btn-primary {
-    background: transparent; border: 1px solid var(--ph);
-    color: var(--ph); font-family: var(--mono); font-size: 13px;
-    letter-spacing: 0.16em; text-transform: uppercase;
-    padding: 1rem 2.4rem; cursor: pointer; text-decoration: none; display: inline-block;
-    transition: background 0.15s, box-shadow 0.2s;
-    box-shadow: 0 0 20px rgba(255,140,0,0.1);
-  }
-  .btn-primary:hover { background: var(--ph-faint); box-shadow: 0 0 40px rgba(255,140,0,0.28); }
+.sys-label {
+  font-family: var(--pip-font-mono); font-size: 10px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--pip-primary); margin-bottom: 0.6rem;
+  display: block; opacity: 0.85;
+}
+.sys-label::before { content: '// '; opacity: 0.4; }
 
-  .btn-ghost {
-    background: transparent; border: 1px solid var(--border2); color: var(--dim);
-    font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
-    padding: 0.85rem 1.6rem; cursor: pointer; text-decoration: none; display: inline-block;
-    transition: border-color 0.15s, color 0.15s;
-  }
-  .btn-ghost:hover { border-color: var(--ph-dark); color: var(--text); }
+.sec-title {
+  font-family: var(--pip-font-body); font-weight: 700;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  line-height: 1.06; letter-spacing: -0.01em;
+}
+.sec-title .ph { color: var(--pip-primary); text-shadow: var(--pip-glow); }
 
-  /* ── EMBERS ── */
-  .embers { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-  .ember {
-    position: absolute; border-radius: 50%; background: var(--ph);
-    animation: rise linear infinite; opacity: 0; box-shadow: 0 0 3px var(--ph);
-  }
-  @keyframes rise {
-    0%   { transform: translateY(100vh); opacity: 0; }
-    10%  { opacity: 0.55; }
-    90%  { opacity: 0.15; }
-    100% { transform: translateY(-8vh) translateX(15px); opacity: 0; }
-  }
+/* ── HUD PANEL (key design element) ── */
+.hud-panel {
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  position: relative;
+}
+.hud-panel::before,
+.hud-panel::after {
+  content: '';
+  position: absolute;
+  width: 10px; height: 10px;
+  border-color: var(--pip-primary); border-style: solid; opacity: 0.5;
+}
+.hud-panel::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
+.hud-panel::after  { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
 
-  /* ── NAV ── */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 1rem 2rem;
-    background: rgba(13,12,11,0.94); backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--border2);
-    transition: border-color 0.3s;
-  }
-  .nav-wordmark {
-    font-family: var(--vt); font-size: 1rem; font-weight: 700;
-    letter-spacing: 0.12em; color: var(--ph); text-shadow: 0 0 8px var(--ph-dim);
-    text-decoration: none;
-  }
-  .nav-wordmark span { color: var(--muted); font-weight: 400; }
-  .nav-right { display: flex; align-items: center; gap: 1rem; }
-  .nav-link {
-    font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em;
-    text-transform: uppercase; color: var(--muted); text-decoration: none;
-    transition: color 0.2s; display: none;
-  }
-  @media(min-width:680px){ .nav-link { display: block; } }
-  .nav-link:hover { color: var(--ph); }
-  .nav-cta {
-    background: transparent; border: 1px solid var(--ph-dark);
-    color: var(--ph); font-family: var(--mono); font-size: 11px;
-    letter-spacing: 0.14em; text-transform: uppercase;
-    padding: 0.55rem 1.2rem; cursor: pointer; text-decoration: none;
-    transition: background 0.15s, border-color 0.15s; white-space: nowrap;
-  }
-  .nav-cta:hover { background: var(--ph-faint); border-color: var(--ph); }
+/* ── BUTTONS ── */
+.btn-primary {
+  background: transparent; border: 1px solid var(--pip-primary);
+  color: var(--pip-primary); font-family: var(--pip-font-mono); font-size: 12px;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  padding: 0.9rem 2.2rem; cursor: pointer; text-decoration: none; display: inline-block;
+  transition: background 0.15s, box-shadow 0.2s;
+  box-shadow: var(--pip-glow);
+}
+.btn-primary:hover {
+  background: rgba(255,120,48,0.08);
+  box-shadow: var(--pip-glow-strong);
+}
 
-  /* ── REVEAL ── */
-  .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.6s ease, transform 0.6s ease; }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
-  .d1 { transition-delay: 0.1s; }
-  .d2 { transition-delay: 0.22s; }
-  .d3 { transition-delay: 0.36s; }
+.btn-ghost {
+  background: transparent; border: 1px solid var(--border-mid); color: var(--pip-text-dim);
+  font-family: var(--pip-font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 0.85rem 1.6rem; cursor: pointer; text-decoration: none; display: inline-block;
+  transition: border-color 0.15s, color 0.15s;
+}
+.btn-ghost:hover { border-color: var(--pip-secondary); color: var(--pip-text); }
 
-  /* ════════════════════
-     HERO
-  ════════════════════ */
-  #hero {
-    min-height: 100vh; display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    text-align: center; padding: 8rem 1.5rem 6rem;
-    overflow: hidden;
-  }
-  .hero-glow {
-    position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%,-60%);
-    width: 800px; height: 800px;
-    background: radial-gradient(ellipse, rgba(255,140,0,0.07) 0%, transparent 65%);
-    pointer-events: none;
-    animation: hg 5s ease-in-out infinite;
-  }
-  @keyframes hg {
-    0%,100% { opacity: 0.5; transform: translate(-50%,-60%) scale(1); }
-    50%      { opacity: 1;   transform: translate(-50%,-60%) scale(1.07); }
-  }
-  .hero-tag {
-    font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--ph); border: 1px solid var(--ph-dark); padding: 0.35rem 1.1rem; margin-bottom: 1.8rem;
-    opacity: 0; animation: fu 0.5s ease forwards 0.3s;
-  }
-  .hero-tag::before { content: '>> '; opacity: 0.45; }
-  .hero-h1 {
-    font-family: var(--vt);
-    font-size: clamp(2.4rem, 8vw, 6.5rem);
-    line-height: 1.0; letter-spacing: 0.04em; font-weight: 900; margin-bottom: 1.6rem;
-    opacity: 0; animation: fu 0.6s ease forwards 0.5s;
-  }
-  .hero-h1 .ph  { color: var(--ph); text-shadow: 0 0 18px var(--ph-dim); }
-  .hero-h1 .dim { color: var(--muted); }
-  .hero-sub {
-    font-family: var(--mono); font-size: clamp(0.92rem, 2vw, 1rem);
-    color: var(--dim); max-width: 540px; line-height: 1.85; margin-bottom: 2.5rem;
-    opacity: 0; animation: fu 0.6s ease forwards 0.7s;
-  }
-  .hero-sub strong { color: var(--text); }
-  .hero-ctas {
-    display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center;
-    opacity: 0; animation: fu 0.6s ease forwards 0.9s; margin-bottom: 3rem;
-  }
-  .hero-stats {
-    display: flex; flex-wrap: wrap; gap: 2.4rem; justify-content: center;
-    opacity: 0; animation: fu 0.6s ease forwards 1.1s;
-    padding-top: 1.8rem; border-top: 1px solid var(--border2);
-  }
-  .hs-num {
-    font-family: var(--vt); font-size: 1.6rem; font-weight: 700;
-    color: var(--ph); text-shadow: 0 0 10px var(--ph-dim); line-height: 1; text-align: center;
-  }
-  .hs-lbl {
-    font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em;
-    text-transform: uppercase; color: var(--muted); margin-top: 0.2rem; text-align: center;
-  }
-  .hero-scroll {
-    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
-    display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
-    opacity: 0; animation: fu 0.6s ease forwards 1.5s;
-  }
-  .hero-scroll span { font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--subtle); }
-  .scroll-line { width: 1px; height: 34px; background: linear-gradient(to bottom, var(--ph), transparent); animation: sp 1.6s ease-in-out infinite; }
-  @keyframes sp { 0%,100%{opacity:0.3} 50%{opacity:0.85} }
-  @keyframes fu  { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+/* ── REVEAL ANIMATION ── */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.55s ease, transform 0.55s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.d1 { transition-delay: 0.08s; }
+.d2 { transition-delay: 0.18s; }
+.d3 { transition-delay: 0.30s; }
+.d4 { transition-delay: 0.42s; }
 
-  /* ════════════════════
-     BIG IDEA
-  ════════════════════ */
-  #big-idea { padding: 6rem 1.5rem; }
-  .bi-inner { max-width: 820px; margin: 0 auto; text-align: center; }
-  .bi-quote {
-    font-family: var(--vt); font-size: clamp(1.4rem, 3.5vw, 2.2rem);
-    line-height: 1.15; letter-spacing: 0.04em; margin: 1.8rem 0;
-  }
-  .bi-quote .ph { color: var(--ph); text-shadow: 0 0 12px var(--ph-dim); }
-  .tri { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; margin-top: 3rem; background: var(--border); border: 1px solid var(--border); }
-  @media(max-width:560px){ .tri { grid-template-columns: 1fr; } }
-  .tri-cell {
-    background: var(--surface); padding: 2rem 1.6rem; text-align: center;
-    position: relative; transition: background 0.2s;
-  }
-  .tri-cell::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,var(--ph-dark),transparent); }
-  .tri-cell:hover { background: var(--ph-faint); }
-  .tri-icon { font-size: 1.3rem; margin-bottom: 0.6rem; display: block; }
-  .tri-cell h3 { font-family: var(--vt); font-size: 0.9rem; font-weight: 700; letter-spacing: 0.1em; color: var(--ph); text-shadow: 0 0 8px var(--ph-dim); margin-bottom: 0.4rem; }
-  .tri-cell p  { font-family: var(--mono); font-size: 0.9rem; color: var(--dim); line-height: 1.6; }
+/* ── ZONE COLOR SPECTRUM BAR ── */
+.zone-spectrum {
+  display: flex; height: 2px; width: 100%;
+  background: linear-gradient(90deg,
+    var(--pink-text) 0%,
+    var(--orange-text) 14%,
+    var(--blue-text) 28%,
+    var(--yellow-text) 42%,
+    var(--green-text) 57%,
+    var(--purple-text) 71%,
+    var(--red-text) 85%,
+    var(--brown-text) 100%
+  );
+  opacity: 0.5;
+}
 
-  /* ════════════════════
-     PAIN
-  ════════════════════ */
-  #pain { padding: 6rem 1.5rem; max-width: 1060px; margin: 0 auto; }
-  .pain-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(290px,1fr)); gap: 1px; margin-top: 3rem; background: var(--border); border: 1px solid var(--border); }
-  .pain-card {
-    background: var(--surface); padding: 2.2rem; position: relative; overflow: hidden; transition: background 0.2s;
-  }
-  .pain-card::before { content:''; position:absolute; top:0; left:0; width:2px; height:0; background:var(--ph); transition:height 0.4s; }
-  .pain-card:hover::before { height:100%; }
-  .pain-card:hover { background: var(--ph-faint); }
-  .pain-card h3 { font-family: var(--vt); font-size: 0.88rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text); margin-bottom: 0.6rem; }
-  .pain-card p  { font-family: var(--mono); font-size: 0.9rem; color: var(--dim); line-height: 1.72; }
-  .pain-card p strong { color: var(--text); }
+/* ── SECTION COLOR ACCENTS ── */
+#main-quest   { --section-accent: 176, 106, 255; } /* purple */
+#big-idea     { --section-accent: 106, 171, 255; } /* blue */
+#pain         { --section-accent: 255, 106, 106; } /* red */
+#framework    { --section-accent: 245, 215, 110; } /* yellow */
+#zones        { --section-accent: 255, 120, 48;  } /* orange */
+#how          { --section-accent: 110, 194, 90;  } /* green */
+#soltar       { --section-accent: 176, 106, 255; } /* purple */
+#pricing      { --section-accent: 255, 120, 48;  } /* orange */
 
-  /* ════════════════════
-     FRAMEWORK
-  ════════════════════ */
-  #framework { padding: 6rem 1.5rem; background: var(--surface); border-top: 1px solid var(--border2); border-bottom: 1px solid var(--border2); }
-  .fw-inner { max-width: 980px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
-  @media(max-width:700px){ .fw-inner { grid-template-columns: 1fr; gap: 3rem; } }
-  .fw-text p { font-family: var(--mono); font-size: 0.92rem; color: var(--dim); line-height: 1.85; margin-top: 1.2rem; }
-  .fw-text p strong { color: var(--text); }
-  .fw-btns { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.8rem; }
+/* ── GAMIFIED STATUS BAR ── */
+.game-status-bar {
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  font-family: var(--pip-font-mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--pip-text-dim); margin-top: 0.8rem;
+}
+.gsb-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--pip-primary); animation: pip-glow-breathe 2s ease-in-out infinite; flex-shrink: 0; }
+.gsb-dot.pulse-purple { background: var(--purple-text); --zone-color: 176,106,255; }
+.gsb-sep { opacity: 0.25; }
 
-  .cat-rows { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1.2rem; }
-  .cat-row {
-    display: flex; align-items: center; gap: 0.8rem;
-    padding: 0.6rem 0.9rem; border: 1px solid var(--border); background: var(--bg);
-    transition: border-color 0.2s, background 0.2s;
-  }
-  .cat-row:hover { border-color: var(--ph-dark); background: var(--ph-faint); }
-  .cat-n { font-family: var(--vt); font-size: 0.88rem; font-weight: 700; color: var(--ph); width: 20px; flex-shrink: 0; text-shadow: 0 0 5px var(--ph-dim); }
-  .cat-i { flex: 1; }
-  .cat-name { font-family: var(--mono); font-size: 0.84rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); }
-  .cat-desc { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); margin-top: 0.08rem; }
-  .cat-bar { width: 44px; height: 4px; background: var(--subtle); flex-shrink: 0; overflow: hidden; }
-  .cat-fill { height: 100%; background: var(--ph); width: 0; transition: width 1.1s ease; box-shadow: 0 0 4px var(--ph-dim); }
-  .reveal.visible .cat-fill { width: var(--w); }
+/* ── LOCKED MODULES (coming soon) ── */
+.mq-card.locked { opacity: 0.45; }
+.mq-card.locked .mq-tag { border-color: var(--pip-text-dim); color: var(--pip-text-dim); }
+.mq-card.locked .mq-tag::before { content: '🔒 '; }
+.mq-card.locked:hover { background: var(--pip-bg-light); cursor: default; }
+.mq-card.locked::before,
+.mq-card.locked::after { display: none; }
 
-  /* ════════════════════
-     ZONE SYSTEM
-  ════════════════════ */
-  #zones { padding: 6rem 1.5rem; border-top: 1px solid var(--border2); border-bottom: 1px solid var(--border2); }
-  .zones-inner { max-width: 1040px; margin: 0 auto; }
-  .zone-intro { font-family: var(--mono); font-size: 0.84rem; color: var(--dim); max-width: 600px; margin: 1rem auto 0; line-height: 1.8; text-align: center; }
+/* ── XP / PROGRESS BARS ── */
+.xp-bar-wrap {
+  margin-top: 0.9rem;
+}
+.xp-bar-label {
+  font-family: var(--pip-font-mono); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--pip-text-dim); display: flex; justify-content: space-between; margin-bottom: 0.3rem;
+}
+.xp-bar {
+  height: 3px; background: var(--pip-muted); border-radius: 1px; overflow: hidden;
+}
+.xp-bar-fill {
+  height: 100%; border-radius: 1px;
+  background: linear-gradient(90deg, var(--pip-primary), var(--pip-accent));
+  box-shadow: 0 0 6px rgba(255,120,48,0.5);
+}
 
-  /* Tabs */
-  .z-tabs { display: flex; border-bottom: 1px solid var(--border2); overflow-x: auto; scrollbar-width: none; margin-top: 3rem; }
-  .z-tabs::-webkit-scrollbar { display: none; }
-  .z-tab {
-    flex: 1; min-width: 66px; background: none; border: none;
-    border-bottom: 2px solid transparent;
-    padding: 0.85rem 0.2rem 0.65rem;
-    cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
-    position: relative; bottom: -1px; transition: all 0.18s;
-  }
-  .z-dot { width: 10px; height: 10px; border-radius: 50%; transition: opacity 0.18s, box-shadow 0.18s; opacity: 0.3; }
-  .z-name { font-family: var(--vt); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; color: var(--muted); transition: color 0.18s; }
-  .z-tab.active { border-bottom-color: var(--tc); }
-  .z-tab.active .z-dot  { opacity: 1; box-shadow: 0 0 8px currentColor; }
-  .z-tab.active .z-name { color: var(--tc); text-shadow: 0 0 8px var(--tc); }
-  .z-tab:hover:not(.active) .z-name { color: var(--dim); }
-  @media(max-width:520px){ .z-tab{min-width:44px;} .z-name{font-size:0.62rem;} }
+/* ── SECTION GLOW ACCENT (uses --section-accent) ── */
+.section-glow {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 600px; height: 200px;
+  background: radial-gradient(ellipse, rgba(var(--section-accent, 255,120,48), 0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
 
-  /* Panels */
-  .z-panel { display: none; animation: zin 0.2s ease; }
-  .z-panel.active { display: block; }
-  @keyframes zin { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+/* ════════════════════════════════════
+   NAV
+════════════════════════════════════ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.9rem 2rem;
+  background: rgba(5,5,8,0.92); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.nav-orb {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--zone-color),1) 0%, rgba(var(--zone-color),0.3) 100%);
+  animation: pip-glow-breathe 3s ease-in-out infinite;
+  flex-shrink: 0;
+}
+.nav-wordmark {
+  font-family: var(--pip-font-mono); font-size: 0.85rem; font-weight: 700;
+  letter-spacing: 0.10em; color: var(--pip-primary); text-decoration: none;
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.nav-wordmark .dim { color: var(--pip-text-dim); font-weight: 400; }
+.nav-right { display: flex; align-items: center; gap: 1rem; }
+.nav-link {
+  font-family: var(--pip-font-mono); font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--pip-text-dim); text-decoration: none;
+  transition: color 0.2s; display: none;
+}
+@media(min-width:680px){ .nav-link { display: block; } }
+.nav-link:hover { color: var(--pip-primary); }
+.nav-cta {
+  background: transparent; border: 1px solid var(--pip-secondary);
+  color: var(--pip-primary); font-family: var(--pip-font-mono); font-size: 10px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 0.5rem 1.1rem; cursor: pointer; text-decoration: none;
+  transition: background 0.15s, border-color 0.15s; white-space: nowrap;
+}
+.nav-cta:hover { background: var(--glow-faint); border-color: var(--pip-primary); }
 
-  /* Zone card — two columns */
-  .z-card {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 1px; background: var(--border); border: 1px solid var(--border2);
-  }
-  .z-card.solo { grid-template-columns: 1fr; }
-  @media(max-width:680px){ .z-card, .z-card.solo { grid-template-columns: 1fr; } }
+/* ════════════════════════════════════
+   HERO
+════════════════════════════════════ */
+#hero {
+  min-height: 100vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 8rem 1.5rem 6rem; overflow: hidden;
+}
+.hero-glow {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-55%);
+  width: 900px; height: 900px;
+  background: radial-gradient(ellipse, rgba(255,120,48,0.06) 0%, transparent 60%);
+  pointer-events: none; animation: hg 5s ease-in-out infinite;
+}
 
-  /* Identity pane */
-  .z-id {
-    background: var(--surface); padding: 2.4rem 2.2rem; position: relative;
-  }
-  .z-id::before {
-    content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 3px;
-    background: var(--zc); opacity: 0.55;
-  }
-  .z-color-lbl { font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.7; margin-bottom: 0.3rem; display: block; }
-  .z-rhythm-name { font-family: var(--vt); font-size: 1.55rem; font-weight: 700; letter-spacing: 0.06em; line-height: 1.05; margin-bottom: 0.1rem; }
-  .z-archetype { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); margin-bottom: 1.2rem; }
-  .z-identity { font-family: var(--mono); font-size: 0.92rem; color: var(--dim); line-height: 1.78; }
+/* breathing zone orb */
+.hero-orb-wrap {
+  margin-bottom: 2.4rem;
+  opacity: 0; animation: fu 0.6s ease forwards 0.3s;
+}
+.hero-orb {
+  width: 72px; height: 72px; border-radius: 50%; margin: 0 auto;
+  background: radial-gradient(circle at 38% 35%,
+    rgba(var(--zone-color), 0.95) 0%,
+    rgba(var(--zone-color), 0.55) 40%,
+    rgba(var(--zone-color), 0.12) 70%,
+    transparent 100%
+  );
+  animation: pip-glow-breathe 3s ease-in-out infinite;
+  position: relative;
+}
+.hero-orb::after {
+  content: '';
+  position: absolute; inset: -12px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--zone-color),0.15) 0%, transparent 70%);
+  animation: orbpulse 3s ease-in-out infinite;
+}
+.hero-tag {
+  font-family: var(--pip-font-mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--pip-primary); border: 1px solid var(--pip-secondary); padding: 0.32rem 1rem; margin-bottom: 1.6rem;
+  display: inline-block;
+  opacity: 0; animation: fu 0.5s ease forwards 0.5s;
+}
+.hero-tag::before { content: '>> '; opacity: 0.4; }
 
-  /* Directive pane */
-  .z-dir {
-    background: var(--surface2); padding: 2.4rem 2.2rem; position: relative;
-  }
-  .z-dir::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--zc); opacity: 0.28; }
-  .z-dir-lbl { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; display: block; }
-  .z-dir-lbl::before { content: '// '; opacity: 0.45; }
-  .z-dir-body { font-family: var(--mono); font-size: 0.92rem; color: var(--text); line-height: 1.8; margin-bottom: 1.4rem; }
-  .z-dir-body .note { color: var(--dim); display: block; margin-top: 0.9rem; font-size: 0.88rem; }
-  .z-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.4rem; }
-  .z-tag {
-    font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase;
-    padding: 0.2rem 0.55rem; border: 1px solid var(--zc); color: var(--zc);
-    background: rgba(255,255,255,0.02); opacity: 0.85;
-  }
-  .z-wave { border-top: 1px solid var(--border); padding-top: 1.2rem; margin-top: 0.4rem; }
-  .z-wave-lbl { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem; opacity: 0.7; display: block; }
-  .z-wave-body { font-family: var(--mono); font-size: 0.84rem; color: var(--muted); line-height: 1.65; }
+.hero-h1 {
+  font-family: var(--pip-font-body); font-weight: 800;
+  font-size: clamp(2.6rem, 8vw, 6.4rem);
+  line-height: 1.0; letter-spacing: -0.02em; margin-bottom: 1.6rem;
+  opacity: 0; animation: fu 0.6s ease forwards 0.7s;
+}
+.hero-h1 .ph  { color: var(--pip-primary); text-shadow: var(--pip-glow-strong); }
+.hero-h1 .dim { color: var(--pip-text-dim); }
 
-  /* ════════════════════
-     HOW IT WORKS
-  ════════════════════ */
-  #how { padding: 6rem 1.5rem; }
-  .how-inner { max-width: 820px; margin: 0 auto; text-align: center; }
-  .steps { display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap: 2rem; margin-top: 3.5rem; position: relative; }
-  .steps::before {
-    content: ''; position: absolute; top: 26px; left: 12%; right: 12%; height: 1px;
-    background: linear-gradient(90deg,transparent,var(--ph-dark),transparent); opacity: 0.5;
-  }
-  @media(max-width:580px){ .steps::before { display: none; } }
-  .step { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.9rem; }
-  .step-n {
-    width: 50px; height: 50px; border: 1px solid var(--ph-dark);
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--vt); font-size: 1.1rem; font-weight: 700; color: var(--ph);
-    background: var(--bg); position: relative; z-index: 1; text-shadow: 0 0 8px var(--ph-dim);
-    transition: box-shadow 0.2s, background 0.2s;
-  }
-  .step:hover .step-n { background: var(--ph-faint); box-shadow: 0 0 20px var(--ph-glow); }
-  .step h3 { font-family: var(--vt); font-size: 0.86rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); }
-  .step p  { font-family: var(--mono); font-size: 0.9rem; color: var(--dim); line-height: 1.7; }
+.hero-sub {
+  font-family: var(--pip-font-body); font-size: clamp(1rem, 2vw, 1.1rem);
+  color: var(--pip-text-dim); max-width: 520px; line-height: 1.75; margin-bottom: 2.4rem;
+  opacity: 0; animation: fu 0.6s ease forwards 0.9s;
+}
+.hero-sub strong { color: var(--pip-text); }
 
-  /* ════════════════════
-     SOLTAR
-  ════════════════════ */
-  #soltar {
-    padding: 6rem 1.5rem; background: #07050F;
-    border-top: 1px solid rgba(138,43,226,0.18); border-bottom: 1px solid rgba(138,43,226,0.18);
-    position: relative; overflow: hidden;
-  }
-  #soltar::before {
-    content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-    width:600px; height:300px;
-    background:radial-gradient(ellipse,rgba(138,43,226,0.07) 0%,transparent 65%);
-    pointer-events:none;
-  }
-  .soltar-inner { max-width: 660px; margin: 0 auto; text-align: center; position: relative; z-index: 1; }
-  .soltar-lbl { font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--purple); margin-bottom: 0.6rem; display: block; }
-  .soltar-lbl::before { content: '// '; opacity: 0.45; }
-  .soltar-title { font-family: var(--vt); font-size: clamp(1.8rem,4vw,3rem); letter-spacing: 0.05em; font-weight: 700; margin-bottom: 2rem; }
-  .soltar-title .purple { color: var(--purple); text-shadow: 0 0 12px rgba(138,43,226,0.6); }
-  .soltar-body { text-align: left; border-top: 1px solid rgba(138,43,226,0.15); padding-top: 2rem; display: flex; flex-direction: column; gap: 1.1rem; }
-  .soltar-body p { font-family: var(--mono); font-size: 0.92rem; color: var(--dim); line-height: 1.85; }
-  .soltar-body p strong { color: var(--text); }
-  .soltar-tx {
-    margin-top: 2rem; padding: 1.6rem 2rem;
-    border: 1px solid rgba(138,43,226,0.2); background: rgba(138,43,226,0.03); position: relative;
-  }
-  .soltar-tx::before {
-    content: '// TRANSMISSION'; position: absolute; top: -0.5rem; left: 1.2rem;
-    font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em;
-    background: #07050F; padding: 0 0.5rem; color: var(--purple);
-  }
-  .soltar-q { font-family: 'Lora',serif; font-style: italic; font-size: 1.05rem; color: var(--text); line-height: 1.8; }
-  .soltar-sig { margin-top: 0.8rem; font-family: 'Lora',serif; font-style: italic; font-size: 0.88rem; color: var(--purple); opacity: 0.8; }
+.hero-ctas {
+  display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center;
+  opacity: 0; animation: fu 0.6s ease forwards 1.1s; margin-bottom: 3rem;
+}
 
-  /* ════════════════════
-     VECTOR
-  ════════════════════ */
-  #vector { padding: 6rem 1.5rem; border-bottom: 1px solid var(--border2); }
-  .vec-inner { max-width: 820px; margin: 0 auto; }
-  .vec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; margin-top: 3rem; }
-  @media(max-width:680px){ .vec-grid { grid-template-columns: 1fr; gap: 2.5rem; } }
-  .vec-text p { font-family: var(--mono); font-size: 0.92rem; color: var(--dim); line-height: 1.85; margin-top: 1rem; }
-  .vec-text p strong { color: var(--text); }
-  .vec-handle {
-    display: inline-block; margin-top: 1.5rem;
-    font-family: var(--vt); font-size: 1.1rem; font-weight: 700; letter-spacing: 0.1em;
-    color: var(--ph); text-decoration: none; border-bottom: 1px solid var(--ph-dark);
-    transition: border-color 0.15s, text-shadow 0.15s; text-shadow: 0 0 8px var(--ph-dim);
-  }
-  .vec-handle:hover { border-color: var(--ph); text-shadow: 0 0 16px var(--ph); }
-  .vec-box {
-    border: 1px solid rgba(255,140,0,0.18); background: var(--ph-faint); padding: 2rem; position: relative;
-  }
-  .vec-box::before {
-    content: '// AUDIT FIRST'; position: absolute; top: -0.5rem; left: 1.2rem;
-    font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em;
-    background: var(--bg); padding: 0 0.5rem; color: var(--ph);
-  }
-  .vec-box h3 { font-family: var(--vt); font-size: 1.2rem; font-weight: 700; letter-spacing: 0.06em; color: var(--text); margin-bottom: 0.8rem; }
-  .vec-box p  { font-family: var(--mono); font-size: 0.9rem; color: var(--dim); line-height: 1.8; }
+.hero-systems {
+  display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;
+  opacity: 0; animation: fu 0.6s ease forwards 1.3s; margin-bottom: 2.5rem;
+}
+.sys-chip {
+  font-family: var(--pip-font-mono); font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--pip-text-dim); border: 1px solid var(--border-subtle);
+  padding: 0.28rem 0.7rem; background: var(--surface);
+}
 
-  /* ════════════════════
-     WHO
-  ════════════════════ */
-  #who { padding: 6rem 1.5rem; background: var(--surface); border-top: 1px solid var(--border2); border-bottom: 1px solid var(--border2); }
-  .who-inner { max-width: 600px; margin: 0 auto; text-align: center; }
-  .who-hed { font-family: var(--vt); font-size: clamp(2.2rem,6vw,4.5rem); font-weight: 900; letter-spacing: 0.04em; line-height: 1.0; }
-  .who-hed .ph { color: var(--ph); text-shadow: 0 0 16px var(--ph-dim); }
-  .who-img { display: flex; justify-content: center; margin: 2rem 0; }
-  .who-img img {
-    width: 148px; height: 148px; border-radius: 50%; object-fit: cover;
-    border: 1px solid var(--border2);
-    box-shadow: 0 0 0 1px var(--ph-dark), 0 12px 40px rgba(0,0,0,0.6);
-    transition: box-shadow 0.3s, transform 0.3s;
-  }
-  .who-img img:hover { transform: scale(1.03); box-shadow: 0 0 0 1px var(--ph), 0 0 28px var(--ph-glow), 0 16px 50px rgba(0,0,0,0.7); }
-  .who-body { text-align: left; border-top: 1px solid var(--border); padding-top: 2rem; display: flex; flex-direction: column; gap: 1.1rem; }
-  .who-body p { font-family: var(--mono); font-size: 0.92rem; color: var(--dim); line-height: 1.85; }
-  .who-body p strong { color: var(--text); }
-  .who-sig { text-align: center; padding: 2rem 0; }
-  .who-quote { font-family: 'Lora',serif; font-style: italic; font-size: 1.12rem; color: var(--text); line-height: 1.8; margin-bottom: 1.4rem; }
-  .who-rule { width: 40px; height: 1px; background: linear-gradient(90deg,transparent,var(--ph),transparent); margin: 0 auto 0.8rem; }
-  .who-name { font-family: 'Lora',serif; font-style: italic; font-size: 0.92rem; color: var(--ph); opacity: 0.85; }
+.hero-scroll {
+  position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+  opacity: 0; animation: fu 0.6s ease forwards 1.7s;
+}
+.hero-scroll span { font-family: var(--pip-font-mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--pip-muted); }
+.scroll-line { width: 1px; height: 34px; background: linear-gradient(to bottom, var(--pip-primary), transparent); animation: sp 1.6s ease-in-out infinite; }
 
-  /* ════════════════════
-     PRICING
-  ════════════════════ */
-  #pricing { padding: 6rem 1.5rem; max-width: 600px; margin: 0 auto; text-align: center; }
-  .price-card {
-    background: var(--surface); border: 1px solid var(--border2);
-    padding: 3rem 2.4rem; margin-top: 3rem; position: relative; overflow: hidden; transition: box-shadow 0.3s;
-  }
-  .price-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--ph),transparent); }
-  .price-card:hover { box-shadow: 0 0 50px rgba(255,140,0,0.08); }
-  .price-lbl { font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ph); margin-bottom: 0.5rem; display: block; }
-  .price-lbl::before { content: '// '; opacity: 0.45; }
-  .price-amt { font-family: var(--vt); font-size: 4.5rem; font-weight: 900; color: var(--text); line-height: 1; margin-bottom: 0.3rem; }
-  .price-amt sup { font-size: 1.8rem; vertical-align: top; margin-top: 0.7rem; display: inline-block; color: var(--ph); }
-  .price-amt sub { font-family: var(--mono); font-size: 1rem; font-weight: 400; color: var(--muted); }
-  .price-trial {
-    display: inline-block; background: rgba(255,140,0,0.08); border: 1px solid var(--ph-dark);
-    color: var(--ph); font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
-    padding: 0.28rem 0.85rem; margin-bottom: 2rem;
-  }
-  .price-feats { list-style: none; text-align: left; display: flex; flex-direction: column; gap: 0.8rem; margin: 2rem 0; padding: 0 0.3rem; }
-  .price-feats li { display: flex; align-items: flex-start; gap: 0.7rem; font-family: var(--mono); font-size: 0.9rem; color: var(--dim); line-height: 1.55; }
-  .ck { color: var(--ph); flex-shrink: 0; margin-top: 0.05rem; text-shadow: 0 0 5px var(--ph-dim); }
-  .price-cta {
-    display: block; width: 100%; text-align: center; text-decoration: none;
-    background: transparent; border: 1px solid var(--ph); color: var(--ph);
-    font-family: var(--mono); font-size: 13px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
-    padding: 1.1rem; cursor: pointer;
-    transition: background 0.15s, box-shadow 0.2s;
-    box-shadow: 0 0 20px rgba(255,140,0,0.1);
-  }
-  .price-cta:hover { background: var(--ph-faint); box-shadow: 0 0 40px rgba(255,140,0,0.28); }
-  .price-ft { margin-top: 0.85rem; font-family: var(--mono); font-size: 0.78rem; color: var(--muted); letter-spacing: 0.06em; }
+/* ════════════════════════════════════
+   MAIN QUEST (RPG QUEST LOG)
+════════════════════════════════════ */
+#main-quest {
+  padding: 7rem 1.5rem;
+  background: linear-gradient(180deg, var(--pip-bg) 0%, var(--pip-bg-light) 100%);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  overflow: hidden;
+}
+#main-quest::before {
+  content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 700px; height: 400px;
+  background: radial-gradient(ellipse, rgba(138,43,226,0.04) 0%, transparent 65%);
+  pointer-events: none;
+}
 
-  /* ════════════════════
-     FAQ
-  ════════════════════ */
-  #faq { padding: 6rem 1.5rem; background: var(--surface); border-top: 1px solid var(--border2); }
-  .faq-inner { max-width: 600px; margin: 0 auto; text-align: center; }
-  .faq-list { margin-top: 3rem; text-align: left; border: 1px solid var(--border2); }
-  .faq-item { border-bottom: 1px solid var(--border); }
-  .faq-item:last-child { border-bottom: none; }
-  .faq-q {
-    width: 100%; background: none; border: none; color: var(--text);
-    font-family: var(--mono); font-size: 0.88rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
-    padding: 1.05rem 1.2rem; display: flex; align-items: center; justify-content: space-between;
-    cursor: pointer; text-align: left; transition: background 0.15s, color 0.15s;
-  }
-  .faq-q:hover { background: var(--ph-faint); color: var(--ph); }
-  .faq-icon { font-size: 1.2rem; color: var(--ph); transition: transform 0.25s; flex-shrink: 0; margin-left: 1rem; }
-  .faq-item.open .faq-icon { transform: rotate(45deg); }
-  .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
-  .faq-item.open .faq-a { max-height: 500px; }
-  .faq-a p { padding: 0 1.2rem 1.1rem; font-family: var(--mono); font-size: 0.9rem; color: var(--dim); line-height: 1.8; }
-  .faq-a p strong { color: var(--text); }
+.mq-inner { max-width: 980px; margin: 0 auto; text-align: center; position: relative; z-index: 1; }
+.mq-header { margin-bottom: 3.5rem; }
+.mq-sub {
+  font-family: var(--pip-font-body); font-size: 1rem; color: var(--pip-text-dim);
+  max-width: 560px; margin: 1rem auto 0; line-height: 1.75;
+}
+.mq-sub strong { color: var(--pip-text); }
 
-  /* ════════════════════
-     FINAL CTA
-  ════════════════════ */
-  #final-cta { padding: 7rem 1.5rem; text-align: center; position: relative; overflow: hidden; }
-  .final-glow { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:500px; height:260px; background:radial-gradient(ellipse,rgba(255,140,0,0.07) 0%,transparent 65%); pointer-events:none; }
-  #final-cta p { font-family: var(--mono); font-size: 0.84rem; color: var(--dim); max-width: 440px; margin: 0.8rem auto 2.4rem; line-height: 1.8; }
-  .trust-row { display: flex; flex-wrap: wrap; gap: 0.45rem; justify-content: center; margin-top: 1.4rem; }
-  .trust-pill { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--border2); background: var(--surface); padding: 0.3rem 0.75rem; }
-  .trust-pill::before { content: '■ '; font-size: 0.5rem; color: var(--ph-dark); vertical-align: middle; }
+/* Quest log panel header */
+.quest-log-header {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.6rem 1rem;
+  background: var(--surface2); border: 1px solid var(--border-mid);
+  border-bottom: none; margin-bottom: 0;
+  max-width: 980px;
+}
+.quest-log-title {
+  font-family: var(--pip-font-mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--pip-primary);
+}
+.quest-log-divider { flex: 1; height: 1px; background: var(--border-subtle); }
+.quest-status {
+  font-family: var(--pip-font-mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--pip-text-dim);
+}
 
-  /* ════════════════════
-     FOOTER
-  ════════════════════ */
-  footer {
-    background: var(--surface); border-top: 1px solid var(--border2);
-    padding: 1.8rem 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
-  }
-  .footer-wm { font-family: var(--vt); font-size: 1rem; font-weight: 700; letter-spacing: 0.1em; color: var(--ph); text-shadow: 0 0 8px var(--ph-dim); }
-  .footer-wm span { color: var(--muted); }
-  footer small { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); }
-  .footer-links { display: flex; gap: 1.2rem; }
-  .footer-links a { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); text-decoration: none; transition: color 0.15s; }
-  .footer-links a:hover { color: var(--ph); }
-  /* ════════════════════
-     CAROUSEL
-  ════════════════════ */
-  .c-slide { display: none; }
-  .c-slide.active { display: block; }
+.mq-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  border: 1px solid var(--border-subtle);
+  background: var(--border-subtle);
+  gap: 1px;
+}
+@media(max-width:640px){ .mq-grid { grid-template-columns: 1fr; } }
 
-  .c-caption {
-    background: var(--bg); padding: 1.2rem 1.4rem;
-    border-top: 1px solid var(--border2);
-  }
-  .c-cap-label {
-    font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em;
-    text-transform: uppercase; color: var(--ph); display: block; margin-bottom: 0.5rem;
-  }
-  .c-caption p {
-    font-family: var(--mono); font-size: 0.88rem; color: var(--dim); line-height: 1.7;
-  }
+.mq-card {
+  background: var(--pip-bg-light); padding: 2.2rem 1.8rem;
+  text-align: left; position: relative; overflow: hidden;
+  transition: background 0.2s;
+}
+.mq-card:hover { background: rgba(255,120,48,0.05); }
 
-  .c-btn {
-    background: transparent; border: 1px solid var(--border2); color: var(--dim);
-    font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
-    padding: 0.55rem 1.1rem; cursor: pointer; transition: border-color 0.15s, color 0.15s;
-  }
-  .c-btn:hover { border-color: var(--ph-dark); color: var(--ph); }
+/* corner accents on hover */
+.mq-card::before,
+.mq-card::after {
+  content: '';
+  position: absolute;
+  width: 8px; height: 8px;
+  border-color: var(--pip-primary); border-style: solid; opacity: 0;
+  transition: opacity 0.2s;
+}
+.mq-card::before { top: 6px; left: 6px; border-width: 1px 0 0 1px; }
+.mq-card::after  { bottom: 6px; right: 6px; border-width: 0 1px 1px 0; }
+.mq-card:hover::before,
+.mq-card:hover::after { opacity: 0.6; }
 
-  .c-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--muted); cursor: pointer; transition: background 0.2s, box-shadow 0.2s;
-  }
-  .c-dot.active { background: var(--ph); box-shadow: 0 0 6px var(--ph-dim); }
+.mq-quest-num {
+  font-family: var(--pip-font-mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--pip-text-dim); margin-bottom: 1rem; display: block;
+}
+.mq-quest-num .num { color: var(--pip-primary); }
+.mq-icon { font-size: 1.3rem; margin-bottom: 0.7rem; display: block; }
+.mq-card h3 {
+  font-family: var(--pip-font-body); font-size: 1rem; font-weight: 700;
+  color: var(--pip-text); margin-bottom: 0.5rem;
+}
+.mq-card p {
+  font-family: var(--pip-font-body); font-size: 0.9rem; color: var(--pip-text-dim); line-height: 1.7;
+}
+.mq-card p strong { color: var(--pip-text); }
 
-  /* ════════════════════
-     MOBILE FONT FLOOR
-  ════════════════════ */
-  @media(max-width:600px){
-    nav { padding: 0.9rem 1rem; }
-    .price-card { padding: 2rem 1.2rem; }
-    footer { flex-direction: column; align-items: flex-start; }
+.mq-card .mq-tag {
+  display: inline-block; margin-top: 1.2rem;
+  font-family: var(--pip-font-mono); font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--pip-primary); border: 1px solid var(--pip-secondary);
+  padding: 0.2rem 0.6rem; opacity: 0.75;
+}
 
-    .sys-label, .soltar-lbl, .z-dir-lbl, .z-color-lbl,
-    .price-lbl, .c-cap-label, .hero-tag { font-size: 12px; }
+.mq-unlock-bar {
+  margin-top: 3rem; padding: 1.4rem 1.8rem;
+  border: 1px solid var(--border-mid);
+  background: var(--surface);
+  display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.mq-unlock-text {
+  font-family: var(--pip-font-mono); font-size: 11px; letter-spacing: 0.12em;
+  color: var(--pip-text-dim);
+}
+.mq-unlock-text strong { color: var(--pip-primary); }
+.mq-free-badge {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: rgba(255,120,48,0.08); border: 1px solid var(--pip-secondary);
+  color: var(--pip-primary); font-family: var(--pip-font-mono); font-size: 9px;
+  letter-spacing: 0.18em; text-transform: uppercase; padding: 0.3rem 0.8rem;
+}
+.mq-free-badge::before { content: '◆'; font-size: 7px; }
 
-    .z-wave-lbl { font-size: 11px; }
+/* ════════════════════════════════════
+   BIG IDEA / DAILY EDGE
+════════════════════════════════════ */
+#big-idea { padding: 7rem 1.5rem; }
+.bi-inner { max-width: 860px; margin: 0 auto; text-align: center; }
+.bi-quote {
+  font-family: var(--pip-font-body); font-size: clamp(1.5rem, 3.5vw, 2.3rem);
+  font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; margin: 1.8rem 0;
+}
+.bi-quote .ph { color: var(--pip-primary); text-shadow: var(--pip-glow); }
 
-    .z-identity, .z-dir-body, .fw-text p, .who-body p,
-    .soltar-body p, .vec-text p, .vec-box p, .pain-card p,
-    .tri-cell p, .step p, .faq-a p, .c-caption p { font-size: 0.95rem; }
+.tri {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 1px; margin-top: 3.5rem;
+  background: var(--border-subtle); border: 1px solid var(--border-subtle);
+}
+@media(max-width:560px){ .tri { grid-template-columns: 1fr; } }
+.tri-cell {
+  background: var(--pip-bg-light); padding: 2.2rem 1.6rem; text-align: center;
+  position: relative; transition: background 0.2s;
+}
+.tri-cell:hover { background: rgba(255,120,48,0.05); }
+.tri-cell::before {
+  content:''; position:absolute; top:0; left: 20%; right: 20%; height:1px;
+  background: linear-gradient(90deg,transparent,var(--pip-primary),transparent); opacity: 0.35;
+}
+.tri-icon { font-size: 1.4rem; margin-bottom: 0.7rem; display: block; }
+.tri-cell h3 {
+  font-family: var(--pip-font-body); font-size: 0.95rem; font-weight: 700;
+  color: var(--pip-primary); margin-bottom: 0.4rem;
+}
+.tri-cell p {
+  font-family: var(--pip-font-body); font-size: 0.88rem; color: var(--pip-text-dim); line-height: 1.65;
+}
 
-    .z-dir-body .note { font-size: 0.9rem; }
-    .cat-name { font-size: 0.88rem; }
-    .cat-desc { font-size: 0.78rem; }
-    .z-wave-body { font-size: 0.88rem; }
-    .z-archetype { font-size: 0.8rem; }
-    .z-tag { font-size: 0.72rem; }
-    .hs-lbl { font-size: 11px; }
-    .price-ft { font-size: 0.82rem; }
-    .trust-pill { font-size: 0.72rem; }
-    footer small { font-size: 0.75rem; }
-    .footer-links a { font-size: 0.75rem; }
-  }
+/* ════════════════════════════════════
+   PAIN
+════════════════════════════════════ */
+#pain { padding: 7rem 1.5rem; }
+.pain-inner { max-width: 1060px; margin: 0 auto; }
+.pain-head { text-align: center; margin-bottom: 3.5rem; }
+.pain-grid {
+  display: grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+  gap: 1px; background: var(--border-subtle); border: 1px solid var(--border-subtle);
+}
+.pain-card {
+  background: var(--pip-bg-light); padding: 2.2rem; position: relative; overflow: hidden; transition: background 0.2s;
+}
+.pain-card::before {
+  content:''; position:absolute; top:0; left:0; width:2px; height:0;
+  background: var(--pip-primary); transition: height 0.35s ease;
+}
+.pain-card:hover::before { height:100%; }
+.pain-card:hover { background: rgba(255,120,48,0.04); }
+.pain-card h3 {
+  font-family: var(--pip-font-body); font-size: 0.95rem; font-weight: 700;
+  color: var(--pip-text); margin-bottom: 0.6rem;
+}
+.pain-card p  { font-family: var(--pip-font-body); font-size: 0.88rem; color: var(--pip-text-dim); line-height: 1.72; }
+.pain-card p strong { color: var(--pip-text); }
+
+/* ════════════════════════════════════
+   FRAMEWORK
+════════════════════════════════════ */
+#framework {
+  padding: 7rem 1.5rem;
+  background: var(--pip-bg-light);
+  border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);
+}
+.fw-inner { max-width: 980px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+@media(max-width:720px){ .fw-inner { grid-template-columns: 1fr; gap: 3rem; } }
+.fw-text p { font-family: var(--pip-font-body); font-size: 0.92rem; color: var(--pip-text-dim); line-height: 1.8; margin-top: 1.2rem; }
+.fw-text p strong { color: var(--pip-text); }
+.fw-btns { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.8rem; }
+
+.cat-rows { display: flex; flex-direction: column; gap: 0.4rem; margin-top: 1.2rem; }
+.cat-row {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--border-subtle); background: var(--pip-bg);
+  transition: border-color 0.2s, background 0.2s;
+}
+.cat-row:hover { border-color: var(--pip-secondary); background: var(--surface); }
+.cat-swatch { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.cat-n {
+  font-family: var(--pip-font-mono); font-size: 10px; font-weight: 700;
+  color: var(--pip-primary); width: 20px; flex-shrink: 0;
+}
+.cat-label { font-family: var(--pip-font-mono); font-size: 11px; color: var(--pip-text-dim); flex: 1; letter-spacing: 0.05em; }
+.cat-sub   { font-family: var(--pip-font-mono); font-size: 10px; color: var(--pip-text-dim); opacity: 0.55; text-align: right; }
+
+/* ════════════════════════════════════
+   ZONES
+════════════════════════════════════ */
+#zones {
+  padding: 7rem 1.5rem;
+  border-top: 1px solid var(--border-subtle);
+}
+.zones-inner { max-width: 980px; margin: 0 auto; }
+.zones-head { text-align: center; margin-bottom: 3rem; }
+.zones-head p { font-family: var(--pip-font-body); font-size: 0.95rem; color: var(--pip-text-dim); max-width: 540px; margin: 0.8rem auto 0; line-height: 1.72; }
+
+.zone-tabs {
+  display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 1.5rem; justify-content: center;
+}
+.zone-tab {
+  font-family: var(--pip-font-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 0.45rem 0.9rem; border: 1px solid var(--border-subtle); background: var(--pip-bg-light);
+  cursor: pointer; color: var(--pip-text-dim); transition: all 0.15s;
+}
+.zone-tab:hover { border-color: var(--pip-secondary); color: var(--pip-text); }
+.zone-tab.active { border-color: currentColor; font-weight: 700; }
+.zone-tab[data-zone="pink"]   { --zt: var(--pink-text); }
+.zone-tab[data-zone="orange"] { --zt: var(--orange-text); }
+.zone-tab[data-zone="blue"]   { --zt: var(--blue-text); }
+.zone-tab[data-zone="yellow"] { --zt: var(--yellow-text); }
+.zone-tab[data-zone="green"]  { --zt: var(--green-text); }
+.zone-tab[data-zone="purple"] { --zt: var(--purple-text); }
+.zone-tab[data-zone="red"]    { --zt: var(--red-text); }
+.zone-tab[data-zone="brown"]  { --zt: var(--brown-text); }
+.zone-tab.active { color: var(--zt); border-color: var(--zt); }
+
+.zone-panel { display: none; }
+.zone-panel.active { display: block; }
+
+.zone-content {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start;
+}
+@media(max-width:640px){ .zone-content { grid-template-columns: 1fr; } }
+
+.zone-info { padding: 2.2rem; border: 1px solid var(--border-subtle); background: var(--pip-bg-light); position: relative; }
+.zone-info::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--zc, var(--pip-primary)), transparent); opacity: 0.5;
+}
+.zone-name {
+  font-family: var(--pip-font-body); font-size: 1.5rem; font-weight: 800;
+  color: var(--zc, var(--pip-primary)); margin-bottom: 0.3rem; text-transform: capitalize;
+}
+.zone-vibe {
+  font-family: var(--pip-font-mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--pip-text-dim); margin-bottom: 1.2rem; display: block;
+}
+.zone-desc {
+  font-family: var(--pip-font-body); font-size: 0.9rem; color: var(--pip-text-dim); line-height: 1.75; margin-bottom: 1.4rem;
+}
+.zone-stats { display: flex; flex-direction: column; gap: 0.5rem; }
+.zone-stat-row {
+  display: flex; align-items: center; gap: 0.7rem; font-family: var(--pip-font-mono); font-size: 11px;
+}
+.zone-stat-key { color: var(--pip-text-dim); width: 80px; flex-shrink: 0; }
+.zone-stat-val { color: var(--pip-text); }
+
+.zone-meta { padding: 2.2rem; border: 1px solid var(--border-subtle); background: var(--pip-bg-light); }
+.zone-meta h4 {
+  font-family: var(--pip-font-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--pip-text-dim); margin-bottom: 1rem;
+}
+.zone-trait-list { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem; }
+.zone-trait {
+  font-family: var(--pip-font-body); font-size: 0.88rem; color: var(--pip-text-dim);
+  padding: 0.5rem 0.75rem; border-left: 2px solid var(--zc, var(--pip-primary));
+  background: var(--surface);
+}
+
+/* ════════════════════════════════════
+   HOW IT WORKS
+════════════════════════════════════ */
+#how {
+  padding: 7rem 1.5rem;
+  background: var(--pip-bg-light);
+  border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);
+}
+.how-inner { max-width: 860px; margin: 0 auto; text-align: center; }
+.steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; margin-top: 3.5rem; background: var(--border-subtle); }
+@media(max-width:600px){ .steps { grid-template-columns: 1fr; } }
+.step {
+  background: var(--pip-bg); padding: 2.4rem 1.8rem; text-align: center; position: relative;
+}
+.step-num {
+  font-family: var(--pip-font-mono); font-size: 0.75rem; font-weight: 700;
+  color: var(--pip-primary); letter-spacing: 0.1em; margin-bottom: 1.2rem; display: block;
+  opacity: 0.7;
+}
+.step-num::before { content: '['; opacity: 0.4; }
+.step-num::after  { content: ']'; opacity: 0.4; }
+.step-icon { font-size: 1.6rem; margin-bottom: 0.9rem; display: block; }
+.step h3 {
+  font-family: var(--pip-font-body); font-size: 1rem; font-weight: 700;
+  color: var(--pip-text); margin-bottom: 0.5rem;
+}
+.step p  { font-family: var(--pip-font-body); font-size: 0.88rem; color: var(--pip-text-dim); line-height: 1.68; }
+
+/* ════════════════════════════════════
+   TESTIMONIAL
+════════════════════════════════════ */
+#testimonial { padding: 7rem 1.5rem; }
+.testi-inner { max-width: 700px; margin: 0 auto; text-align: center; }
+.testi-orb {
+  width: 40px; height: 40px; border-radius: 50%; margin: 0 auto 1.4rem;
+  background: radial-gradient(circle, rgba(var(--zone-color),0.8) 0%, rgba(var(--zone-color),0.2) 70%, transparent 100%);
+  animation: pip-glow-breathe 4s ease-in-out infinite;
+}
+.testi-quote {
+  font-family: var(--pip-font-body); font-size: clamp(1.05rem, 2.2vw, 1.3rem);
+  color: var(--pip-text); line-height: 1.7; font-style: italic; margin-bottom: 1.4rem;
+}
+.testi-source {
+  font-family: var(--pip-font-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--pip-text-dim);
+}
+.testi-source span { color: var(--pip-primary); }
+
+/* ════════════════════════════════════
+   SOLTAR SECTION
+════════════════════════════════════ */
+#soltar {
+  padding: 7rem 1.5rem;
+  background: var(--pip-bg-light);
+  border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);
+}
+.soltar-inner { max-width: 860px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+@media(max-width:680px){ .soltar-inner { grid-template-columns: 1fr; gap: 2.5rem; } }
+.soltar-avatar {
+  width: 160px; height: 160px; border-radius: 50%; border: 1px solid var(--border-mid);
+  background: radial-gradient(circle at 35% 35%, rgba(var(--zone-color),0.5) 0%, rgba(var(--zone-color),0.08) 60%, transparent 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 4rem; margin: 0 auto;
+  animation: pip-glow-breathe 5s ease-in-out infinite;
+}
+.soltar-text p { font-family: var(--pip-font-body); font-size: 0.92rem; color: var(--pip-text-dim); line-height: 1.8; margin-top: 1rem; }
+.soltar-text p strong { color: var(--pip-text); }
+.soltar-btns { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 1.8rem; }
+
+/* ════════════════════════════════════
+   VECTOR (PROOF SECTION)
+════════════════════════════════════ */
+#vector { padding: 5rem 1.5rem; }
+.vector-inner { max-width: 860px; margin: 0 auto; text-align: center; }
+.vector-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1px; margin-top: 2.5rem; background: var(--border-subtle); border: 1px solid var(--border-subtle);
+}
+.vector-cell {
+  background: var(--pip-bg-light); padding: 1.8rem 1.2rem; text-align: center;
+}
+.vec-num {
+  font-family: var(--pip-font-mono); font-size: 1.8rem; font-weight: 700;
+  color: var(--pip-primary); display: block; line-height: 1; margin-bottom: 0.4rem;
+  text-shadow: var(--pip-glow);
+}
+.vec-lbl {
+  font-family: var(--pip-font-mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--pip-text-dim);
+}
+
+/* ════════════════════════════════════
+   WHO THIS IS FOR
+════════════════════════════════════ */
+#who { padding: 7rem 1.5rem; }
+.who-inner { max-width: 980px; margin: 0 auto; }
+.who-head { text-align: center; margin-bottom: 3.5rem; }
+.who-head p { font-family: var(--pip-font-body); font-size: 0.95rem; color: var(--pip-text-dim); max-width: 540px; margin: 0.8rem auto 0; line-height: 1.72; }
+.who-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 1px; background: var(--border-subtle); border: 1px solid var(--border-subtle); }
+.who-card {
+  background: var(--pip-bg-light); padding: 2.2rem; position: relative; transition: background 0.2s;
+}
+.who-card:hover { background: rgba(255,120,48,0.04); }
+.who-card::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--pip-muted), transparent);
+}
+.who-card h3 {
+  font-family: var(--pip-font-body); font-size: 0.95rem; font-weight: 700;
+  color: var(--pip-text); margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.5rem;
+}
+.who-card h3 .icon { font-size: 1.1rem; }
+.who-card p {
+  font-family: var(--pip-font-body); font-size: 0.88rem; color: var(--pip-text-dim); line-height: 1.72;
+}
+.who-not {
+  margin-top: 2rem; padding: 1.4rem 1.8rem;
+  border: 1px solid var(--border-subtle); background: var(--pip-bg-light);
+  display: flex; align-items: flex-start; gap: 1rem;
+}
+.who-not-label {
+  font-family: var(--pip-font-mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--pip-text-dim); flex-shrink: 0; padding-top: 0.1rem;
+}
+.who-not p { font-family: var(--pip-font-body); font-size: 0.88rem; color: var(--pip-text-dim); line-height: 1.65; }
+
+/* ════════════════════════════════════
+   PRICING
+════════════════════════════════════ */
+#pricing {
+  padding: 7rem 1.5rem;
+  background: var(--pip-bg-light);
+  border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);
+}
+.pricing-inner { max-width: 980px; margin: 0 auto; text-align: center; }
+.pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 3.5rem; }
+@media(max-width:720px){ .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin-inline: auto; } }
+
+.pricing-card {
+  background: var(--pip-bg); border: 1px solid var(--border-subtle);
+  padding: 2.4rem 2rem; text-align: left; position: relative; transition: border-color 0.2s;
+}
+.pricing-card::before,
+.pricing-card::after {
+  content: '';
+  position: absolute;
+  width: 10px; height: 10px;
+  border-style: solid; opacity: 0.3;
+  transition: opacity 0.2s;
+}
+.pricing-card::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; border-color: var(--pip-primary); }
+.pricing-card::after  { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; border-color: var(--pip-primary); }
+.pricing-card:hover { border-color: var(--border-mid); }
+.pricing-card:hover::before,
+.pricing-card:hover::after { opacity: 0.7; }
+
+.pricing-card.featured {
+  border-color: var(--pip-secondary);
+  background: rgba(255,120,48,0.04);
+}
+.pricing-card.featured::before,
+.pricing-card.featured::after { opacity: 0.7; }
+
+.pricing-badge {
+  display: inline-block; margin-bottom: 1.2rem;
+  font-family: var(--pip-font-mono); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--pip-primary); border: 1px solid var(--pip-secondary);
+  padding: 0.22rem 0.7rem; background: rgba(255,120,48,0.06);
+}
+
+.pricing-tier {
+  font-family: var(--pip-font-mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--pip-text-dim); margin-bottom: 0.4rem; display: block;
+}
+.pricing-name {
+  font-family: var(--pip-font-body); font-size: 1.3rem; font-weight: 800;
+  color: var(--pip-text); margin-bottom: 0.3rem;
+}
+.pricing-price {
+  font-family: var(--pip-font-mono); font-size: 1.8rem; font-weight: 700;
+  color: var(--pip-primary); margin-bottom: 0.3rem;
+  text-shadow: var(--pip-glow);
+}
+.pricing-price sup { font-size: 0.9rem; vertical-align: super; }
+.pricing-price span { font-size: 0.75rem; color: var(--pip-text-dim); font-weight: 400; }
+.pricing-desc {
+  font-family: var(--pip-font-body); font-size: 0.85rem; color: var(--pip-text-dim); line-height: 1.65;
+  margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-subtle);
+}
+
+.pricing-features { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.8rem; }
+.pf-row {
+  display: flex; align-items: flex-start; gap: 0.6rem;
+  font-family: var(--pip-font-body); font-size: 0.85rem; color: var(--pip-text-dim); line-height: 1.5;
+}
+.pf-check { color: var(--pip-primary); font-family: var(--pip-font-mono); font-size: 11px; flex-shrink: 0; margin-top: 0.1rem; }
+
+/* ════════════════════════════════════
+   FAQ
+════════════════════════════════════ */
+#faq { padding: 7rem 1.5rem; }
+.faq-inner { max-width: 700px; margin: 0 auto; }
+.faq-head { text-align: center; margin-bottom: 3rem; }
+.faq-list { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border-subtle); }
+.faq-item { border-bottom: 1px solid var(--border-subtle); }
+.faq-item:last-child { border-bottom: none; }
+.faq-q {
+  width: 100%; text-align: left; background: var(--pip-bg-light);
+  border: none; cursor: pointer; padding: 1.2rem 1.4rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  transition: background 0.15s;
+}
+.faq-q:hover { background: rgba(255,120,48,0.04); }
+.faq-q span {
+  font-family: var(--pip-font-body); font-size: 0.9rem; font-weight: 600;
+  color: var(--pip-text); text-align: left;
+}
+.faq-icon {
+  font-family: var(--pip-font-mono); font-size: 14px; color: var(--pip-primary);
+  flex-shrink: 0; transition: transform 0.2s;
+}
+.faq-item.open .faq-icon { transform: rotate(45deg); }
+.faq-a {
+  display: none; padding: 0 1.4rem 1.2rem;
+  font-family: var(--pip-font-body); font-size: 0.88rem; color: var(--pip-text-dim); line-height: 1.75;
+  background: var(--pip-bg-light);
+}
+.faq-item.open .faq-a { display: block; }
+
+/* ════════════════════════════════════
+   FINAL CTA
+════════════════════════════════════ */
+#final-cta {
+  padding: 8rem 1.5rem;
+  text-align: center; position: relative; overflow: hidden;
+}
+#final-cta::before {
+  content: ''; position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  width: 700px; height: 500px;
+  background: radial-gradient(ellipse, rgba(255,120,48,0.06) 0%, transparent 65%);
+  pointer-events: none;
+}
+.cta-inner { max-width: 640px; margin: 0 auto; position: relative; z-index: 1; }
+.cta-orb {
+  width: 56px; height: 56px; border-radius: 50%; margin: 0 auto 2rem;
+  background: radial-gradient(circle at 38% 35%,
+    rgba(var(--zone-color), 0.9) 0%,
+    rgba(var(--zone-color), 0.4) 50%,
+    transparent 100%
+  );
+  animation: pip-glow-breathe 3s ease-in-out infinite;
+}
+.cta-inner .sec-title { margin-bottom: 1rem; }
+.cta-inner p { font-family: var(--pip-font-body); font-size: 0.95rem; color: var(--pip-text-dim); line-height: 1.75; margin-bottom: 2.2rem; }
+.cta-inner p strong { color: var(--pip-text); }
+.cta-btns { display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; margin-bottom: 1.5rem; }
+.cta-note {
+  font-family: var(--pip-font-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--pip-text-dim);
+}
+
+/* ════════════════════════════════════
+   FOOTER
+════════════════════════════════════ */
+footer {
+  border-top: 1px solid var(--border-subtle);
+  padding: 2.5rem 2rem;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+}
+.footer-wordmark {
+  font-family: var(--pip-font-mono); font-size: 0.78rem; font-weight: 700;
+  letter-spacing: 0.1em; color: var(--pip-primary); text-decoration: none;
+}
+.footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+.footer-links a {
+  font-family: var(--pip-font-mono); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--pip-text-dim); text-decoration: none; transition: color 0.15s;
+}
+.footer-links a:hover { color: var(--pip-primary); }
+.footer-copy {
+  font-family: var(--pip-font-mono); font-size: 9px; color: var(--pip-muted); letter-spacing: 0.1em;
+  width: 100%;
+}
+
 </style>
 </head>
 <body>
 
-<div class="embers" id="embers"></div>
-
-<!-- NAV -->
-<nav id="main-nav">
-  <a href="#" class="nav-wordmark">LUCKIFY<span>.ME</span></a>
+<!-- ════ NAV ════ -->
+<div class="zone-spectrum"></div>
+<nav>
+  <a href="/" class="nav-wordmark">
+    <span class="nav-orb"></span>
+    LUCKIFY<span class="dim">.ME</span>
+  </a>
   <div class="nav-right">
-    <a href="#zones" class="nav-link">Zones</a>
-    <a href="#how" class="nav-link">How It Works</a>
-    <a href="#pricing" class="nav-link">Pricing</a>
-    <a href="https://luckify3.gumroad.com/l/nimtpq" class="nav-cta">>> Start Free</a>
+    <a href="#main-quest" class="nav-link">Main Quest</a>
+    <a href="#zones"      class="nav-link">Zones</a>
+    <a href="#pricing"    class="nav-link">Pricing</a>
+    <a href="https://luckify-me.pages.dev/" class="nav-cta">Build Profile</a>
   </div>
 </nav>
 
-
-<!-- ══════════════════════════════════
-     HERO
-══════════════════════════════════ -->
+<!-- ════ HERO ════ -->
 <section id="hero">
   <div class="hero-glow"></div>
-  <div class="hero-tag">Personal rhythm calendar · know when you're at your best</div>
+
+  <div class="hero-orb-wrap">
+    <div class="hero-orb"></div>
+  </div>
+
+  <span class="hero-tag">Main Quest — Now Active</span>
 
   <h1 class="hero-h1">
-    You are not the<br>
-    <span class="ph">same person</span><br>
-    <span class="dim">every day.</span><br>
-    <span class="ph">Your edge isn't either.</span>
+    Your <span class="ph">Purpose</span><br>
+    Has <span class="dim">Mechanics</span>
   </h1>
 
   <p class="hero-sub">
-    Some days everything clicks. Others, nothing lands — even when you do everything right.<br>
-    <strong>Same skills. Same effort. Different results.</strong><br><br>
-    Lucky Window gives you a personalized daily calendar built from your birth data —
-    so you know <strong>when your decision quality is at its peak</strong>
-    and when to pull back before the day costs you.
+    <strong>Your birth data holds the pattern.</strong> Luckify translates it into a personalized identity profile — who you are, how you make decisions, and what's in play right now.
   </p>
+
+  <div class="hero-systems">
+    <span class="sys-chip">BaZi</span>
+    <span class="sys-chip">I Ching</span>
+    <span class="sys-chip">Numerology</span>
+    <span class="sys-chip">Gene Keys</span>
+    <span class="sys-chip">Moon Phases</span>
+    <span class="sys-chip">Vedic Astrology</span>
+    <span class="sys-chip">Horoscopes</span>
+    <span class="sys-chip">Chinese Zodiac</span>
+    <span class="sys-chip">Tarot Archetypes</span>
+  </div>
 
   <div class="hero-ctas">
-    <a href="https://luckify3.gumroad.com/l/nimtpq" class="btn-primary">>> Start My 30-Day Trial</a>
-    <a href="#big-idea" class="btn-ghost">How it works →</a>
+    <a href="https://luckify-me.pages.dev/" class="btn-primary">Begin Your Quest — Free</a>
+    <a href="#main-quest" class="btn-ghost">See What's Inside</a>
   </div>
 
-  <p style="font-family:var(--mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:2.5rem;">
-    30 days free · track your output · cancel anytime
-  </p>
-
-  <div class="hero-stats">
-    <div><div class="hs-num">8</div><div class="hs-lbl">Rhythm Zones</div></div>
-    <div><div class="hs-num">6</div><div class="hs-lbl">Scored Categories</div></div>
-    <div><div class="hs-num">1</div><div class="hs-lbl">Calendar, Yours Alone</div></div>
-    <div><div class="hs-num">30</div><div class="hs-lbl">Days Free</div></div>
+  <div class="game-status-bar" style="justify-content:center; opacity:0; animation: fu 0.5s ease forwards 1.2s;">
+    <span class="gsb-dot"></span>
+    <span>Main Quest — Active</span>
+    <span class="gsb-sep">|</span>
+    <span>3 Modules Loaded</span>
+    <span class="gsb-sep">|</span>
+    <span>Channel Open</span>
   </div>
 
-  <div class="hero-scroll"><span>Scroll</span><div class="scroll-line"></div></div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
 </section>
 
-
-<!-- ══════════════════════════════════
-     BIG IDEA
-══════════════════════════════════ -->
-<section id="big-idea">
-  <div class="bi-inner">
-    <div class="reveal">
-      <span class="sys-label">The Real Edge</span>
-      <h2 class="sec-title">Your output quality<br><span class="ph">is not constant.</span></h2>
-      <div class="bi-quote">Your best days aren't random.<br><span class="ph">Neither are your worst.</span></div>
-      <p style="font-family:var(--mono);font-size:0.87rem;color:var(--dim);max-width:580px;margin:0 auto;line-height:1.8;">
-        Lucky Window maps the underlying pattern —
-        <strong style="color:var(--text)">when to go harder</strong>,
-        <strong style="color:var(--text)">when to hold steady</strong>, and
-        <strong style="color:var(--text)">when the environment is working against you</strong>.
-        The directive lives in the zone.
+<!-- ════ MAIN QUEST ════ -->
+<section id="main-quest" style="position:relative;">
+  <div class="section-glow"></div>
+  <div class="mq-inner">
+    <div class="mq-header reveal">
+      <span class="sys-label">Main Quest — Free</span>
+      <h2 class="sec-title">Your <span class="ph">Character Sheet.</span><br>Finally Loaded.</h2>
+      <p class="mq-sub">
+        Most people live their whole life without ever seeing the pattern behind how they work.
+        Your Main Quest is the starting point — <strong>a complete profile built from your birth data,</strong> decoded across multiple systems into one coherent picture.
       </p>
     </div>
 
-    <div class="tri reveal">
-      <div class="tri-cell"><span class="tri-icon">🔥</span><h3>High Output Days</h3><p>Your rhythm is at its peak. Energy, clarity, and pattern recognition are all firing. These are the days to move.</p></div>
-      <div class="tri-cell"><span class="tri-icon">🛡️</span><h3>Steady State Days</h3><p>Not every day is a high. Some zones reward consistency over ambition — and knowing that is its own edge.</p></div>
-      <div class="tri-cell"><span class="tri-icon">⏸</span><h3>Pull Back Days</h3><p>Field conditions are working against execution. The edge today is in what you don't do.</p></div>
+    <div class="quest-log-header reveal d1">
+      <span class="quest-log-title">QUEST LOG</span>
+      <div class="quest-log-divider"></div>
+      <span class="quest-status">3 MODULES UNLOCKED</span>
     </div>
 
-    <div class="reveal" style="text-align:center;margin-top:2.5rem;">
-      <a href="#zones" class="btn-primary">>> See the zone system</a>
+    <div class="mq-grid reveal d2">
+      <div class="mq-card">
+        <span class="mq-quest-num">MODULE <span class="num">01</span></span>
+        <span class="mq-icon">🧬</span>
+        <h3>Foundation Engine</h3>
+        <p>Your permanent identity layer. <strong>How you're structurally wired</strong> — your element, your authority, your Life Path, your destiny card. The things that don't change.</p>
+        <div class="xp-bar-wrap">
+          <div class="xp-bar-label"><span>Identity Load</span><span>100%</span></div>
+          <div class="xp-bar"><div class="xp-bar-fill" style="width:100%"></div></div>
+        </div>
+        <span class="mq-tag" style="margin-top:0.8rem;">Always Active</span>
+      </div>
+      <div class="mq-card">
+        <span class="mq-quest-num">MODULE <span class="num">02</span></span>
+        <span class="mq-icon">⚡</span>
+        <h3>Color Rhythm</h3>
+        <p>The daily timing layer — <strong>what elemental field is running right now.</strong> Your current zone, your color, what's favorable and what to move around.</p>
+        <div class="xp-bar-wrap">
+          <div class="xp-bar-label"><span>Daily Sync</span><span>Live</span></div>
+          <div class="xp-bar"><div class="xp-bar-fill" style="width:100%"></div></div>
+        </div>
+        <span class="mq-tag" style="margin-top:0.8rem;">Updates Daily</span>
+      </div>
+      <div class="mq-card">
+        <span class="mq-quest-num">MODULE <span class="num">03</span></span>
+        <span class="mq-icon">🎯</span>
+        <h3>Decision Authority</h3>
+        <p>Your I Ching authority translated into a <strong>daily usable skill.</strong> A clear, personal process for arriving at decisions that actually fit you — connected to your active color field.</p>
+        <div class="xp-bar-wrap">
+          <div class="xp-bar-label"><span>Clarity Engine</span><span>Active</span></div>
+          <div class="xp-bar"><div class="xp-bar-fill" style="width:100%"></div></div>
+        </div>
+        <span class="mq-tag" style="margin-top:0.8rem;">Always Active</span>
+      </div>
+    </div>
+
+    <div class="mq-unlock-bar reveal d3">
+      <span class="mq-unlock-text">Your full profile is <strong>generated from your birth data</strong> — date, time, and location. Every number calculated. Nothing assigned.</span>
+      <div style="display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap;">
+        <span class="mq-free-badge">Free Forever</span>
+        <a href="https://luckify-me.pages.dev/" class="btn-primary" style="font-size:11px; padding: 0.65rem 1.4rem;">Build Your Profile</a>
+      </div>
     </div>
   </div>
 </section>
 
+<!-- ════ BIG IDEA / DAILY EDGE ════ -->
+<section id="big-idea">
+  <div class="bi-inner">
+    <div class="reveal">
+      <span class="sys-label">The Insight</span>
+      <p class="bi-quote">
+        You've been operating on <span class="ph">someone else's timing.</span><br>
+        What if you had your own?
+      </p>
+      <p style="font-family: var(--pip-font-body); font-size:0.95rem; color: var(--pip-text-dim); max-width:520px; margin: 0 auto; line-height:1.75;">
+        Most tools tell you who you are and stop there. Luckify gives you the daily layer too — so you know not just your structure, but <strong style="color:var(--pip-text)">what's actually active right now.</strong>
+      </p>
+    </div>
 
-<!-- ══════════════════════════════════
-     PAIN
-══════════════════════════════════ -->
+    <div class="tri reveal d2">
+      <div class="tri-cell">
+        <span class="tri-icon">🌀</span>
+        <h3>Color Rhythm</h3>
+        <p>A BaZi-based daily color field that shows what elemental energy is running — and how to move with it instead of against it.</p>
+      </div>
+      <div class="tri-cell">
+        <span class="tri-icon">🧭</span>
+        <h3>Your Decision Process</h3>
+        <p>Human Design authority, translated into plain language. A daily skill — not a concept to study, but a process to use.</p>
+      </div>
+      <div class="tri-cell">
+        <span class="tri-icon">📡</span>
+        <h3>Live Context</h3>
+        <p>Your Active Rhythm updates every day. The same profile, but you always know what phase you're in and what that means for action.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ PAIN ════ -->
 <section id="pain">
-  <div class="reveal" style="text-align:center;max-width:700px;margin:0 auto;">
-    <span class="sys-label">The Blind Spot</span>
-    <h2 class="sec-title">You're not performing badly.<br><span class="ph">You're performing at the wrong time.</span></h2>
-  </div>
+  <div class="pain-inner">
+    <div class="pain-head reveal">
+      <span class="sys-label">The Problem</span>
+      <h2 class="sec-title">You've Tried the Tools.<br><span class="ph">They Didn't Stick.</span></h2>
+    </div>
 
-  <div class="pain-grid">
-    <div class="pain-card reveal d1">
-      <h3>You did everything right — and it still didn't land</h3>
-      <p>Full effort. Clear thinking. Disciplined execution. Still walked away with nothing to show for it.<br><br><strong>You can't always control the outcome. But you can control when you expose yourself to it.</strong></p>
-    </div>
-    <div class="pain-card reveal d2">
-      <h3>You don't know when you're actually sharp</h3>
-      <p>Some days you're locked in — decisions feel fast and clean. Others you're forcing it and don't realize until after.<br><br><strong>The conditions changed. You didn't know.</strong></p>
-    </div>
-    <div class="pain-card reveal d3">
-      <h3>Your edge disappears and you don't know why</h3>
-      <p>Same skills. Same preparation. Same environment. But some days none of it converts.<br><br><strong>Because your edge isn't always available. And no one told you that was measurable.</strong></p>
-    </div>
-  </div>
-
-  <div class="reveal" style="text-align:center;margin-top:2rem;">
-    <p style="font-family:var(--mono);font-size:0.87rem;color:var(--dim);max-width:580px;margin:0 auto 1.8rem;line-height:1.7;">
-      Most people try to optimize harder.<br>
-      <strong style="color:var(--ph)">The real edge is knowing when your capacity is actually available.</strong>
-    </p>
-    <div style="display:flex;gap:0.7rem;justify-content:center;flex-wrap:wrap;">
-      <a href="https://luckify3.gumroad.com/l/nimtpq" class="btn-primary">>> Start My 30-Day Trial</a>
-      <a href="#framework" class="btn-ghost">Show me the system →</a>
+    <div class="pain-grid reveal d2">
+      <div class="pain-card">
+        <h3>Co-Star / The Pattern</h3>
+        <p><strong>"Energy is shifting."</strong> Cool — but what does that mean? Vague readings designed for passive consumption. You can't actually do anything with them.</p>
+      </div>
+      <div class="pain-card">
+        <h3>MBTI / Enneagram</h3>
+        <p>Great for describing <strong>personality</strong> — but no timing layer, no purpose layer, no daily context. You know your type. You still don't know what to do today.</p>
+      </div>
+      <div class="pain-card">
+        <h3>I Ching / Human Design (raw)</h3>
+        <p>Deep and real — but the language is dense and the charts are overwhelming. <strong>Most people get their reading and never look at it again.</strong> No daily layer. No way to apply it.</p>
+      </div>
+      <div class="pain-card">
+        <h3>Traditional Readings</h3>
+        <p>High cost, high mysticism, hard to verify. Great for insight in the moment — but you walk away with <strong>no system to continue using on your own.</strong></p>
+      </div>
     </div>
   </div>
 </section>
 
-
-<!-- ══════════════════════════════════
-     FRAMEWORK
-══════════════════════════════════ -->
-<section id="framework">
+<!-- ════ FRAMEWORK ════ -->
+<section id="framework" style="position:relative;">
+  <div class="section-glow"></div>
   <div class="fw-inner">
     <div class="fw-text reveal">
-      <span class="sys-label">The System Behind It</span>
-      <h2 class="sec-title">Not a horoscope.<br><span class="ph">A performance model.</span></h2>
-      <p>Lucky Window calculates <strong>six performance categories</strong> every day — Action, Strategy, Discipline, Social, Creativity, and Risk — each scored independently, weighted by your zone.</p>
-      <p>Your zone is calculated from your birth data measured against the daily environmental field. That score maps to a color. The color carries a rhythm identity and behavioral guidance. <strong>Check the color. Read the zone. Operate accordingly.</strong></p>
-      <p><strong>No journaling. No mood tracking. No guesswork.</strong> Fixed inputs — birth date and location — calculated forward. You don't have to believe anything. Run the 30-day audit and compare your output against your zones. Same methodology you'd apply to any edge claim.</p>
+      <span class="sys-label">The Framework</span>
+      <h2 class="sec-title">One <span class="ph">System.</span><br>Multiple Inputs.</h2>
+      <p>Luckify synthesizes BaZi, I Ching, numerology, Gene Keys, moon phases, Vedic astrology, tarot archetypes, Chinese zodiac, and more into a <strong>single coherent profile.</strong> Not a personality quiz. Not a generic archetype. Your actual pattern — calculated from your specific birth data.</p>
+      <p>Each system adds a different layer. Together they form something you can <strong>actually use every day.</strong></p>
       <div class="fw-btns">
-        <a href="#zones" class="btn-primary">>> See the 8 zones</a>
-        <a href="#how" class="btn-ghost">How you get it →</a>
+        <a href="https://luckify-me.pages.dev/" class="btn-primary">Start Your Profile</a>
       </div>
     </div>
 
     <div class="reveal d2">
-      <p style="font-family:var(--mono);font-size:8px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:0.8rem;">// 6 scored categories · daily output profile</p>
+      <span class="sys-label">Active Systems</span>
       <div class="cat-rows">
-        <div class="cat-row"><div class="cat-n">01</div><div class="cat-i"><div class="cat-name">Action</div><div class="cat-desc">Initiation energy · execution timing · follow-through</div></div><div class="cat-bar"><div class="cat-fill" style="--w:88%"></div></div></div>
-        <div class="cat-row"><div class="cat-n">02</div><div class="cat-i"><div class="cat-name">Strategy</div><div class="cat-desc">Planning depth · decision convergence · clarity of read</div></div><div class="cat-bar"><div class="cat-fill" style="--w:74%"></div></div></div>
-        <div class="cat-row"><div class="cat-n">03</div><div class="cat-i"><div class="cat-name">Discipline</div><div class="cat-desc">Process adherence · resistance to distraction · integrity</div></div><div class="cat-bar"><div class="cat-fill" style="--w:66%"></div></div></div>
-        <div class="cat-row"><div class="cat-n">04</div><div class="cat-i"><div class="cat-name">Social</div><div class="cat-desc">Relational attunement · communication · reading others</div></div><div class="cat-bar"><div class="cat-fill" style="--w:58%"></div></div></div>
-        <div class="cat-row"><div class="cat-n">05</div><div class="cat-i"><div class="cat-name">Creativity</div><div class="cat-desc">Pattern recognition · improvisation · novel approaches</div></div><div class="cat-bar"><div class="cat-fill" style="--w:82%"></div></div></div>
-        <div class="cat-row"><div class="cat-n">06</div><div class="cat-i"><div class="cat-name">Risk</div><div class="cat-desc">Sizing authorization · variance tolerance · edge confirmation</div></div><div class="cat-bar"><div class="cat-fill" style="--w:71%"></div></div></div>
+        <div class="cat-row">
+          <div class="cat-swatch" style="background:#E87020"></div>
+          <span class="cat-n">01</span>
+          <span class="cat-label">BaZi — Daily timing + elemental field</span>
+        </div>
+        <div class="cat-row">
+          <div class="cat-swatch" style="background:#6aabff"></div>
+          <span class="cat-n">02</span>
+          <span class="cat-label">I Ching — Decision gates + hexagrams</span>
+        </div>
+        <div class="cat-row">
+          <div class="cat-swatch" style="background:#f5d76e"></div>
+          <span class="cat-n">03</span>
+          <span class="cat-label">Numerology — Life Path + cycles</span>
+        </div>
+        <div class="cat-row">
+          <div class="cat-swatch" style="background:#6ec25a"></div>
+          <span class="cat-n">04</span>
+          <span class="cat-label">Gene Keys — Purpose + shadow work</span>
+        </div>
+        <div class="cat-row">
+          <div class="cat-swatch" style="background:#b06aff"></div>
+          <span class="cat-n">05</span>
+          <span class="cat-label">Moon Phases — Rhythmic context</span>
+        </div>
+        <div class="cat-row">
+          <div class="cat-swatch" style="background:#e87ad4"></div>
+          <span class="cat-n">06</span>
+          <span class="cat-label">Vedic Astrology — Deeper natal lens</span>
+        </div>
+        <div class="cat-row">
+          <div class="cat-swatch" style="background:#ff6a6a"></div>
+          <span class="cat-n">07</span>
+          <span class="cat-label">Chinese Zodiac — Archetypal pattern</span>
+        </div>
+        <div class="cat-row">
+          <div class="cat-swatch" style="background:#c4935a"></div>
+          <span class="cat-n">08</span>
+          <span class="cat-label">Tarot Archetypes — Shadow + gift mapping</span>
+        </div>
+        <div class="cat-row">
+          <div class="cat-swatch" style="background:#DDD8CC"></div>
+          <span class="cat-n">09</span>
+          <span class="cat-label">Horoscopes — Seasonal context layer</span>
+        </div>
       </div>
-      <p style="font-family:var(--mono);font-size:0.66rem;color:var(--muted);margin-top:0.7rem;">* Scores are zone-weighted and globally normalized.</p>
     </div>
   </div>
 </section>
 
-
-<!-- ══════════════════════════════════
-     ZONE SYSTEM — color + rhythm only
-══════════════════════════════════ -->
+<!-- ════ ZONES ════ -->
 <section id="zones">
   <div class="zones-inner">
-
-    <div class="reveal" style="text-align:center;">
-      <span class="sys-label">Zone System</span>
-      <h2 class="sec-title">8 rhythms.<br><span class="ph">One daily directive.</span></h2>
-      <p class="zone-intro">Your day maps to a color. Each color carries a distinct rhythm identity — a character, a wave pattern, and behavioral guidance specific to that zone. Your calendar shows which zone you're in each day, before the day starts.</p>
+    <div class="zones-head reveal">
+      <span class="sys-label">The Zone System</span>
+      <h2 class="sec-title">Eight <span class="ph">Zones.</span><br>One Active at a Time.</h2>
+      <p>Your current zone reflects the elemental field running in your Active Rhythm. Each zone has a character — not a mood, but a <strong>mode of operating</strong> that shapes what's naturally in flow.</p>
     </div>
 
-    <!-- TABS -->
-    <div class="z-tabs reveal" id="zoneTabs">
-      <button class="z-tab active" style="--tc:#D030A0" onclick="switchZone('pink',this)">
-        <div class="z-dot" style="background:#D030A0;color:#D030A0"></div>
-        <span class="z-name">PINK</span>
-      </button>
-      <button class="z-tab" style="--tc:#E87020" onclick="switchZone('orange',this)">
-        <div class="z-dot" style="background:#E87020;color:#E87020"></div>
-        <span class="z-name">ORANGE</span>
-      </button>
-      <button class="z-tab" style="--tc:#4080E0" onclick="switchZone('blue',this)">
-        <div class="z-dot" style="background:#4080E0;color:#4080E0"></div>
-        <span class="z-name">BLUE</span>
-      </button>
-      <button class="z-tab" style="--tc:#F0C020" onclick="switchZone('yellow',this)">
-        <div class="z-dot" style="background:#F0C020;color:#F0C020"></div>
-        <span class="z-name">YELLOW</span>
-      </button>
-      <button class="z-tab" style="--tc:#6EC25A" onclick="switchZone('green',this)">
-        <div class="z-dot" style="background:#6EC25A;color:#6EC25A"></div>
-        <span class="z-name">GREEN</span>
-      </button>
-      <button class="z-tab" style="--tc:#8A2BE2" onclick="switchZone('purple',this)">
-        <div class="z-dot" style="background:#8A2BE2;color:#8A2BE2"></div>
-        <span class="z-name">PURPLE</span>
-      </button>
-      <button class="z-tab" style="--tc:#E04030" onclick="switchZone('red',this)">
-        <div class="z-dot" style="background:#E04030;color:#E04030"></div>
-        <span class="z-name">RED</span>
-      </button>
-      <button class="z-tab" style="--tc:#A97040" onclick="switchZone('brown',this)">
-        <div class="z-dot" style="background:#A97040;color:#A97040"></div>
-        <span class="z-name">BROWN</span>
-      </button>
+    <div class="zone-tabs reveal d2">
+      <button class="zone-tab active" data-zone="pink">Pink</button>
+      <button class="zone-tab" data-zone="orange">Orange</button>
+      <button class="zone-tab" data-zone="blue">Blue</button>
+      <button class="zone-tab" data-zone="yellow">Yellow</button>
+      <button class="zone-tab" data-zone="green">Green</button>
+      <button class="zone-tab" data-zone="purple">Purple</button>
+      <button class="zone-tab" data-zone="red">Red</button>
+      <button class="zone-tab" data-zone="brown">Brown</button>
     </div>
 
     <!-- PINK -->
-    <div class="z-panel active" id="panel-pink">
-      <div class="z-card" style="--zc:#D030A0">
-        <div class="z-id">
-          <span class="z-color-lbl" style="color:#D030A0">Pink</span>
-          <div class="z-rhythm-name" style="color:#D030A0;text-shadow:0 0 12px rgba(208,48,160,0.4)">The Sparkplug</div>
-          <div class="z-archetype">Fast ignition energy</div>
-          <p class="z-identity">The rhythm that starts things. Pink fires from any state — near-zero ramp time, high dopamine, fast momentum. It reads the room before others do and burns bright in short bursts. The window rewards action over analysis. The burst is the nature, not a symptom of it.</p>
-        </div>
-        <div class="z-dir">
-          <span class="z-dir-lbl">Directive</span>
-          <div class="z-dir-body">
-            Full ignition. Move fast, trust first reads, size up. The energy itself is the edge.
-            <span class="note">Pattern recognition fires ahead of analysis — the read arrives before you can explain it, and it's usually correct. Run with it. The window doesn't last long at the top. Don't verify your way out of the signal.</span>
+    <div class="zone-panel active reveal d3" data-zone="pink">
+      <div class="zone-content">
+        <div class="zone-info" style="--zc: var(--pink-text)">
+          <div class="zone-name">Pink</div>
+          <span class="zone-vibe">Noise — Peak Output Window</span>
+          <p class="zone-desc">The rarest zone. High-energy, high-amplitude — everything is amplified. Execution that normally takes two weeks can happen in two days. The field is almost unstably favorable. Move fast, but stay grounded.</p>
+          <div class="zone-stats">
+            <div class="zone-stat-row"><span class="zone-stat-key">Element</span><span class="zone-stat-val">Fire + Metal</span></div>
+            <div class="zone-stat-row"><span class="zone-stat-key">Frequency</span><span class="zone-stat-val">Rare (&lt;5% of days)</span></div>
+            <div class="zone-stat-row"><span class="zone-stat-key">Mode</span><span class="zone-stat-val">Extreme output</span></div>
           </div>
-          <div class="z-tags"><span class="z-tag">PRESS</span><span class="z-tag">FULL IGNITION</span></div>
-          <div class="z-wave">
-            <span class="z-wave-lbl">// Energy pattern</span>
-            <div class="z-wave-body">Instant ignition · sharp peak · fork at the top. Less time to catch the fork than Purple. Empowered: long taper, can re-ignite if momentum is sustained.</div>
+        </div>
+        <div class="zone-meta">
+          <h4>How it shows up</h4>
+          <div class="zone-trait-list">
+            <div class="zone-trait" style="border-color: var(--pink-text)">Doors open faster than usual</div>
+            <div class="zone-trait" style="border-color: var(--pink-text)">High social and creative energy</div>
+            <div class="zone-trait" style="border-color: var(--pink-text)">Potential for over-extension</div>
+            <div class="zone-trait" style="border-color: var(--pink-text)">Excellent for high-stakes moves</div>
+          </div>
+          <h4>Best for</h4>
+          <div class="zone-trait-list">
+            <div class="zone-trait" style="border-color: var(--pink-text)">Launches, pitches, major conversations</div>
+            <div class="zone-trait" style="border-color: var(--pink-text)">Creative breakthroughs</div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- ORANGE -->
-    <div class="z-panel" id="panel-orange">
-      <div class="z-card" style="--zc:#E87020">
-        <div class="z-id">
-          <span class="z-color-lbl" style="color:#E87020">Orange</span>
-          <div class="z-rhythm-name" style="color:#E87020;text-shadow:0 0 12px rgba(232,112,32,0.4)">The Metaphysical Shield</div>
-          <div class="z-archetype">Protective creative energy</div>
-          <p class="z-identity">Steady, body-level, and safe. Orange doesn't ignite — it builds. The floor is higher here. Even when things don't go as planned, Orange softens the blow and keeps structure intact. No peak to fall from. Worst case is stagnant, not collapse. The safest window in the system for sustained effort.</p>
-        </div>
-        <div class="z-dir">
-          <span class="z-dir-lbl">Directive</span>
-          <div class="z-dir-body">
-            Engaged and protected. Build, create, execute. This is a volume day — sustained effort converts here.
-            <span class="note">Don't wait for the surge. The steady state is the signal. Reliable, repeatable execution. The routine runs itself. Orange doesn't ask you to press harder — it asks you to keep going.</span>
+    <div class="zone-panel" data-zone="orange">
+      <div class="zone-content">
+        <div class="zone-info" style="--zc: var(--orange-text)">
+          <div class="zone-name">Orange</div>
+          <span class="zone-vibe">Prime — High Resource Access</span>
+          <p class="zone-desc">Strong and sustainable. Your natural authority is up — decisions made now carry. Resources flow more easily. People around you respond well. Excellent for meaningful execution without the volatility of Pink.</p>
+          <div class="zone-stats">
+            <div class="zone-stat-row"><span class="zone-stat-key">Element</span><span class="zone-stat-val">Fire dominant</span></div>
+            <div class="zone-stat-row"><span class="zone-stat-key">Frequency</span><span class="zone-stat-val">Uncommon (~12%)</span></div>
+            <div class="zone-stat-row"><span class="zone-stat-key">Mode</span><span class="zone-stat-val">High execution</span></div>
           </div>
-          <div class="z-tags"><span class="z-tag">PRESS</span><span class="z-tag">SUSTAINED BUILD</span></div>
-          <div class="z-wave">
-            <span class="z-wave-lbl">// Energy pattern</span>
-            <div class="z-wave-body">Slow continuous climb · no peak · no fall. Stable floor. Execution-heavy, risk-forward profile. Unempowered = stagnant, not crashing.</div>
+        </div>
+        <div class="zone-meta">
+          <h4>How it shows up</h4>
+          <div class="zone-trait-list">
+            <div class="zone-trait" style="border-color: var(--orange-text)">Clarity on decisions without forcing</div>
+            <div class="zone-trait" style="border-color: var(--orange-text)">Elevated confidence, not arrogance</div>
+            <div class="zone-trait" style="border-color: var(--orange-text)">Strong follow-through</div>
+          </div>
+          <h4>Best for</h4>
+          <div class="zone-trait-list">
+            <div class="zone-trait" style="border-color: var(--orange-text)">Negotiation, big asks, leadership moves</div>
+            <div class="zone-trait" style="border-color: var(--orange-text)">Starting new projects or commitments</div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- BLUE -->
-    <div class="z-panel" id="panel-blue">
-      <div class="z-card" style="--zc:#4080E0">
-        <div class="z-id">
-          <span class="z-color-lbl" style="color:#4080E0">Blue</span>
-          <div class="z-rhythm-name" style="color:#4080E0;text-shadow:0 0 12px rgba(64,128,224,0.4)">The Pursuer</div>
-          <div class="z-archetype">Curiosity in motion</div>
-          <p class="z-identity">Always rising toward something. Blue is the rhythm of curiosity — it questions, pursues, locks in with intensity, and cycles through distinct phases: rising, landing, resetting. It rewards going deeper, not wider. Cycles may connect across sessions, days, or years.</p>
-        </div>
-        <div class="z-dir">
-          <span class="z-dir-lbl">Directive</span>
-          <div class="z-dir-body">
-            Lock one target and move toward it. Blue rewards depth and convergence. The directive shifts with the cycle phase — the calendar tells you where in the arc you are.
-            <span class="note">On the rise: press with full intensity. At the landing: stay steady, don't over-adjust. At the reset: consolidate, refuel. The next rise begins from here.</span>
+    <div class="zone-panel" data-zone="blue">
+      <div class="zone-content">
+        <div class="zone-info" style="--zc: var(--blue-text)">
+          <div class="zone-name">Blue</div>
+          <span class="zone-vibe">Sub-Prime — Precision Window</span>
+          <p class="zone-desc">Clear-headed and detail-oriented. The field is favorable for technical work, analysis, and planning. Not a peak output zone — but precision and quality come naturally. Less social drive, more depth.</p>
+          <div class="zone-stats">
+            <div class="zone-stat-row"><span class="zone-stat-key">Element</span><span class="zone-stat-val">Metal + Water</span></div>
+            <div class="zone-stat-row"><span class="zone-stat-key">Frequency</span><span class="zone-stat-val">Moderate (~18%)</span></div>
+            <div class="zone-stat-row"><span class="zone-stat-key">Mode</span><span class="zone-stat-val">Focused precision</span></div>
           </div>
-          <div class="z-tags"><span class="z-tag">PRESS — ON THE RISE</span><span class="z-tag">PROTECT — LANDING</span><span class="z-tag">STAND DOWN — RESET</span></div>
-          <div class="z-wave">
-            <span class="z-wave-lbl">// Energy pattern</span>
-            <div class="z-wave-body">Steep rise · cup/catch at peak · fork: rises again or crashes. Three cycle phases — the directive changes with the phase.</div>
+        </div>
+        <div class="zone-meta">
+          <h4>How it shows up</h4>
+          <div class="zone-trait-list">
+            <div class="zone-trait" style="border-color: var(--blue-text)">Analytical clarity, systems thinking</div>
+            <div class="zone-trait" style="border-color: var(--blue-text)">Less social energy than average</div>
+            <div class="zone-trait" style="border-color: var(--blue-text)">Detail work feels natural</div>
+          </div>
+          <h4>Best for</h4>
+          <div class="zone-trait-list">
+            <div class="zone-trait" style="border-color: var(--blue-text)">Research, deep work, problem-solving</div>
+            <div class="zone-trait" style="border-color: var(--blue-text)">Planning and strategy sessions</div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- YELLOW -->
-    <div class="z-panel" id="panel-yellow">
-      <div class="z-card" style="--zc:#F0C020">
-        <div class="z-id">
-          <span class="z-color-lbl" style="color:#F0C020">Yellow</span>
-          <div class="z-rhythm-name" style="color:#F0C020;text-shadow:0 0 12px rgba(240,192,32,0.4)">The Phoenix</div>
-          <div class="z-archetype">Extreme energy · system true neutral</div>
-          <p class="z-identity">No middle register — spikes up or spikes down from a flat baseline. Yellow is the system's true neutral and its most volatile zone. The dampening is off — what you bring into the window expresses without filtering. Polarity is live. There is no coasting in Yellow.</p>
-        </div>
-        <div class="z-dir">
-          <span class="z-dir-lbl">Directive</span>
-          <div class="z-dir-body">
-            Check your state before you sit. Yellow amplifies whatever you bring to it.
-            <span class="note">Regulated state: maximum force available. The gut confirms edge before the math, and the math catches up. Unregulated state: same magnitude fires downward. The work happens before the session starts.</span>
+    <div class="zone-panel" data-zone="yellow">
+      <div class="zone-content">
+        <div class="zone-info" style="--zc: var(--yellow-text)">
+          <div class="zone-name">Yellow</div>
+          <span class="zone-vibe">Edge — Slight Advantage</span>
+          <p class="zone-desc">A mild positive field — things are slightly in your favor, but not dramatically so. Good for routine execution and staying consistent. The compound effect of Yellow days adds up significantly over time.</p>
+          <div class="zone-stats">
+            <div class="zone-stat-row"><span class="zone-stat-key">Element</span><span class="zone-stat-val">Earth</span></div>
+            <div class="zone-stat-row"><span class="zone-stat-key">Frequency</span><span class="zone-stat-val">Common (~20%)</span></div>
+            <div class="zone-stat-row"><span class="zone-stat-key">Mode</span><span class="zone-stat-row">Steady execution</span></div>
           </div>
-          <div class="z-tags"><span class="z-tag">PRESS — REGULATED</span><span class="z-tag">STAND DOWN — UNREGULATED</span></div>
-          <div class="z-wave">
-            <span class="z-wave-lbl">// Energy pattern</span>
-            <div class="z-wave-body">Richter scale — magnitude from zero in both directions. Direction depends entirely on incoming state. Maximum upside available if clean. Only rhythm where unempowered goes negative.</div>
+        </div>
+        <div class="zone-meta">
+          <h4>How it shows up</h4>
+          <div class="zone-trait-list">
+            <div class="zone-trait" style="border-color: var(--yellow-text)">Reliable, productive days</div>
+            <div class="zone-trait" style="border-color: var(--yellow-text)">Good for consistency habits</div>
+            <div class="zone-trait" style="border-color: var(--yellow-text)">Fewer surprises, stable flow</div>
+          </div>
+          <h4>Best for</h4>
+          <div class="zone-trait-list">
+            <div class="zone-trait" style="border-color: var(--yellow-text)">Building momentum, routine work</div>
+            <div class="zone-trait" style="border-color: var(--yellow-text)">Maintenance and systems</div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- GREEN -->
-    <div class="z-panel" id="panel-green">
-      <div class="z-card" style="--zc:#6EC25A">
-        <div class="z-id">
-          <span class="z-color-lbl" style="color:#6EC25A">Green</span>
-          <div class="z-rhythm-name" style="color:#6EC25A;text-shadow:0 0 12px rgba(110,194,90,0.4)">The Stabilizer</div>
-          <div class="z-archetype">Balance · connection · quiet influence</div>
-          <p class="z-identity">Green works on environments and other people more than on the self. It attunes, stabilizes, and transmits coherence outward. High-coherence window — not high voltage. Green reads the room better than any other zone and lets things self-correct rather than forcing resolution.</p>
-        </div>
-        <div class="z-dir">
-          <span class="z-dir-lbl">Directive</span>
-          <div class="z-dir-body">
-            Stay present. Don't force moves. Composure over ambition.
-            <span class="note">You hear what people mean, not just what they say. The live tell is more valuable than the technical read today. Relational intelligence is your edge. Let the environment bring information to you.</span>
+    <div class="zone-panel" data-zone="green">
+      <div class="zone-content">
+        <div class="zone-info" style="--zc: var(--green-text)">
+          <div class="zone-name">Green</div>
+          <span class="zone-vibe">Survivor — Recovery Mode</span>
+          <p class="zone-desc">Slightly below neutral — the field asks you to hold, recover, and maintain. Not a time to force output. Not a bad day — just a day where the environment isn't amplifying you. Conserve and restore.</p>
+          <div class="zone-stats">
+            <div class="zone-stat-row"><span class="zone-stat-key">Element</span><span class="zone-stat-val">Wood</span></div>
+            <div class="zone-stat-row"><span class="zone-stat-key">Frequency</span><span class="zone-stat-val">Common (~20%)</span></div>
+            <div class="zone-stat-row"><span class="zone-stat-key">Mode</span><span class="zone-stat-val">Restoration</span></div>
           </div>
-          <div class="z-tags"><span class="z-tag">PROTECT</span><span class="z-tag">COMPOSURE OVER AMBITION</span></div>
-          <div class="z-wave">
-            <span class="z-wave-lbl">// Energy pattern</span>
-            <div class="z-wave-body">Near-flat equilibrium baseline · micro-variations resolve fast. Most stable wave in the system. High coherence, low noise. Operates in two stable pockets.</div>
+        </div>
+        <div class="zone-meta">
+          <h4>How it shows up</h4>
+          <div class="zone-trait-list">
+            <div class="zone-trait" style="border-color: var(--green-text)">Slightly lower energy or resistance</div>
+            <div class="zone-trait" style="border-color: var(--green-text)">Push-back from environment</div>
+            <div class="zone-trait" style="border-color: var(--green-text)">Good day for reflection, not action</div>
+          </div>
+          <h4>Best for</h4>
+          <div class="zone-trait-list">
+            <div class="zone-trait" style="border-color: var(--green-text)">Recovery, review, low-stakes tasks</div>
+            <div class="zone-trait" style="border-color: var(--green-text)">Journaling, planning ahead</div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- PURPLE -->
-    <div class="z-panel" id="panel-purple">
-      <div class="z-card" style="--zc:#8A2BE2">
-        <div class="z-id">
-          <span class="z-color-lbl" style="color:#8A2BE2">Purple</span>
-          <div class="z-rhythm-name" style="color:#8A2BE2;text-shadow:0 0 12px rgba(138,43,226,0.4)">The Cautious</div>
-          <div class="z-archetype">Purpose-driven · momentum-dependent</div>
-          <p class="z-identity">Purple builds slowly and sustains deeply. It needs a running start and resists disruption once moving. The window sits in identity territory — things feel more significant, more personal, more charged. That charge is data, not direction. You're operating on a longer time horizon than others at the table.</p>
-        </div>
-        <div class="z-dir">
-          <span class="z-dir-lbl">Directive</span>
-          <div class="z-dir-body">
-            Slower decision-making is calibration, not weakness. Name what you're feeling before acting. Separate the signal from the story.
-            <span class="note">The edge is real — you can see where the session is going before others feel it turning. But the timing trap: you can be right about the arc and early on the hand. Early and wrong have the same P&amp;L. Move deliberately.</span>
+    <div class="zone-panel" data-zone="purple">
+      <div class="zone-content">
+        <div class="zone-info" style="--zc: var(--purple-text)">
+          <div class="zone-name">Purple</div>
+          <span class="zone-vibe">Identity — Inner Work Window</span>
+          <p class="zone-desc">Deep and introspective. The field turns inward — not ideal for external output, but remarkable for clarity on who you are and what you actually want. Insights land hard on Purple days.</p>
+          <div class="zone-stats">
+            <div class="zone-stat-row"><span class="zone-stat-key">Element</span><span class="zone-stat-val">Water + Metal</span></div>
+            <div class="zone-stat-row"><span class="zone-stat-key">Frequency</span><span class="zone-stat-val">Moderate (~15%)</span></div>
+            <div class="zone-stat-row"><span class="zone-stat-key">Mode</span><span class="zone-stat-val">Inner clarity</span></div>
           </div>
-          <div class="z-tags"><span class="z-tag">PROTECT</span><span class="z-tag">CALIBRATE BEFORE MOVING</span></div>
-          <div class="z-wave">
-            <span class="z-wave-lbl">// Energy pattern</span>
-            <div class="z-wave-body">Slow build · sustained peak · fork at the top. Requires ramp-up — does not fire from zero like Pink. Patience is the instrument.</div>
+        </div>
+        <div class="zone-meta">
+          <h4>How it shows up</h4>
+          <div class="zone-trait-list">
+            <div class="zone-trait" style="border-color: var(--purple-text)">Deep realizations, pattern recognition</div>
+            <div class="zone-trait" style="border-color: var(--purple-text)">Social interactions feel draining</div>
+            <div class="zone-trait" style="border-color: var(--purple-text)">Excellent for identity work</div>
+          </div>
+          <h4>Best for</h4>
+          <div class="zone-trait-list">
+            <div class="zone-trait" style="border-color: var(--purple-text)">Therapy, journaling, big-picture thinking</div>
+            <div class="zone-trait" style="border-color: var(--purple-text)">Understanding a situation from the inside out</div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- RED -->
-    <div class="z-panel" id="panel-red">
-      <div class="z-card" style="--zc:#E04030">
-        <div class="z-id">
-          <span class="z-color-lbl" style="color:#E04030">Red</span>
-          <div class="z-rhythm-name" style="color:#E04030;text-shadow:0 0 12px rgba(224,64,48,0.4)">The Catalyst</div>
-          <div class="z-archetype">Weapon energy · authority required</div>
-          <p class="z-identity">Forceful, accumulating, and catalytic. Red fires in impacts, not arcs. Every action leaves a larger residue in the field than usual. Each strike accumulates. The direction of the eventual detonation is not guaranteed by the direction of the firing. Authority required — without it, Red drains rather than catalyzes.</p>
-        </div>
-        <div class="z-dir">
-          <span class="z-dir-lbl">Directive</span>
-          <div class="z-dir-body">
-            Play with authority or don't play. One question before every significant move: is this authorized, or is the energy looking for a release?
-            <span class="note">When authorized: maximum impact available. Authorized Red shifts outcomes. Reactive Red drains. Half-committed action in this window depletes. The professional move requires a verified hand.</span>
+    <div class="zone-panel" data-zone="red">
+      <div class="zone-content">
+        <div class="zone-info" style="--zc: var(--red-text)">
+          <div class="zone-name">Red</div>
+          <span class="zone-vibe">Unstable Swing — High Variance</span>
+          <p class="zone-desc">Volatile. The field is swinging hard — outcomes are unpredictable, emotions run high, and mistakes compound. Not a day to force major decisions or start new things. Stay calm, stay deliberate.</p>
+          <div class="zone-stats">
+            <div class="zone-stat-row"><span class="zone-stat-key">Element</span><span class="zone-stat-val">Fire conflict</span></div>
+            <div class="zone-stat-row"><span class="zone-stat-key">Frequency</span><span class="zone-stat-val">Uncommon (~8%)</span></div>
+            <div class="zone-stat-row"><span class="zone-stat-key">Mode</span><span class="zone-stat-val">High caution</span></div>
           </div>
-          <div class="z-tags"><span class="z-tag">PRESS — AUTHORIZED ONLY</span><span class="z-tag">STAND DOWN — IF REACTIVE</span></div>
-          <div class="z-wave">
-            <span class="z-wave-lbl">// Energy pattern</span>
-            <div class="z-wave-body">Vertical impacts · residue accumulation · threshold detonation. The bomb is the accumulation, not the individual strike.</div>
+        </div>
+        <div class="zone-meta">
+          <h4>How it shows up</h4>
+          <div class="zone-trait-list">
+            <div class="zone-trait" style="border-color: var(--red-text)">Friction in interactions</div>
+            <div class="zone-trait" style="border-color: var(--red-text)">Emotional reactivity elevated</div>
+            <div class="zone-trait" style="border-color: var(--red-text)">Small things feel bigger than they are</div>
+          </div>
+          <h4>Best avoided</h4>
+          <div class="zone-trait-list">
+            <div class="zone-trait" style="border-color: var(--red-text)">Major financial or relationship decisions</div>
+            <div class="zone-trait" style="border-color: var(--red-text)">High-stakes conversations</div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- BROWN -->
-    <div class="z-panel" id="panel-brown">
-      <div class="z-card solo" style="--zc:#A97040">
-        <div class="z-id" style="border-right:none">
-          <span class="z-color-lbl" style="color:#A97040">Brown</span>
-          <div class="z-rhythm-name" style="color:#A97040;text-shadow:0 0 12px rgba(169,112,64,0.4)">The Earth</div>
-          <div class="z-archetype">Environmental overlay · not a human rhythm</div>
-          <p class="z-identity">Brown is not a human rhythm — it's the elemental environment itself. When this zone is active, field forces are dominant and personal control is reduced. Things happen because the Earth decided. Outcomes can be extraordinary or disruptive; the mechanism is the same. No category scores on a Brown day. One rule.</p>
-        </div>
-        <div class="z-dir" style="border-top:1px solid var(--border)">
-          <span class="z-dir-lbl">The Brown Standard</span>
-          <div class="z-dir-body">
-            Elemental forces are dominant. Reduce personal pressure — what happens today is larger than your hand.
-            <span class="note" style="color:#A97040;font-size:0.84rem;"><strong>Undeniable edge only. If you are evaluating whether it qualifies, it does not. Undeniable does not require evaluation.</strong></span>
-            <span class="note">The professional move on a Brown day is almost always the one that doesn't happen.</span>
+    <div class="zone-panel" data-zone="brown">
+      <div class="zone-content">
+        <div class="zone-info" style="--zc: var(--brown-text)">
+          <div class="zone-name">Brown</div>
+          <span class="zone-vibe">Luck — Deep Rest Required</span>
+          <p class="zone-desc">The inverse of Pink. The field is in a deep trough — energy is low, resistance is high, and almost nothing outside your control will cooperate. The correct move is near-total rest and internal focus.</p>
+          <div class="zone-stats">
+            <div class="zone-stat-row"><span class="zone-stat-key">Element</span><span class="zone-stat-val">Earth conflict</span></div>
+            <div class="zone-stat-row"><span class="zone-stat-key">Frequency</span><span class="zone-stat-val">Rare (&lt;5%)</span></div>
+            <div class="zone-stat-row"><span class="zone-stat-key">Mode</span><span class="zone-stat-val">Full rest</span></div>
           </div>
-          <div class="z-tags"><span class="z-tag">STAND DOWN</span><span class="z-tag">UNDENIABLE EDGE ONLY</span></div>
+        </div>
+        <div class="zone-meta">
+          <h4>How it shows up</h4>
+          <div class="zone-trait-list">
+            <div class="zone-trait" style="border-color: var(--brown-text)">Plans don't work as expected</div>
+            <div class="zone-trait" style="border-color: var(--brown-text)">Everything feels harder than it should</div>
+            <div class="zone-trait" style="border-color: var(--brown-text)">Body and mind asking for quiet</div>
+          </div>
+          <h4>The move</h4>
+          <div class="zone-trait-list">
+            <div class="zone-trait" style="border-color: var(--brown-text)">Rest, restore, don't force</div>
+            <div class="zone-trait" style="border-color: var(--brown-text)">It will pass — and Pink often follows</div>
+          </div>
         </div>
       </div>
     </div>
-
-    <div class="reveal" style="text-align:center;margin-top:3rem;">
-      <a href="https://luckify3.gumroad.com/l/nimtpq" class="btn-primary">>> Start My 30-Day Trial</a>
-      <p style="font-family:var(--mono);font-size:9px;letter-spacing:0.12em;color:var(--muted);margin-top:0.7rem;">
-        Run a month. Track sessions. Decide with data.
-      </p>
-    </div>
-  </div>
+  </div><!-- /zones-inner -->
 </section>
 
-
-<!-- ══════════════════════════════════
-     APP PREVIEW CAROUSEL
-══════════════════════════════════ -->
-<section id="preview" style="padding:6rem 1.5rem;background:var(--surface);border-top:1px solid var(--border2);border-bottom:1px solid var(--border2);">
-  <div style="max-width:600px;margin:0 auto;">
-
-    <div class="reveal" style="text-align:center;margin-bottom:2.8rem;">
-      <span class="sys-label">Inside the Calendar</span>
-      <h2 class="sec-title">This is what you<br><span class="ph">open every day.</span></h2>
-      <p style="font-family:var(--mono);font-size:0.84rem;color:var(--dim);margin-top:0.8rem;line-height:1.75;">Your zone. Your scores. Your rhythm — mapped out a month in advance.</p>
-    </div>
-
-    <!-- Carousel -->
-    <div class="reveal" style="position:relative;">
-
-      <!-- Slides -->
-      <div id="carousel" style="position:relative;overflow:hidden;border:1px solid var(--border2);">
-        <div class="c-slide active" id="slide-0">
-          <img src="https://i.imgur.com/JgVH00b.png" alt="Monthly calendar view" style="width:100%;display:block;">
-          <div class="c-caption">
-            <span class="c-cap-label">// 01 — MONTHLY CALENDAR</span>
-            <p>Every day of the month mapped by zone color. At a glance you can see high-output stretches, pull-back days, and where the environment is dominant — before the month starts.</p>
-          </div>
-        </div>
-        <div class="c-slide" id="slide-1">
-          <img src="https://i.imgur.com/biM4LdE.png" alt="Day detail view" style="width:100%;display:block;">
-          <div class="c-caption">
-            <span class="c-cap-label">// 02 — DAY DETAIL</span>
-            <p>Tap any day to see your zone, its rhythm identity, a behavioral read, energy pattern chart, and your 6-category score breakdown — with ON and OFF state guidance for each.</p>
-          </div>
-        </div>
-        <div class="c-slide" id="slide-2">
-          <img src="https://i.imgur.com/w9FI7ap.png" alt="Category deep-dive" style="width:100%;display:block;">
-          <div class="c-caption">
-            <span class="c-cap-label">// 03 — CATEGORY DEEP-DIVE</span>
-            <p>Drill into any of the 6 scored categories. The read tells you exactly what that score means for today — what's available when you're on, and what the warning sign looks like when you're off.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Controls -->
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:1.2rem;">
-        <button onclick="prevSlide()" class="c-btn">‹ Prev</button>
-
-        <div style="display:flex;gap:0.5rem;align-items:center;">
-          <div class="c-dot active" onclick="goSlide(0)"></div>
-          <div class="c-dot" onclick="goSlide(1)"></div>
-          <div class="c-dot" onclick="goSlide(2)"></div>
-        </div>
-
-        <button onclick="nextSlide()" class="c-btn">Next ›</button>
-      </div>
-
-    </div><!-- /carousel wrapper -->
-
-    <div class="reveal" style="text-align:center;margin-top:2.5rem;">
-      <a href="https://luckify3.gumroad.com/l/nimtpq" class="btn-primary">>> Start My 30-Day Trial</a>
-    </div>
-
-  </div>
-</section>
-
-
-<!-- ══════════════════════════════════
-     HOW IT WORKS
-══════════════════════════════════ -->
+<!-- ════ HOW IT WORKS ════ -->
 <section id="how">
   <div class="how-inner">
     <div class="reveal">
-      <span class="sys-label">How to Get It</span>
-      <h2 class="sec-title">Three steps. <span class="ph">Then you know.</span></h2>
+      <span class="sys-label">How It Works</span>
+      <h2 class="sec-title">Three Steps.<br><span class="ph">One Loadout.</span></h2>
     </div>
 
-    <div class="steps">
-      <div class="step reveal d1">
-        <div class="step-n">01</div>
-        <h3>Submit Fixed Inputs</h3>
-        <p>Birth date + birth location + where you play. Birth time is optional — it sharpens precision if you have it.</p>
+    <div class="steps reveal d2">
+      <div class="step">
+        <span class="step-num">01</span>
+        <span class="step-icon">📍</span>
+        <h3>Enter Your Birth Data</h3>
+        <p>Date, time, and location. That's all we need. Everything in your profile is calculated — not approximated, not assigned.</p>
       </div>
-      <div class="step reveal d2">
-        <div class="step-n">02</div>
-        <h3>Receive Your Calendar</h3>
-        <p>A personalized monthly calendar — each day labeled with zone color, directive, and 6-category score breakdown.</p>
+      <div class="step">
+        <span class="step-num">02</span>
+        <span class="step-icon">⚙️</span>
+        <h3>We Run the Engines</h3>
+        <p>Multiple systems process your data simultaneously — BaZi, I Ching, numerology, Gene Keys, moon phases, Vedic astrology, tarot archetypes, and more. One coherent output.</p>
       </div>
-      <div class="step reveal d3">
-        <div class="step-n">03</div>
-        <h3>Access and Operate</h3>
-        <p>Your personalized calendar link is delivered each month. Open it, check your zone for the day, and operate with the full picture.</p>
+      <div class="step">
+        <span class="step-num">03</span>
+        <span class="step-icon">🎮</span>
+        <h3>Your Loadout Appears</h3>
+        <p>Your Foundation Engine, Active Rhythm, and Decision Engine are live. Your current zone is active. You know who you are and what's running now.</p>
       </div>
-    </div>
-
-    <div class="reveal" style="text-align:center;margin-top:2.5rem;">
-      <a href="https://luckify3.gumroad.com/l/nimtpq" class="btn-primary">>> Start My 30-Day Trial</a>
-      <p style="font-family:var(--mono);font-size:9px;letter-spacing:0.12em;color:var(--muted);margin-top:0.6rem;">
-        Want proof first? <a href="#vector" style="color:var(--ph);text-decoration:none;">View the VECTOR public audit →</a>
-      </p>
     </div>
   </div>
 </section>
 
+<!-- ════ TESTIMONIAL ════ -->
+<section id="testimonial">
+  <div class="testi-inner reveal">
+    <div class="testi-orb"></div>
+    <blockquote class="testi-quote">
+      "Soltar is so positive and uplifting! I received a beautiful channeled message which helped reframe my clarity on a situation and reminded me of my greater purpose. Thank you so very much for your beautiful, compassionate message."
+    </blockquote>
+    <p class="testi-source">— Reading Client  &nbsp;|&nbsp;  <span>1:1 Session with Soltar</span></p>
+  </div>
+</section>
 
-<!-- ══════════════════════════════════
-     SOLTAR
-══════════════════════════════════ -->
-<section id="soltar">
+<!-- ════ SOLTAR ════ -->
+<section id="soltar" style="position:relative;">
+  <div class="section-glow"></div>
   <div class="soltar-inner">
-    <div class="reveal">
-      <span class="soltar-lbl">Field Intelligence</span>
-      <h2 class="soltar-title">Who is <span class="purple">Soltar</span>?</h2>
-    </div>
-    <div class="soltar-body reveal d1">
-      <p>Soltar is the voice that files your weekly field reports. <strong>Not a mascot. Not a guru.</strong> The system's narrator — translating your zone into a single operational directive for the week ahead.</p>
-      <p>When you see <strong>AskSoltar</strong> in your weekly intel, it's a direct read on your recent streak patterns — what they tend to mean, what to do next. No interpretation loops. Just actionable cues.</p>
-      <p>If you prefer to ignore the lore and work the tool clean, that's a valid posture. <strong>The calendar stands on its own.</strong></p>
-    </div>
-    <div class="soltar-tx reveal d2">
-      <p class="soltar-q">The operator who checks the window before sitting down isn't hoping. They're reducing variance. Timing is a skill. Use the read.</p>
-      <p class="soltar-sig">— Soltar</p>
-    </div>
-  </div>
-</section>
-
-
-<!-- ══════════════════════════════════
-     VECTOR
-══════════════════════════════════ -->
-<section id="vector">
-  <div class="vec-inner">
     <div class="reveal" style="text-align:center;">
-      <span class="sys-label">External Validation</span>
-      <h2 class="sec-title">Same engine. <span class="ph">Public record.</span></h2>
-      <p style="font-family:var(--mono);font-size:0.84rem;color:var(--dim);max-width:540px;margin:0.6rem auto 0;line-height:1.75;">
-        Audit the signal in a domain with hard binary outcomes before you subscribe.
-        Scores posted <strong style="color:var(--text)">before</strong> the fights. Results checked <strong style="color:var(--text)">after</strong>.
-      </p>
-    </div>
-
-    <div class="vec-grid">
-      <div class="vec-text reveal d1">
-        <p><strong>VECTOR</strong> is a public signal feed on X tracking UFC cards. Zone-strength scores posted for fighters before each event — outcomes logged after.</p>
-        <p>The point isn't to predict fights. It's to show that <strong>timing signals can be published in advance and audited later</strong> — using the same zone engine that generates your calendar.</p>
-        <p style="margin-top:1rem"><strong>Audit in 60 seconds:</strong><br>
-        Pick any card thread. Note the scores — timestamped before the event. Compare outcomes after. Repeat across several cards. Look for pattern, not perfection.</p>
-        <a href="https://x.com/vector_signal" class="vec-handle" target="_blank">@vector_signal →</a>
+      <div class="soltar-avatar" style="border-color: rgba(176,106,255,0.4); background: radial-gradient(circle at 35% 35%, rgba(176,106,255,0.5) 0%, rgba(176,106,255,0.08) 60%, transparent 100%); animation-duration: 6s;">✦</div>
+      <div class="game-status-bar" style="justify-content:center; margin-top:0.8rem;">
+        <span class="gsb-dot pulse-purple"></span>
+        <span>Channel Active</span>
+        <span class="gsb-sep">|</span>
+        <span>Multidimensional Source</span>
       </div>
-
-      <div class="reveal d2">
-        <div class="vec-box">
-          <h3>Audit first. Then decide.</h3>
-          <p>Poker logic: sample size over vibes. If the pattern holds, run the 30-day trial and track session quality against your zones. Same methodology. Different domain.</p>
-          <div style="margin-top:1.6rem">
-            <a href="https://luckify3.gumroad.com/l/nimtpq" class="btn-primary">>> Start My 30-Day Trial</a>
-          </div>
-        </div>
+    </div>
+    <div class="soltar-text reveal d2">
+      <span class="sys-label" style="color:var(--purple-text)">Transmission Source</span>
+      <h2 class="sec-title">Preston <span class="ph">&</span> Soltar.</h2>
+      <p>Luckify was built by Preston — and through Preston, by Soltar. Soltar is a multidimensional guide, a consciousness channeled directly by Preston that shaped every system inside the app. <strong>This isn't a product built by a team. It's a map that came through.</strong></p>
+      <p>A 1:1 reading is the deepest access point — a live session with Preston, where Soltar speaks directly to your profile, your current field, and what you're actually here to do. The app opens the door. The reading walks you through it.</p>
+      <div class="soltar-btns">
+        <a href="https://calendly.com/prestonlee/luckifyme60" class="btn-primary">Book a Reading with Preston</a>
+        <a href="https://luckify-me.pages.dev/" class="btn-ghost">Start With Your Profile</a>
       </div>
     </div>
   </div>
 </section>
 
+<!-- ════ VECTOR / PROOF ════ -->
+<section id="vector">
+  <div class="vector-inner reveal">
+    <span class="sys-label">The Build</span>
+    <h2 class="sec-title">What's <span class="ph">Inside</span> the Profile</h2>
+    <div class="vector-grid">
+      <div class="vector-cell">
+        <span class="vec-num">9+</span>
+        <span class="vec-lbl">Divination systems synthesized</span>
+      </div>
+      <div class="vector-cell">
+        <span class="vec-num">365</span>
+        <span class="vec-lbl">Daily rhythm updates per year</span>
+      </div>
+      <div class="vector-cell">
+        <span class="vec-num">8</span>
+        <span class="vec-lbl">Zones. One active right now.</span>
+      </div>
+      <div class="vector-cell">
+        <span class="vec-num">∞</span>
+        <span class="vec-lbl">Layers to explore as you go deeper</span>
+      </div>
+    </div>
+  </div>
+</section>
 
-<!-- ══════════════════════════════════
-     WHO
-══════════════════════════════════ -->
+<!-- ════ WHO ════ -->
 <section id="who">
   <div class="who-inner">
+    <div class="who-head reveal">
+      <span class="sys-label">Right Player, Right Game</span>
+      <h2 class="sec-title">This Is <span class="ph">Built For You</span><br>If You Recognize This.</h2>
+      <p>Luckify isn't for everyone. Here's who gets the most out of it.</p>
+    </div>
+
+    <div class="who-grid reveal d2">
+      <div class="who-card">
+        <h3><span class="icon">🎮</span> The Builder / Gamer (30–45)</h3>
+        <p>You love understanding systems. You've read the self-dev books. You play RPGs or think like one. You want a <strong>character sheet for your actual life</strong> — with real depth behind the surface.</p>
+      </div>
+      <div class="who-card">
+        <h3><span class="icon">🏆</span> The Competitor / Athlete</h3>
+        <p>You already optimize everything physical. You're looking for <strong>the non-physical edge nobody else is using</strong> — timing, rhythm, how to align your peak days with your peak performance.</p>
+      </div>
+      <div class="who-card">
+        <h3><span class="icon">🧭</span> The Seeker (30–50)</h3>
+        <p>You've had the persistent sense that there's a pattern to your life — how you work, when things click, why certain periods feel off. You want <strong>a framework that actually explains it.</strong></p>
+      </div>
+    </div>
+
+    <div class="who-not reveal d3">
+      <span class="who-not-label">Not For</span>
+      <p>People looking for predictions ("will I get the job?"), passive validation, or anyone who wants to be told what to do without doing any self-reflection. Luckify is a mirror — it shows you the pattern. What you do with it is yours.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════ PRICING ════ -->
+<section id="pricing" style="position:relative;">
+  <div class="section-glow"></div>
+  <div class="pricing-inner">
     <div class="reveal">
-      <span class="sys-label">The Operator Behind the Window</span>
-      <div class="who-hed">Not as a belief.<br><span class="ph">As a hypothesis.</span></div>
-    </div>
-
-    <div class="who-img reveal d1">
-      <img src="https://i.imgur.com/tVaqkvf.jpeg" alt="Preston Lee">
-    </div>
-
-    <div class="who-body reveal d1">
-      <p>A WSOP bracelet. Two decades of high-stakes decision-making. And one question that never left: <strong>why do some days feel inevitable — and others feel like you're fighting the environment itself?</strong></p>
-      <p>I built Lucky Window to answer that question systematically. I tested the timing model in high-stakes, public-outcome environments where results are recorded, timestamped, and verifiable — starting with poker, extending to UFC, with more domains in progress.</p>
-      <p>The calendar isn't poker-specific. <strong>It's a performance calibration system</strong> — built for anyone who makes consequential decisions and wants to know when their capacity is actually available to them.</p>
-    </div>
-
-    <div class="who-sig reveal d3">
-      <p class="who-quote">The math got me curious. What kept me here was the repeatability.</p>
-      <div class="who-rule"></div>
-      <p class="who-name">— Preston Lee · Founder, Luckify.me</p>
-      <div style="margin-top:1.8rem">
-        <a href="https://luckify3.gumroad.com/l/nimtpq" class="btn-primary">>> Start My 30-Day Trial</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<!-- ══════════════════════════════════
-     BETA
-══════════════════════════════════ -->
-<section style="padding:5rem 1.5rem;max-width:700px;margin:0 auto;">
-  <div class="reveal" style="text-align:center;">
-    <span class="sys-label">Early Operators</span>
-    <h2 class="sec-title">Beta is live. <span class="ph">Tracking is underway.</span></h2>
-    <div style="margin-top:2rem;border:1px solid var(--border2);background:var(--surface);padding:2rem 2.2rem;position:relative;text-align:left;">
-      <div style="position:absolute;top:-0.5rem;left:1.2rem;font-family:var(--mono);font-size:8px;letter-spacing:0.2em;background:var(--bg);padding:0 0.5rem;color:var(--ph);">// BETA — TRACKING LIVE</div>
-      <p style="font-family:var(--mono);font-size:0.83rem;color:var(--dim);line-height:1.8;">We're not publishing manufactured quotes. The first subscribers are running 30-day audits — logging output quality against their zones and measuring the correlation. <strong style="color:var(--text)">Either the pattern shows up in real tracking, or it doesn't.</strong></p>
-      <div style="margin-top:1.1rem;padding:0.9rem 1.1rem;background:var(--ph-faint);border:1px solid var(--border);border-left:2px solid var(--ph-dark);">
-        <p style="font-family:var(--mono);font-size:0.79rem;color:var(--dim);line-height:1.7;margin:0">Want proof before you try it? Audit the zone engine at <a href="https://x.com/vector_signal" target="_blank" style="color:var(--ph);text-decoration:none">@vector_signal</a>. UFC scores posted before each card. Results logged after.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<!-- ══════════════════════════════════
-     PRICING
-══════════════════════════════════ -->
-<section id="pricing">
-  <div class="reveal" style="text-align:center;">
-    <span class="sys-label">Access</span>
-    <h2 class="sec-title">8 zones. 6 categories.<br><span class="ph">One calendar. Yours.</span></h2>
-  </div>
-
-  <div class="price-card reveal">
-    <span class="price-lbl">Monthly Subscription · Cancel Anytime</span>
-    <div class="price-amt"><sup>$</sup>19.99<sub>/mo</sub></div>
-    <div class="price-trial">🔥 First 30 days free — no charge until trial ends</div>
-
-    <ul class="price-feats">
-      <li><span class="ck">◆</span> Personalized monthly calendar — each day labeled with zone color and rhythm guidance</li>
-      <li><span class="ck">◆</span> 6-category daily score breakdown — Action, Strategy, Discipline, Social, Creativity, Risk</li>
-      <li><span class="ck">◆</span> Zone-specific behavioral guidance — what the rhythm asks of you each day</li>
-      <li><span class="ck">◆</span> Weekly field intelligence + AskSoltar — streak pattern reads and operational notes</li>
-      <li><span class="ck">◆</span> Personal calendar link delivered monthly — open it and see your zone for the day</li>
-      <li><span class="ck">◆</span> Peak zone days flagged in advance — plan your highest-output days intentionally</li>
-      <li><span class="ck">◆</span> High-variance and field-dominant days flagged — know before the day costs you</li>
-    </ul>
-
-    <div style="border:1px solid rgba(255,140,0,0.2);background:rgba(255,140,0,0.03);padding:1.2rem 1.4rem;margin-bottom:1.6rem;position:relative;">
-      <div style="position:absolute;top:-0.5rem;left:1rem;font-family:var(--mono);font-size:8px;letter-spacing:0.2em;background:var(--surface);padding:0 0.5rem;color:var(--ph);">// ADD-ON · SUBSCRIBERS ONLY</div>
-      <p style="font-family:var(--mono);font-size:0.8rem;color:var(--dim);line-height:1.7;margin:0;">
-        <strong style="color:var(--text)">Poker Intelligence Layer</strong> — zone-specific pre-session reads mapped to poker decision categories. Table timing, read quality, sizing authorization, variance exposure. Available now for active subscribers. Ask Soltar to activate.
+      <span class="sys-label">Quest Tiers</span>
+      <h2 class="sec-title">Choose Your <span class="ph">Level</span> of Access</h2>
+      <p style="font-family:var(--pip-font-body); font-size:0.95rem; color:var(--pip-text-dim); max-width:480px; margin:0.8rem auto 0; line-height:1.72;">
+        Start with your Main Quest — it's free. Unlock the daily layer when you're ready.
       </p>
     </div>
 
-    <a href="https://luckify3.gumroad.com/l/nimtpq" class="price-cta">>> Start 30 Days Free →</a>
-    <p class="price-ft">// Secure checkout · Delivered monthly · Cancel anytime</p>
-    <p style="margin-top:0.8rem;font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:0.1em;">Questions? <a href="https://reddit.com/r/asksoltar" target="_blank" style="color:var(--ph);text-decoration:none">r/asksoltar</a></p>
+    <div class="pricing-grid reveal d2">
+      <!-- Free -->
+      <div class="pricing-card">
+        <span class="pricing-tier">Tier 01</span>
+        <div class="pricing-name">Main Quest</div>
+        <div class="pricing-price">Free</div>
+        <p class="pricing-desc">Your Foundation Engine, Active Rhythm, and Decision Engine. The full identity profile from your birth data. Always free.</p>
+        <div class="pricing-features">
+          <div class="pf-row"><span class="pf-check">◆</span> Foundation Engine (who you are)</div>
+          <div class="pf-row"><span class="pf-check">◆</span> Active Rhythm (what's running now)</div>
+          <div class="pf-row"><span class="pf-check">◆</span> Decision Engine (your authority)</div>
+          <div class="pf-row"><span class="pf-check">◆</span> Current zone + daily context</div>
+          <div class="pf-row"><span class="pf-check">◆</span> All 6 system layers</div>
+        </div>
+        <a href="https://luckify-me.pages.dev/" class="btn-ghost" style="width:100%; text-align:center;">Build Profile — Free</a>
+      </div>
+
+      <!-- Premium -->
+      <div class="pricing-card featured">
+        <span class="pricing-badge">Most Popular</span>
+        <span class="pricing-tier">Tier 02</span>
+        <div class="pricing-name">Daily Edge</div>
+        <div class="pricing-price"><sup>$</sup>9<span>.99/mo</span></div>
+        <p class="pricing-desc">Everything in the Main Quest, plus the daily timing layer — Color Rhythm, add-ons, and the full perks unlock.</p>
+        <div class="pricing-features">
+          <div class="pf-row"><span class="pf-check">◆</span> Everything in Main Quest</div>
+          <div class="pf-row"><span class="pf-check">◆</span> Daily Color Rhythm</div>
+          <div class="pf-row"><span class="pf-check">◆</span> All perks + add-ons</div>
+          <div class="pf-row"><span class="pf-check">◆</span> Deep-dive system breakdowns</div>
+          <div class="pf-row"><span class="pf-check">◆</span> Priority zone alerts</div>
+        </div>
+        <a href="https://luckify-me.pages.dev/" class="btn-primary" style="width:100%; text-align:center;">Unlock Daily Edge</a>
+      </div>
+
+      <!-- Readings -->
+      <div class="pricing-card">
+        <span class="pricing-tier">Tier 03</span>
+        <div class="pricing-name">Reading with Soltar</div>
+        <div class="pricing-price" style="font-size:1.3rem; color:var(--pip-text);">Direct Access</div>
+        <p class="pricing-desc">A 1:1 session with the founder. Your profile, interpreted in real-time by someone who built the system and does this live.</p>
+        <div class="pricing-features">
+          <div class="pf-row"><span class="pf-check">◆</span> Personal 1:1 session with Soltar</div>
+          <div class="pf-row"><span class="pf-check">◆</span> Your full profile reviewed live</div>
+          <div class="pf-row"><span class="pf-check">◆</span> Questions answered in real-time</div>
+          <div class="pf-row"><span class="pf-check">◆</span> Channeled guidance + clarity</div>
+          <div class="pf-row"><span class="pf-check">◆</span> Recording included</div>
+        </div>
+        <a href="https://calendly.com/prestonlee/luckifyme60" class="btn-ghost" style="width:100%; text-align:center;">Book a Reading</a>
+      </div>
+    </div>
   </div>
 </section>
 
-
-<!-- ══════════════════════════════════
-     FAQ
-══════════════════════════════════ -->
+<!-- ════ FAQ ════ -->
 <section id="faq">
   <div class="faq-inner">
-    <div class="reveal">
-      <span class="sys-label">FAQs</span>
-      <h2 class="sec-title">Got questions. <span class="ph">We have the read.</span></h2>
+    <div class="faq-head reveal">
+      <span class="sys-label">Questions</span>
+      <h2 class="sec-title">Straight <span class="ph">Answers.</span></h2>
     </div>
 
-    <div class="faq-list reveal">
+    <div class="faq-list reveal d2">
       <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Is this just astrology with a performance label?<span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Not quite. Lucky Window is a daily Person–Environment interaction model — your personal elemental profile is calculated once from your birth data, then measured against a recalculated environmental field every day. The output is a color zone with a rhythm identity and scoring profile. <strong>It's less like a horoscope and more like a daily edge calculation</strong> — same concept as tracking your peak performance hours, but driven by elemental science rather than subjective self-assessment.</p></div>
+        <button class="faq-q"><span>Doesn't this sound like vague personality stuff that could apply to anyone?</span><span class="faq-icon">+</span></button>
+        <p class="faq-a">Your profile is generated from your specific birth data — date, time, and location. Every element is calculated, not assigned. If it feels generic, something is off in the data. The specificity comes from the math, not from broad archetypes.</p>
       </div>
       <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">What makes this personalized to me specifically?<span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Your exact birth date and location are the primary inputs. <strong>No two people born on different days get the same calendar.</strong> Your Pink days might be someone else's Brown days — that asymmetry is the point. Birth time is optional but sharpens precision significantly if you have it.</p></div>
+        <button class="faq-q"><span>I'm not really into spiritual stuff.</span><span class="faq-icon">+</span></button>
+        <p class="faq-a">Neither is Luckify, in the traditional sense. Think of it as a systems tool. You're finding out how your character is built — and then actually playing to your strengths. No crystals required.</p>
       </div>
       <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">How do I actually test whether this works?<span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Same way you'd test any edge claim — sample size. <strong>Log your output quality against your zone for one month.</strong> Note which days felt sharp and which felt off. Compare against the zone. Let the data answer the question. You can also audit the same zone engine in public at <strong>@vector_signal</strong> — UFC zone scores posted before each card, outcomes logged after. Look for pattern, not perfection.</p></div>
+        <button class="faq-q"><span>How is this actually actionable day-to-day?</span><span class="faq-icon">+</span></button>
+        <p class="faq-a">The Active Rhythm tells you what zone you're in today. The Decision Engine gives you a personal process for arriving at clarity. It's not advice — it's a mirror with mechanics. You decide what to do with it.</p>
       </div>
       <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">What do I actually receive each month?<span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>A personalized Google Sheet with your full monthly calendar — each day labeled with zone color, 6-category score breakdown, and rhythm guidance. Plus weekly field intelligence from Soltar. <strong>Plus a personal calendar link so your zone is visible whenever you open your calendar.</strong> Delivered before the month starts.</p></div>
+        <button class="faq-q"><span>How long does it take to build my profile?</span><span class="faq-icon">+</span></button>
+        <p class="faq-a">About two minutes. Enter your birth date, time, and location — the engines run automatically. You'll have your full Main Quest profile immediately.</p>
       </div>
       <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">What's the poker add-on?<span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>An additional layer of zone-specific guidance mapped to poker decision categories — table timing, read quality, sizing authorization, variance exposure. It's built on top of the core calendar, not a replacement. <strong>Available to active subscribers now.</strong> Message Soltar at r/asksoltar to get it activated.</p></div>
+        <button class="faq-q"><span>What if I don't know my exact birth time?</span><span class="faq-icon">+</span></button>
+        <p class="faq-a">Use your best estimate. Some layers (like Human Design) depend on exact timing. Others — including BaZi's day pillar and numerology — remain accurate regardless. You'll still get a meaningful profile.</p>
       </div>
       <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Can I cancel whenever I want?<span class="faq-icon">+</span></button>
-        <div class="faq-a"><p><strong>Yes. No questions, no hoops.</strong> Cancel by email any time and you won't be charged again. If the calendar isn't improving your output, you shouldn't pay for it.</p></div>
+        <button class="faq-q"><span>Can I cancel the subscription anytime?</span><span class="faq-icon">+</span></button>
+        <p class="faq-a">Yes. No lock-in, no complicated cancellation. Your Main Quest profile remains free and accessible regardless of your subscription status.</p>
       </div>
     </div>
   </div>
 </section>
 
-
-<!-- ══════════════════════════════════
-     FINAL CTA
-══════════════════════════════════ -->
+<!-- ════ FINAL CTA ════ -->
 <section id="final-cta">
-  <div class="final-glow"></div>
-  <div class="reveal">
-    <span class="sys-label">Your Move</span>
-    <h2 class="sec-title">You already have the skills.<br><span class="ph">Now know when to use them.</span></h2>
-    <p>Every day you operate without your zone, you're missing half the picture.<br>Start free. Your first month costs nothing.</p>
-    <a href="https://luckify3.gumroad.com/l/nimtpq" class="btn-primary">>> Deal Me In — Free →</a>
-    <div class="trust-row">
-      <div class="trust-pill">8 rhythm zones</div>
-      <div class="trust-pill">6 scored categories</div>
-      <div class="trust-pill">Performance calibration system</div>
-      <div class="trust-pill">First 30 days free</div>
-      <div class="trust-pill">Cancel anytime</div>
+  <div class="cta-inner">
+    <div class="cta-orb"></div>
+    <div class="reveal">
+      <span class="sys-label">Begin</span>
+      <h2 class="sec-title">Your <span class="ph">Main Quest</span><br>Is Waiting.</h2>
     </div>
+    <p class="reveal d1">
+      Two minutes. Your birth data. <strong>A complete picture of how you work, what's running now, and how to make decisions that actually fit you.</strong>
+    </p>
+    <div class="cta-btns reveal d2">
+      <a href="https://luckify-me.pages.dev/" class="btn-primary">Build Your Profile — Free</a>
+      <a href="https://calendly.com/prestonlee/luckifyme60" class="btn-ghost">Book a Reading</a>
+    </div>
+    <p class="cta-note reveal d3">Free forever. No credit card. Build in 2 minutes.</p>
   </div>
 </section>
 
-
-<!-- FOOTER -->
+<!-- ════ FOOTER ════ -->
 <footer>
-  <div class="footer-wm">LUCKIFY<span>.ME</span></div>
-  <small>© 2026 Luckify.me — Lucky Window Performance Intelligence</small>
+  <a href="/" class="footer-wordmark">LUCKIFY.ME</a>
   <div class="footer-links">
-    <a href="#">Privacy</a>
-    <a href="#">Terms</a>
-    <a href="https://reddit.com/r/asksoltar" target="_blank">r/asksoltar</a>
-    <a href="https://x.com/vector_signal" target="_blank">@vector_signal</a>
+    <a href="https://luckify-me.pages.dev/">App</a>
+    <a href="https://calendly.com/prestonlee/luckifyme60">Readings</a>
+    <a href="https://luckify.me/privacy">Privacy</a>
+    <a href="https://luckify.me/terms">Terms</a>
   </div>
+  <p class="footer-copy">© 2026 Luckify.me — Know your pattern. Work with it.</p>
 </footer>
 
-
 <script>
-  /* EMBERS */
-  const ec = document.getElementById('embers');
-  for (let i = 0; i < 20; i++) {
-    const e = document.createElement('div');
-    e.className = 'ember';
-    const s = 1 + Math.random() * 1.8;
-    e.style.cssText = `left:${Math.random()*100}%;width:${s}px;height:${s}px;animation-duration:${10+Math.random()*14}s;animation-delay:${Math.random()*18}s;`;
-    ec.appendChild(e);
-  }
+// ── INTERSECTION OBSERVER (reveal on scroll) ──
+const revealEls = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+}, { threshold: 0.12 });
+revealEls.forEach(el => io.observe(el));
 
-  /* ZONE TABS */
-  function switchZone(id, tab) {
-    document.querySelectorAll('.z-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.z-panel').forEach(p => p.classList.remove('active'));
+// ── ZONE TABS ──
+const zoneTabs   = document.querySelectorAll('.zone-tab');
+const zonePanels = document.querySelectorAll('.zone-panel');
+
+zoneTabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    const zone = tab.dataset.zone;
+    zoneTabs.forEach(t => t.classList.remove('active'));
+    zonePanels.forEach(p => p.classList.remove('active'));
     tab.classList.add('active');
-    document.getElementById('panel-' + id).classList.add('active');
-  }
+    document.querySelector(`.zone-panel[data-zone="${zone}"]`).classList.add('active');
+  });
+});
 
-  /* SWIPE on mobile */
-  (function() {
-    const zones = ['pink','orange','blue','yellow','green','purple','red','brown'];
-    let sx = 0, decided = false, isH = false;
-    const sec = document.getElementById('zones');
-    if (!sec) return;
-    sec.addEventListener('touchstart', e => { sx = e.touches[0].clientX; decided = false; isH = false; }, {passive:true});
-    sec.addEventListener('touchmove',  e => {
-      if (decided) return;
-      const dx = Math.abs(e.touches[0].clientX - sx), dy = Math.abs(e.touches[0].clientY - sx);
-      if (dx < 6 && dy < 6) return;
-      decided = true; isH = dx > dy * 1.5;
-    }, {passive:true});
-    sec.addEventListener('touchend', e => {
-      if (!isH) return;
-      const dx = e.changedTouches[0].clientX - sx;
-      if (Math.abs(dx) < 50) return;
-      const cur = document.querySelector('.z-panel.active');
-      if (!cur) return;
-      const idx = zones.indexOf(cur.id.replace('panel-',''));
-      const next = dx < 0 ? Math.min(idx+1,zones.length-1) : Math.max(idx-1,0);
-      if (next === idx) return;
-      const tab = document.querySelectorAll('.z-tab')[next];
-      switchZone(zones[next], tab);
-      tab.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
-    }, {passive:true});
-  })();
-
-  /* SCROLL REVEAL */
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-  }, { threshold: 0.07 });
-  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-
-  /* FAQ */
-  function toggleFaq(btn) {
-    const item = btn.parentElement;
-    const was = item.classList.contains('open');
-    document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
-    if (!was) item.classList.add('open');
-  }
-
-  /* CAROUSEL */
-  let curSlide = 0;
-  const totalSlides = 3;
-
-  function goSlide(n) {
-    document.querySelectorAll('.c-slide').forEach((s,i) => s.classList.toggle('active', i === n));
-    document.querySelectorAll('.c-dot').forEach((d,i) => d.classList.toggle('active', i === n));
-    curSlide = n;
-  }
-  function nextSlide() { goSlide((curSlide + 1) % totalSlides); }
-  function prevSlide() { goSlide((curSlide - 1 + totalSlides) % totalSlides); }
-
-  /* Swipe on carousel */
-  (function() {
-    const el = document.getElementById('carousel');
-    if (!el) return;
-    let sx = 0;
-    el.addEventListener('touchstart', e => { sx = e.touches[0].clientX; }, {passive:true});
-    el.addEventListener('touchend',   e => {
-      const dx = e.changedTouches[0].clientX - sx;
-      if (Math.abs(dx) < 40) return;
-      dx < 0 ? nextSlide() : prevSlide();
-    }, {passive:true});
-  })();
-
-  /* NAV border on scroll */
-  window.addEventListener('scroll', () => {
-    document.getElementById('main-nav').style.borderBottomColor =
-      window.scrollY > 60 ? 'rgba(255,140,0,0.18)' : 'rgba(255,255,255,0.08)';
-  }, {passive:true});
+// ── FAQ ACCORDION ──
+document.querySelectorAll('.faq-q').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.closest('.faq-item');
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+  });
+});
 </script>
 </body>
 </html>
